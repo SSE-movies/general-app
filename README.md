@@ -1,109 +1,67 @@
-# SSE_ProjectII
+# Movie App
 
-## GitHub
-Clone the repository
-```
-git clone https://github.com/tiagoriely/SSE_ProjectII.git
-```
-Push Changes to GitHub
-```
-git add .
-git commit -m "Commit message"
-git push origin main
-```
+A Flask-based web application for [brief description of what our app will do].
+[change that at the end]
 
-Pull Latest Changes
-```
-git pull
-```
+## Features (Coming Soon)
+- Feature 1
+- Feature 2
+- Feature 3
 
-### Using branches
-#### Making changes
-Create a branch
-```
-git checkout -b [branch_name]
-```
+## Components
+- **`app.py`**: Main application entry point
+- **`templates/`**: HTML templates
+- **`requirements.txt`**: Python dependencies
 
-List all branches
-```
-git branch
+## Prerequisites
+- Python 3.12
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone git@github.com:tiagoriely/SSE_ProjectII.git
 ```
 
-Switch between branches
-```
-git checkout main
-git checkout [branch_name]
-```
-
-Check the status of your working directory
-```
-git status
+2. Create and activate virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
 ```
 
-Stage and commit changes
-```
-git add .
-git commit -m "Descriptive commit message"
-```
-
-Push changes to remote; set an upstream branch like the below
-```
-git push -u origin [branch_name]
-```
-
-#### Keeping your branch updated
-Fetch the latest changes
-```
-git fetch origin
-```
-
-Rebase your branch on latest main
-```
-git checkout [branch_name]
-git rebase origin/main
-```
-
-Resolve conflicts if any
-```
-git add .
-git rebase --continue
-```
-
-## Creating virtual environment
-Create the venv
-```
-python3 -m venv venv
-```
-
-Activate venv
-
-(Linux)
-```
-source venv/bin/activate
-```
-(Windows)
-```
-venv\Scripts\activate
-```
-
-Install packages
-```
+3. Install Python dependencies:
+```bash
 pip install -r requirements.txt
 ```
 
-Add new dependencies to requirements.txt
-```
-pip freeze > requirements.txt
-```
-
-## Run Flask App
-Set the Flask app
-```
-export FLASK_APP=app.py
+4. Install Node.js dependencies:
+```bash
+npm install
 ```
 
-Be careful, the port may have been changed
-```
-flask --app app.py run --host=0.0.0.0 --port 8000
+5. Build Tailwind CSS:
+```bash
+npm run build:css
 ```
 
+## Running the Application
+
+1. Run the application:
+```bash
+flask run
+```
+
+## Testing
+[to be completed]
+
+## CI/CD
+The project uses GitHub Actions for continuous integration and deployment, including:
+- Code formatting checks (black)
+- Automated testing
+- Deployment to ImPaaS
+- [to add]
+
+## API Integration
+MovieApp integrates with:
+- [to add]
