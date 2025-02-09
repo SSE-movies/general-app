@@ -76,6 +76,7 @@ python3 -m venv venv
 ```
 
 Activate venv
+
 (Linux)
 ```
 source venv/bin/activate
