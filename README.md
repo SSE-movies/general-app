@@ -3,7 +3,7 @@
 ### GitHub
 Clone the repository
 ```
-git clone https://gitlab.doc.ic.ac.uk/lab2425_spring/intro2ml_cw1_12.git
+git clone https://github.com/tiagoriely/SSE_ProjectII.git
 ```
 Push Changes to GitHub
 ```
