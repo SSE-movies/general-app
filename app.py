@@ -1,11 +1,10 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
 @app.route("/")
-def hello_movies():
- return render_template("index.html")
+def home():
+    return render_template("index.html")
 
-# Run Flask app on port 80, accessible from any IP
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host="0.0.0.0", port=5000, debug=True)

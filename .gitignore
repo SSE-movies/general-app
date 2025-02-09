@@ -3,3 +3,4 @@ venv
 .venv
 flask_session/
 .env
+node_modules
