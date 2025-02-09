@@ -17,6 +17,27 @@ Pull Latest Changes
 git pull
 ```
 
+### Using branches
+Create a branch
+```
+git checkout -b [branch_name]
+```
+
+List all branches
+```
+git branch
+```
+
+Switch between branches
+```
+git checkout [branch_name]
+git checkout main
+```
+
+When pushing to remote, set an upstream branch like the below
+```
+git push -u origin [branch_name]
+```
 
 ## Creating virtual environment
 Create the venv
