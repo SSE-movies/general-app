@@ -1,5 +1,7 @@
 from ..app import app
+
 # import requests
+
 
 # test correct loading of homepage
 def test_homepage_loads_correctly():
