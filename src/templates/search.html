@@ -1,23 +1,40 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>ICmovies - Search</title>#}
+{#    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">#}
+{#</head>#}
+{#<body class="bg-dark-forest min-h-screen flex flex-col items-center justify-center text-cream p-4">#}
+{#    <div class="max-w-4xl mx-auto text-center">#}
+{#        <h1 class="text-4xl font-bold mb-6 text-golden">Movie Search</h1>#}
+{#        <form class="flex flex-col items-center space-y-4">#}
+{#            <label for="movie-search" class="sr-only">Movie Search</label>#}
+{#            <input id="movie-search" type="text" placeholder="Search for a movie..."#}
+{#                   class="w-full max-w-md px-4 py-2 rounded-lg bg-taupe text-dark-forest">#}
+{#            <button type="submit"#}
+{#                    class="bg-golden text-dark-forest px-6 py-2 rounded-lg hover:bg-cream transition duration-300">#}
+{#                Search#}
+{#            </button>#}
+{#        </form>#}
+{#    </div>#}
+{#</body>#}
+{#</html>#}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICmovies - Search</title>
+    <title>ICmovies Search Bar</title>
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body class="bg-dark-forest min-h-screen flex flex-col items-center justify-center text-cream p-4">
     <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl font-bold mb-6 text-golden">Movie Search</h1>
-        <form class="flex flex-col items-center space-y-4">
-            <label for="movie-search" class="sr-only">Movie Search</label>
-            <input id="movie-search" type="text" placeholder="Search for a movie..."
-                   class="w-full max-w-md px-4 py-2 rounded-lg bg-taupe text-dark-forest">
-            <button type="submit"
-                    class="bg-golden text-dark-forest px-6 py-2 rounded-lg hover:bg-cream transition duration-300">
-                Search
-            </button>
-        </form>
+        <h1 class="text-4xl font-bold mb-6 text-golden">Where are you Movies?</h1>
+        <p class="text-xl text-taupe">What am I searching for?</p>
     </div>
 </body>
 </html>
