@@ -37,21 +37,20 @@ jobs:
           git add .
           git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
 
-# Tailwind build step for future use
-#  build-tailwind:
-#    needs: python-format
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Setup Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '16'
-#      - name: Install npm dependencies
-#        run: npm install
-#      - name: Build Tailwind CSS
-#        run: npm run build:css
+  build-tailwind:
+    needs: python-format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Build Tailwind CSS
+        run: npm run build:css
 
 # Unit Testing for future use
 #  unit-testing:
@@ -76,7 +75,7 @@ jobs:
 #          # pytest api_test.py
 
   deploy-to-impaas:
-    needs: python-format
+    needs: build-tailwind
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
