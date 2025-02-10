@@ -9,6 +9,7 @@ app = Flask(
 def home():
     return render_template("index.html")
 
+
 @app.route("/search")
 def search():
     """Route to search for a movie"""
