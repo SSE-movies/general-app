@@ -15,6 +15,11 @@ def search():
     """Route to search for a movie"""
     return render_template("search.html")
 
+@app.route("/watchlist")
+def watchlist():
+    """Route to watchlist page with saved movies"""
+    return render_template("watchlist.html")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
