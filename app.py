@@ -15,6 +15,7 @@ def search():
     """Route to search for a movie"""
     return render_template("search.html")
 
+
 @app.route("/watchlist")
 def watchlist():
     """Route to watchlist page with saved movies"""
