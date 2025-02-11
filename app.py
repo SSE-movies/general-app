@@ -20,10 +20,39 @@ app = Flask(
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
 app.config["MONGO_URI"] = os.getenv(
-    "MONGO_URI", "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/?retryWrites=true&w=majority&appName=UserAuthCluster"
+    "MONGO_URI",
+    "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=UserAuthCluster"
 )
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
+
+# Database initialization
+def init_db():
+    try:
+        # Check if the users collection exists
+        if 'users' not in mongo.db.list_collection_names():
+            # Create the users collection
+            mongo.db.create_collection('users')
+            print("Users collection created successfully")
+
+        # Check if there's at least one admin user
+        admin_user = mongo.db.users.find_one({'is_admin': True})
+        if not admin_user:
+            # Create a default admin user if none exists
+            default_admin = {
+                'username': 'admin',
+                'password': bcrypt.generate_password_hash('admin123').decode('utf-8'),
+                'is_admin': True
+            }
+            mongo.db.users.insert_one(default_admin)
+            print("Default admin user created")
+
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+
+
+# Initialize database
+init_db()
 
 
 # Authentication decorators
@@ -63,44 +92,69 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = mongo.db.users.find_one({"username": request.form["username"]})
-        if user and bcrypt.check_password_hash(
-            user["password"], request.form["password"]
-        ):
+        try:
+            # Get user from MongoDB
+            user = mongo.db.users.find_one({"username": request.form["username"]})
+
+            if not user:
+                return render_template("login.html", error="User not found")
+
+            # Check password
+            if not bcrypt.check_password_hash(user["password"], request.form["password"]):
+                return render_template("login.html", error="Invalid credentials")
+
+            # If credentials are valid, set session and redirect
             session["user_id"] = str(user["_id"])
             session["username"] = user["username"]
-            session["is_admin"] = user.get(
-                "is_admin", False
-            )  # Store admin status in session
+            session["is_admin"] = user.get("is_admin", False)
 
             if user.get("is_admin"):
                 return redirect(url_for("admin"))
             return redirect(url_for("search"))
-        return render_template("login.html", error="Invalid credentials")
+
+        except Exception as e:
+            print(f"Login error: {e}")
+            return render_template("login.html", error="Login failed. Please try again.")
+
     return render_template("login.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        existing_user = mongo.db.users.find_one(
-            {"username": request.form["username"]}
-        )
-        if existing_user:
-            return "Username already exists", 400
+        try:
+            # Check if username already exists
+            existing_user = mongo.db.users.find_one(
+                {"username": request.form["username"]}
+            )
+            if existing_user:
+                return "Username already exists", 400
 
-        hashed_password = bcrypt.generate_password_hash(
-            request.form["password"]
-        ).decode("utf-8")
-        user = {
-            "username": request.form["username"],
-            "password": hashed_password,
-            "is_admin": False,
-        }
-        mongo.db.users.insert_one(user)
-        return redirect(url_for("login"))
+            # Hash the password
+            hashed_password = bcrypt.generate_password_hash(
+                request.form["password"]
+            ).decode("utf-8")
 
-    # Add this line to render the register template for GET requests
+            # Create a new user
+            user = {
+                "username": request.form["username"],
+                "password": hashed_password,
+                "is_admin": False,  # Default to not admin
+            }
+
+            # Insert user into the database
+            result = mongo.db.users.insert_one(user)
+
+            if result.inserted_id:
+                print("User successfully registered")
+                return redirect(url_for("login"))
+            else:
+                return "Registration failed", 500
+
+        except Exception as e:
+            print(f"Registration error: {e}")
+            return f"Registration failed: {str(e)}", 500
+
     return render_template("register.html")
 
 
@@ -119,26 +173,33 @@ def logout():
 @app.route("/admin")
 @admin_required
 def admin():
-    # Fetch all users, excluding password
-    users = list(mongo.db.users.find({}, {"password": 0}))
+    try:
+        # Fetch all users, excluding password
+        users = list(mongo.db.users.find({}, {"password": 0}))
 
-    # Convert ObjectId to string
-    for user in users:
-        user["_id"] = str(user["_id"])
+        # Convert ObjectId to string
+        for user in users:
+            user["_id"] = str(user["_id"])
 
-    return render_template(
-        "admin.html", username=session.get("username"), users=users
-    )
+        return render_template(
+            "admin.html", username=session.get("username"), users=users
+        )
+    except Exception as e:
+        print(f"Admin page error: {e}")
+        return "Error loading admin page", 500
 
 
 # API Routes for admin functionality
 @app.route("/api/users")
 @admin_required
 def get_users():
-    users = list(mongo.db.users.find({}, {"password": 0}))
-    for user in users:
-        user["_id"] = str(user["_id"])
-    return jsonify(users)
+    try:
+        users = list(mongo.db.users.find({}, {"password": 0}))
+        for user in users:
+            user["_id"] = str(user["_id"])
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/users/<user_id>/reset-password", methods=["POST"])
@@ -175,11 +236,23 @@ def reset_password(user_id):
 @app.route("/api/users/<user_id>/username", methods=["PUT"])
 @admin_required
 def update_username(user_id):
-    new_username = request.json.get("newUsername")
-    mongo.db.users.update_one(
-        {"_id": user_id}, {"$set": {"username": new_username}}
-    )
-    return "Username updated"
+    try:
+        new_username = request.json.get("newUsername")
+        if not new_username:
+            return jsonify({"error": "New username is required"}), 400
+
+        # Convert string ID to ObjectId
+        result = mongo.db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"username": new_username}}
+        )
+
+        if result.modified_count > 0:
+            return jsonify({"message": "Username updated successfully"}), 200
+        else:
+            return jsonify({"error": "User not found or username unchanged"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/users/<user_id>", methods=["DELETE"])
@@ -197,5 +270,5 @@ def delete_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     app.run(debug=True)
