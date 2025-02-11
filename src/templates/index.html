@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICmovies</title>
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-dark-forest min-h-screen flex flex-col items-center justify-center text-cream p-4">
-    <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl font-bold mb-6 text-golden">Hello, Movies!</h1>
-        <p class="text-xl text-taupe">Be ready, a brand new movie web app is arriving soon.</p>
+<body class="bg-dark-forest text-cream">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-sage p-8 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold mb-4 text-taupe">Welcome to Our App</h1>
+            <div class="flex space-x-4">
+                <a href="/login" class="bg-golden text-cream px-4 py-2 rounded hover:opacity-90 transition-opacity">Login</a>
+                <a href="/register" class="bg-taupe text-cream px-4 py-2 rounded hover:opacity-90 transition-opacity">Register</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="bg-dark-forest text-cream">
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-sage p-8 rounded-lg shadow-md w-96">
-            <h2 class="text-2xl font-bold mb-4 text-taupe">Login</h2>
-            
-            <!-- Add error message block here -->
-            {% if error %}
-            <div class="bg-sage border-2 border-golden text-cream p-3 rounded mb-4 text-center">
-                {{ error }}
-            </div>
-            {% endif %}
-
-            <form action="/login" method="POST">
+            <h2 class="text-2xl font-bold mb-4 text-taupe">Register</h2>
+            <form action="/register" method="POST">
                 <div class="mb-4">
                     <label class="block text-cream mb-2">Username</label>
                     <input type="text" name="username" class="w-full px-3 py-2 border rounded bg-dark-forest text-cream border-golden" required>
@@ -25,11 +17,11 @@
                     <label class="block text-cream mb-2">Password</label>
                     <input type="password" name="password" class="w-full px-3 py-2 border rounded bg-dark-forest text-cream border-golden" required>
                 </div>
-                <button type="submit" class="w-full bg-golden text-cream px-4 py-2 rounded hover:opacity-90 mb-4">Login</button>
+                <button type="submit" class="w-full bg-taupe text-cream px-4 py-2 rounded hover:opacity-90 mb-4">Register</button>
             </form>
             <div class="text-center">
-                <p class="text-cream">Don't have an account? 
-                    <a href="/register" class="text-golden hover:underline">Register here</a>
+                <p class="text-cream">Already have an account? 
+                    <a href="/login" class="text-golden hover:underline">Login here</a>
                 </p>
             </div>
         </div>

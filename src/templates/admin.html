@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Navbar Script -->
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+    
+    <!-- Admin Dashboard Script -->
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navbar with current username
+            window.createNavbar({
+                title: 'Admin Dashboard',
+                username: '{{ username }}',
+                logoutUrl: '/logout'
+            });
+        });
+    </script>
+</head>
+<body class="bg-dark-forest text-cream min-h-screen">
+    <main class="container mx-auto mt-8 px-4">
+        <div class="bg-sage p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold mb-6 text-taupe">User Management</h2>
+            
+            <!-- User List Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-golden">
+                            <th class="text-left p-3 text-taupe">Username</th>
+                            <th class="text-left p-3 text-taupe">Role</th>
+                            <th class="text-right p-3 text-taupe">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        {% for user in users %}
+                        <tr class="border-b border-golden hover:bg-dark-forest">
+                            <td class="p-3">{{ user.username }}</td>
+                            <td class="p-3">{{ 'Admin' if user.is_admin else 'User' }}</td>
+                            <td class="p-3 text-right">
+                                <button 
+                                    data-user-id="{{ user._id }}"
+                                    class="change-password-btn bg-golden text-cream px-3 py-1 rounded hover:opacity-90 mr-2"
+                                >
+                                    Change Password
+                                </button>
+                                <button 
+                                    data-user-id="{{ user._id }}"
+                                    class="delete-user-btn bg-sage text-cream px-3 py-1 rounded hover:opacity-90"
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="hidden fixed inset-0 bg-dark-forest bg-opacity-50 flex items-center justify-center">
+        <div class="bg-sage p-6 rounded-lg shadow-lg w-96">
+            <h3 class="text-lg font-bold mb-4 text-taupe">Change Password</h3>
+            <div class="space-y-4">
+                <input 
+                    type="password" 
+                    id="newPassword" 
+                    placeholder="Enter new password" 
+                    class="w-full p-2 rounded bg-dark-forest text-cream border-2 border-golden focus:outline-none focus:border-taupe"
+                >
+                <div class="flex justify-end space-x-3">
+                    <button 
+                        id="closePasswordModalBtn"
+                        class="px-4 py-2 rounded text-cream hover:opacity-90"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        id="savePasswordBtn"
+                        class="bg-golden px-4 py-2 rounded text-cream hover:opacity-90"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
