@@ -28,12 +28,13 @@ bcrypt = Bcrypt(app)
 
 try:
     # Test MongoDB connection
-    mongo.db.command('ping')
+    mongo.db.command("ping")
     print("MongoDB connection successful!")
     print("Available collections:", mongo.db.list_collection_names())
 except Exception as e:
     print(f"MongoDB Connection Error: {str(e)}")
     raise Exception(f"Failed to connect to MongoDB: {str(e)}")
+
 
 # Database initialization
 def init_db():
@@ -146,8 +147,7 @@ def register():
             # Input validation
             if not username or not password:
                 return render_template(
-                    "register.html", 
-                    error="Username and password are required"
+                    "register.html", error="Username and password are required"
                 )
 
             # Check if username already exists
@@ -155,24 +155,25 @@ def register():
                 existing_user = mongo.db.users.find_one({"username": username})
                 if existing_user:
                     return render_template(
-                        "register.html", 
-                        error="Username already exists"
+                        "register.html", error="Username already exists"
                     )
             except Exception as db_error:
                 print(f"Database query error: {db_error}")
                 return render_template(
                     "register.html",
-                    error="Unable to check username. Please try again later."
+                    error="Unable to check username. Please try again later.",
                 )
 
             # Hash the password
             try:
-                hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+                hashed_password = bcrypt.generate_password_hash(
+                    password
+                ).decode("utf-8")
             except Exception as hash_error:
                 print(f"Password hashing error: {hash_error}")
                 return render_template(
                     "register.html",
-                    error="Error processing password. Please try again."
+                    error="Error processing password. Please try again.",
                 )
 
             # Create a new user
@@ -192,14 +193,14 @@ def register():
                 print(f"Database insertion error: {insert_error}")
                 return render_template(
                     "register.html",
-                    error="Registration failed. Please try again later."
+                    error="Registration failed. Please try again later.",
                 )
 
         except Exception as e:
             print(f"Registration error: {e}")
             return render_template(
                 "register.html",
-                error="An error occurred during registration. Please try again."
+                error="An error occurred during registration. Please try again.",
             )
 
     return render_template("register.html")
