@@ -19,7 +19,9 @@ app = Flask(
 
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/auth_system"
+app.config["MONGO_URI"] = os.getenv(
+    "MONGO_URI", "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/?retryWrites=true&w=majority&appName=UserAuthCluster"
+)
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 
@@ -78,24 +80,28 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    existing_user = mongo.db.users.find_one(
-        {"username": request.form["username"]}
-    )
-    if existing_user:
-        return "Username already exists", 400
+    if request.method == "POST":
+        existing_user = mongo.db.users.find_one(
+            {"username": request.form["username"]}
+        )
+        if existing_user:
+            return "Username already exists", 400
 
-    hashed_password = bcrypt.generate_password_hash(
-        request.form["password"]
-    ).decode("utf-8")
-    user = {
-        "username": request.form["username"],
-        "password": hashed_password,
-        "is_admin": False,
-    }
-    mongo.db.users.insert_one(user)
-    return redirect(url_for("login"))
+        hashed_password = bcrypt.generate_password_hash(
+            request.form["password"]
+        ).decode("utf-8")
+        user = {
+            "username": request.form["username"],
+            "password": hashed_password,
+            "is_admin": False,
+        }
+        mongo.db.users.insert_one(user)
+        return redirect(url_for("login"))
+
+    # Add this line to render the register template for GET requests
+    return render_template("register.html")
 
 
 @app.route("/search")
