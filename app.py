@@ -116,9 +116,7 @@ def login():
             if not bcrypt.check_password_hash(
                 user["password"], request.form["password"]
             ):
-                return render_template(
-                    "login.html", error="Invalid password"
-                )
+                return render_template("login.html", error="Invalid password")
 
             # If credentials are valid, set session and redirect
             session["user_id"] = str(user["_id"])
