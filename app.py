@@ -20,7 +20,8 @@ app = Flask(
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
 app.config["MONGO_URI"] = os.getenv(
-    "MONGO_URI", "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/?retryWrites=true&w=majority&appName=UserAuthCluster"
+    "MONGO_URI",
+    "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/?retryWrites=true&w=majority&appName=UserAuthCluster",
 )
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
