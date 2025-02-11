@@ -21,28 +21,31 @@ app = Flask(
 app.config["SECRET_KEY"] = os.urandom(24)
 app.config["MONGO_URI"] = os.getenv(
     "MONGO_URI",
-    "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=UserAuthCluster"
+    "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=UserAuthCluster",
 )
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
+
 
 # Database initialization
 def init_db():
     try:
         # Check if the users collection exists
-        if 'users' not in mongo.db.list_collection_names():
+        if "users" not in mongo.db.list_collection_names():
             # Create the users collection
-            mongo.db.create_collection('users')
+            mongo.db.create_collection("users")
             print("Users collection created successfully")
 
         # Check if there's at least one admin user
-        admin_user = mongo.db.users.find_one({'is_admin': True})
+        admin_user = mongo.db.users.find_one({"is_admin": True})
         if not admin_user:
             # Create a default admin user if none exists
             default_admin = {
-                'username': 'admin',
-                'password': bcrypt.generate_password_hash('admin123').decode('utf-8'),
-                'is_admin': True
+                "username": "admin",
+                "password": bcrypt.generate_password_hash("admin123").decode(
+                    "utf-8"
+                ),
+                "is_admin": True,
             }
             mongo.db.users.insert_one(default_admin)
             print("Default admin user created")
@@ -94,14 +97,20 @@ def login():
     if request.method == "POST":
         try:
             # Get user from MongoDB
-            user = mongo.db.users.find_one({"username": request.form["username"]})
+            user = mongo.db.users.find_one(
+                {"username": request.form["username"]}
+            )
 
             if not user:
                 return render_template("login.html", error="User not found")
 
             # Check password
-            if not bcrypt.check_password_hash(user["password"], request.form["password"]):
-                return render_template("login.html", error="Invalid credentials")
+            if not bcrypt.check_password_hash(
+                user["password"], request.form["password"]
+            ):
+                return render_template(
+                    "login.html", error="Invalid credentials"
+                )
 
             # If credentials are valid, set session and redirect
             session["user_id"] = str(user["_id"])
@@ -114,7 +123,9 @@ def login():
 
         except Exception as e:
             print(f"Login error: {e}")
-            return render_template("login.html", error="Login failed. Please try again.")
+            return render_template(
+                "login.html", error="Login failed. Please try again."
+            )
 
     return render_template("login.html")
 
@@ -243,14 +254,16 @@ def update_username(user_id):
 
         # Convert string ID to ObjectId
         result = mongo.db.users.update_one(
-            {"_id": ObjectId(user_id)},
-            {"$set": {"username": new_username}}
+            {"_id": ObjectId(user_id)}, {"$set": {"username": new_username}}
         )
 
         if result.modified_count > 0:
             return jsonify({"message": "Username updated successfully"}), 200
         else:
-            return jsonify({"error": "User not found or username unchanged"}), 404
+            return (
+                jsonify({"error": "User not found or username unchanged"}),
+                404,
+            )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
