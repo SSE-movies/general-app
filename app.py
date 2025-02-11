@@ -264,6 +264,7 @@ def search():
     # return render_template("search.html", username=session.get("username"), movies=filtered)
     return render_template("search.html", username=session.get("username"))
 
+
 @app.route("/logout")
 def logout():
     session.clear()
