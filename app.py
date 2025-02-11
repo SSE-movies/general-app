@@ -103,6 +103,7 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    success = request.args.get('success')  # Get success message from URL if it exists
     if request.method == "POST":
         try:
             # Get user from MongoDB
@@ -134,7 +135,7 @@ def login():
                 "login.html", error="Login failed. Please try again."
             )
 
-    return render_template("login.html")
+    return render_template("login.html", success=success)  # Pass success message to template
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -188,7 +189,7 @@ def register():
                 result = mongo.db.users.insert_one(user)
                 if result.inserted_id:
                     print(f"User {username} successfully registered")
-                    return redirect(url_for("login"))
+                    return redirect(url_for("login", success="Registration successful. Please login now."))
             except Exception as insert_error:
                 print(f"Database insertion error: {insert_error}")
                 return render_template(

@@ -16,6 +16,13 @@
             </div>
             {% endif %}
 
+            <!-- Add success message block here -->
+            {% if success %}
+            <div class="bg-sage border-2 border-golden text-cream p-3 rounded mb-4 text-center">
+                {{ success }}
+            </div>
+            {% endif %}
+
             <form action="/login" method="POST">
                 <div class="mb-4">
                     <label class="block text-cream mb-2">Username</label>
