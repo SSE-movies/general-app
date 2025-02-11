@@ -21,11 +21,19 @@ app = Flask(
 app.config["SECRET_KEY"] = os.urandom(24)
 app.config["MONGO_URI"] = os.getenv(
     "MONGO_URI",
-    "mongodb+srv://admin:LKt2lujE6czy468S@userauthcluster.obo8e.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=UserAuthCluster",
+    "mongodb+srv://admin:admin@userauthcluster.obo8e.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=UserAuthCluster",
 )
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 
+try:
+    # Test MongoDB connection
+    mongo.db.command('ping')
+    print("MongoDB connection successful!")
+    print("Available collections:", mongo.db.list_collection_names())
+except Exception as e:
+    print(f"MongoDB Connection Error: {str(e)}")
+    raise Exception(f"Failed to connect to MongoDB: {str(e)}")
 
 # Database initialization
 def init_db():
@@ -134,39 +142,67 @@ def login():
 def register():
     if request.method == "POST":
         try:
-            # Check if username already exists
-            existing_user = mongo.db.users.find_one(
-                {"username": request.form["username"]}
-            )
-            if existing_user:
+            username = request.form["username"]
+            password = request.form["password"]
+
+            # Input validation
+            if not username or not password:
                 return render_template(
-                    "register.html", error="Username already exists"
+                    "register.html", 
+                    error="Username and password are required"
+                )
+
+            # Check if username already exists
+            try:
+                existing_user = mongo.db.users.find_one({"username": username})
+                if existing_user:
+                    return render_template(
+                        "register.html", 
+                        error="Username already exists"
+                    )
+            except Exception as db_error:
+                print(f"Database query error: {db_error}")
+                return render_template(
+                    "register.html",
+                    error="Unable to check username. Please try again later."
                 )
 
             # Hash the password
-            hashed_password = bcrypt.generate_password_hash(
-                request.form["password"]
-            ).decode("utf-8")
+            try:
+                hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+            except Exception as hash_error:
+                print(f"Password hashing error: {hash_error}")
+                return render_template(
+                    "register.html",
+                    error="Error processing password. Please try again."
+                )
 
             # Create a new user
             user = {
-                "username": request.form["username"],
+                "username": username,
                 "password": hashed_password,
-                "is_admin": False,  # Default to not admin
+                "is_admin": False,
             }
 
             # Insert user into the database
-            result = mongo.db.users.insert_one(user)
-
-            if result.inserted_id:
-                print("User successfully registered")
-                return redirect(url_for("login"))
-            else:
-                return "Registration failed", 500
+            try:
+                result = mongo.db.users.insert_one(user)
+                if result.inserted_id:
+                    print(f"User {username} successfully registered")
+                    return redirect(url_for("login"))
+            except Exception as insert_error:
+                print(f"Database insertion error: {insert_error}")
+                return render_template(
+                    "register.html",
+                    error="Registration failed. Please try again later."
+                )
 
         except Exception as e:
             print(f"Registration error: {e}")
-            return f"Registration failed: {str(e)}", 500
+            return render_template(
+                "register.html",
+                error="An error occurred during registration. Please try again."
+            )
 
     return render_template("register.html")
 
