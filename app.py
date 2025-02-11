@@ -109,7 +109,7 @@ def login():
                 user["password"], request.form["password"]
             ):
                 return render_template(
-                    "login.html", error="Invalid credentials"
+                    "login.html", error="Invalid password"
                 )
 
             # If credentials are valid, set session and redirect
@@ -139,7 +139,9 @@ def register():
                 {"username": request.form["username"]}
             )
             if existing_user:
-                return "Username already exists", 400
+                return render_template(
+                    "register.html", error="Username already exists"
+                )
 
             # Hash the password
             hashed_password = bcrypt.generate_password_hash(
