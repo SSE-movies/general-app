@@ -220,48 +220,94 @@ def register():
 @app.route("/search")
 @login_required
 def search():
-    cast_inp       = request.values.get("cast", "").strip()
-    country_inp    = request.values.get("country", "").strip()
-    date_inp       = request.values.get("date_added", "").strip()
-    desc_inp       = request.values.get("description", "").strip()
-    dir_inp        = request.values.get("director", "").strip()
-    dur_inp        = request.values.get("duration", "").strip()
-    list_inp       = request.values.get("listed_in", "").strip()
-    rating_inp     = request.values.get("rating", "").strip()
-    year_inp       = request.values.get("release_year", "").strip()
-    show_id_inp    = request.values.get("show_id", "").strip()
-    title_inp      = request.values.get("title", "").strip()
-    type_inp       = request.values.get("type", "").strip()
+    cast_inp = request.values.get("cast", "").strip()
+    country_inp = request.values.get("country", "").strip()
+    date_inp = request.values.get("date_added", "").strip()
+    desc_inp = request.values.get("description", "").strip()
+    dir_inp = request.values.get("director", "").strip()
+    dur_inp = request.values.get("duration", "").strip()
+    list_inp = request.values.get("listed_in", "").strip()
+    rating_inp = request.values.get("rating", "").strip()
+    year_inp = request.values.get("release_year", "").strip()
+    show_id_inp = request.values.get("show_id", "").strip()
+    title_inp = request.values.get("title", "").strip()
+    type_inp = request.values.get("type", "").strip()
 
     # filtered = movies_data
 
     if cast_inp:
-        filtered = [m for m in filtered if cast_inp.lower() in (m.get("cast") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if cast_inp.lower() in (m.get("cast") or "").lower()
+        ]
     if country_inp:
-        filtered = [m for m in filtered if country_inp.lower() in (m.get("country") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if country_inp.lower() in (m.get("country") or "").lower()
+        ]
     if date_inp:
-        filtered = [m for m in filtered if date_inp.lower() in (m.get("date_added") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if date_inp.lower() in (m.get("date_added") or "").lower()
+        ]
     if desc_inp:
-        filtered = [m for m in filtered if desc_inp.lower() in (m.get("description") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if desc_inp.lower() in (m.get("description") or "").lower()
+        ]
     if dir_inp:
-        filtered = [m for m in filtered if dir_inp.lower() in (m.get("director") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if dir_inp.lower() in (m.get("director") or "").lower()
+        ]
     if dur_inp:
-        filtered = [m for m in filtered if dur_inp.lower() in (m.get("duration") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if dur_inp.lower() in (m.get("duration") or "").lower()
+        ]
     if list_inp:
-        filtered = [m for m in filtered if list_inp.lower() in (m.get("listed_in") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if list_inp.lower() in (m.get("listed_in") or "").lower()
+        ]
     if rating_inp:
-        filtered = [m for m in filtered if rating_inp.lower() in (m.get("rating") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if rating_inp.lower() in (m.get("rating") or "").lower()
+        ]
     if year_inp.isdigit():
         year_val = int(year_inp)
         filtered = [m for m in filtered if m.get("release_year") == year_val]
     if show_id_inp:
-        filtered = [m for m in filtered if show_id_inp.lower() in (m.get("show_id") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if show_id_inp.lower() in (m.get("show_id") or "").lower()
+        ]
     if title_inp:
-        filtered = [m for m in filtered if title_inp.lower() in (m.get("title") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if title_inp.lower() in (m.get("title") or "").lower()
+        ]
     if type_inp:
-        filtered = [m for m in filtered if type_inp.lower() in (m.get("type") or "").lower()]
+        filtered = [
+            m
+            for m in filtered
+            if type_inp.lower() in (m.get("type") or "").lower()
+        ]
 
-    return render_template("search.html", username=session.get("username"), movies=filtered)
+    return render_template(
+        "search.html", username=session.get("username"), movies=filtered
+    )
 
 
 @app.route("/logout")
