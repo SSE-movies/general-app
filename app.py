@@ -12,10 +12,13 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 import os
 from bson.objectid import ObjectId
+import requests
 
 app = Flask(
     __name__, template_folder="src/templates", static_folder="src/static"
 )
+
+MOVIES_API_URL = "https://bookapi.impaas.uk/movies"
 
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
@@ -216,53 +219,71 @@ def register():
     return render_template("register.html")
 
 
-# @app.route("/search", methods=["GET", "POST"])
-@app.route("/search")
+@app.route("/search", methods=["GET", "POST"])
 @login_required
 def search():
-    # cast_inp       = request.values.get("cast", "").strip()
-    # country_inp    = request.values.get("country", "").strip()
-    # date_inp       = request.values.get("date_added", "").strip()
-    # desc_inp       = request.values.get("description", "").strip()
-    # dir_inp        = request.values.get("director", "").strip()
-    # dur_inp        = request.values.get("duration", "").strip()
-    # list_inp       = request.values.get("listed_in", "").strip()
-    # rating_inp     = request.values.get("rating", "").strip()
-    # year_inp       = request.values.get("release_year", "").strip()
-    # show_id_inp    = request.values.get("show_id", "").strip()
-    # title_inp      = request.values.get("title", "").strip()
-    # type_inp       = request.values.get("type", "").strip()
+    """Fetches movies from the API and applies backend filtering."""
+    
+    # Fetch movies from the API
+    try:
+        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=1000")  # Fetch all movies
+        response.raise_for_status()
+        movies_data = response.json().get("movies", [])  # Extract movie list
+    except requests.RequestException as e:
+        print(f"Error fetching movies: {e}")
+        return render_template("search.html", username=session.get("username"), movies=[])
 
-    # filtered = movies_data
+    # Handle both GET and POST requests
+    if request.method == "POST":
+        search_data = request.form  # Data from a submitted form
+    else:
+        search_data = request.args  # Data from URL parameters
 
-    # if cast_inp:
-    #     filtered = [m for m in filtered if cast_inp.lower() in (m.get("cast") or "").lower()]
-    # if country_inp:
-    #     filtered = [m for m in filtered if country_inp.lower() in (m.get("country") or "").lower()]
-    # if date_inp:
-    #     filtered = [m for m in filtered if date_inp.lower() in (m.get("date_added") or "").lower()]
-    # if desc_inp:
-    #     filtered = [m for m in filtered if desc_inp.lower() in (m.get("description") or "").lower()]
-    # if dir_inp:
-    #     filtered = [m for m in filtered if dir_inp.lower() in (m.get("director") or "").lower()]
-    # if dur_inp:
-    #     filtered = [m for m in filtered if dur_inp.lower() in (m.get("duration") or "").lower()]
-    # if list_inp:
-    #     filtered = [m for m in filtered if list_inp.lower() in (m.get("listed_in") or "").lower()]
-    # if rating_inp:
-    #     filtered = [m for m in filtered if rating_inp.lower() in (m.get("rating") or "").lower()]
-    # if year_inp.isdigit():
-    #     year_val = int(year_inp)
-    #     filtered = [m for m in filtered if m.get("release_year") == year_val]
-    # if show_id_inp:
-    #     filtered = [m for m in filtered if show_id_inp.lower() in (m.get("show_id") or "").lower()]
-    # if title_inp:
-    #     filtered = [m for m in filtered if title_inp.lower() in (m.get("title") or "").lower()]
-    # if type_inp:
-    #     filtered = [m for m in filtered if type_inp.lower() in (m.get("type") or "").lower()]
+    # Get user input
+    cast_inp       = search_data.get("cast", "").strip()
+    country_inp    = search_data.get("country", "").strip()
+    date_inp       = search_data.get("date_added", "").strip()
+    desc_inp       = search_data.get("description", "").strip()
+    dir_inp        = search_data.get("director", "").strip()
+    dur_inp        = search_data.get("duration", "").strip()
+    list_inp       = search_data.get("listed_in", "").strip()
+    rating_inp     = search_data.get("rating", "").strip()
+    year_inp       = search_data.get("release_year", "").strip()
+    show_id_inp    = search_data.get("show_id", "").strip()
+    title_inp      = search_data.get("title", "").strip()
+    type_inp       = search_data.get("type", "").strip()
 
-    # return render_template("search.html", username=session.get("username"), movies=filtered)
-    return render_template("search.html", username=session.get("username"))
+    # Apply backend filtering
+    filtered_movies = movies_data
+
+    if cast_inp:
+        filtered_movies = [m for m in filtered_movies if cast_inp.lower() in (m.get("cast") or "").lower()]
+    if country_inp:
+        filtered_movies = [m for m in filtered_movies if country_inp.lower() in (m.get("country") or "").lower()]
+    if date_inp:
+        filtered_movies = [m for m in filtered_movies if date_inp.lower() in (m.get("date_added") or "").lower()]
+    if desc_inp:
+        filtered_movies = [m for m in filtered_movies if desc_inp.lower() in (m.get("description") or "").lower()]
+    if dir_inp:
+        filtered_movies = [m for m in filtered_movies if dir_inp.lower() in (m.get("director") or "").lower()]
+    if dur_inp:
+        filtered_movies = [m for m in filtered_movies if dur_inp.lower() in (m.get("duration") or "").lower()]
+    if list_inp:
+        filtered_movies = [m for m in filtered_movies if list_inp.lower() in (m.get("listed_in") or "").lower()]
+    if rating_inp:
+        filtered_movies = [m for m in filtered_movies if rating_inp.lower() in (m.get("rating") or "").lower()]
+    if year_inp.isdigit():
+        year_val = int(year_inp)
+        filtered_movies = [m for m in filtered_movies if m.get("release_year") == year_val]
+    if show_id_inp:
+        filtered_movies = [m for m in filtered_movies if show_id_inp.lower() in (m.get("show_id") or "").lower()]
+    if title_inp:
+        filtered_movies = [m for m in filtered_movies if title_inp.lower() in (m.get("title") or "").lower()]
+    if type_inp:
+        filtered_movies = [m for m in filtered_movies if type_inp.lower() in (m.get("type") or "").lower()]
+
+    return render_template("search.html", username=session.get("username"), movies=filtered_movies)
+
 
 
 @app.route("/logout")
