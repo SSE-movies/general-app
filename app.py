@@ -70,9 +70,14 @@ def login():
             username = request.form["username"]
             password = request.form["password"]
 
-            # Check username and password directly from profiles table
-            user_response = supabase.table('profiles').select('*').eq('username', username).eq('password',
-                                                                                               password).single().execute()
+            # Use pgcrypto to verify password
+            user_response = supabase.rpc(
+                'verify_user',
+                {
+                    'p_username': username,
+                    'p_password': password
+                }
+            ).execute()
 
             print(f"Login attempt - Username: {username}")
             print(f"Query response: {user_response}")
@@ -80,10 +85,16 @@ def login():
             if not user_response.data:
                 return render_template("login.html", error="Invalid credentials")
 
+            user_data = user_response.data[0]  # Get first (and should be only) result
+
             # Store user info in session
-            session["user_id"] = user_response.data["id"]
-            session["username"] = user_response.data["username"]
-            session["is_admin"] = user_response.data["is_admin"]
+            session["user_id"] = user_data["id"]
+            session["username"] = user_data["username"]
+            session["is_admin"] = user_data["is_admin"]
+
+            if user_data["is_admin"]:
+                return redirect(url_for("admin"))
+            return redirect(url_for("search"))
 
             print(f"Session data: {session}")
             print(f"Is admin?: {user_response.data['is_admin']}")
