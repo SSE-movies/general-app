@@ -28,7 +28,7 @@ app.config["SECRET_KEY"] = os.urandom(24)
 # Initialize Supabase client
 supabase: Client = create_client(
     "https://euibanwordbygkxadvrx.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk",
 )
 
 
@@ -72,20 +72,20 @@ def login():
 
             # Use pgcrypto to verify password
             user_response = supabase.rpc(
-                'verify_user',
-                {
-                    'p_username': username,
-                    'p_password': password
-                }
+                "verify_user", {"p_username": username, "p_password": password}
             ).execute()
 
             print(f"Login attempt - Username: {username}")
             print(f"Query response: {user_response}")
 
             if not user_response.data:
-                return render_template("login.html", error="Invalid credentials")
+                return render_template(
+                    "login.html", error="Invalid credentials"
+                )
 
-            user_data = user_response.data[0]  # Get first (and should be only) result
+            user_data = user_response.data[
+                0
+            ]  # Get first (and should be only) result
 
             # Store user info in session
             session["user_id"] = user_data["id"]
@@ -99,7 +99,9 @@ def login():
             print(f"Session data: {session}")
             print(f"Is admin?: {user_response.data['is_admin']}")
 
-            if user_response.data["is_admin"] == True:  # Explicitly check for True
+            if (
+                user_response.data["is_admin"] == True
+            ):  # Explicitly check for True
                 print("Redirecting to admin page")
                 return redirect(url_for("admin"))
             print("Redirecting to search page")
@@ -110,8 +112,18 @@ def login():
             session["username"] = username  # Store username instead of email
 
             # Check if user is admin
-            user_data = supabase.table('profiles').select('is_admin').eq('id', auth_response.user.id).single().execute()
-            session["is_admin"] = user_data.data.get('is_admin', False) if user_data.data else False
+            user_data = (
+                supabase.table("profiles")
+                .select("is_admin")
+                .eq("id", auth_response.user.id)
+                .single()
+                .execute()
+            )
+            session["is_admin"] = (
+                user_data.data.get("is_admin", False)
+                if user_data.data
+                else False
+            )
 
             if session["is_admin"]:
                 return redirect(url_for("admin"))
@@ -132,24 +144,37 @@ def register():
             password = request.form["password"]
 
             if not username or not password:
-                return render_template("register.html",
-                                       error="Username and password are required")  # We'll use this format for Supabase
+                return render_template(
+                    "register.html", error="Username and password are required"
+                )  # We'll use this format for Supabase
 
             # Check if username already exists
-            existing_user = supabase.table('profiles').select('username').eq('username', username).execute()
+            existing_user = (
+                supabase.table("profiles")
+                .select("username")
+                .eq("username", username)
+                .execute()
+            )
             if existing_user.data:
-                return render_template("register.html", error="Username already exists")
+                return render_template(
+                    "register.html", error="Username already exists"
+                )
 
             # Create profile entry
             profile_data = {
-                'username': username,
-                'password': password,  # You might want to hash this
-                'is_admin': False
+                "username": username,
+                "password": password,  # You might want to hash this
+                "is_admin": False,
             }
 
-            supabase.table('profiles').insert(profile_data).execute()
+            supabase.table("profiles").insert(profile_data).execute()
 
-            return redirect(url_for("login", success="Registration successful. Please login now."))
+            return redirect(
+                url_for(
+                    "login",
+                    success="Registration successful. Please login now.",
+                )
+            )
 
         except Exception as e:
             print(f"Registration error: {e}")
@@ -168,7 +193,9 @@ def search():
         movies_data = response.json().get("movies", [])
     except requests.RequestException as e:
         print(f"Error fetching movies: {e}")
-        return render_template("search.html", username=session.get("username"), movies=[])
+        return render_template(
+            "search.html", username=session.get("username"), movies=[]
+        )
 
     if request.method == "POST":
         search_data = request.form
@@ -179,7 +206,9 @@ def search():
 
     # Your existing filter logic here...
 
-    return render_template("search.html", username=session.get("username"), movies=filtered_movies)
+    return render_template(
+        "search.html", username=session.get("username"), movies=filtered_movies
+    )
 
 
 @app.route("/logout")
@@ -197,9 +226,11 @@ def logout():
 @admin_required
 def admin():
     try:
-        response = supabase.table('profiles').select('*').execute()
+        response = supabase.table("profiles").select("*").execute()
         users = response.data
-        return render_template("admin.html", username=session.get("username"), users=users)
+        return render_template(
+            "admin.html", username=session.get("username"), users=users
+        )
     except Exception as e:
         print(f"Admin page error: {e}")
         return "Error loading admin page", 500
@@ -209,7 +240,7 @@ def admin():
 @admin_required
 def get_users():
     try:
-        response = supabase.table('profiles').select('*').execute()
+        response = supabase.table("profiles").select("*").execute()
         return jsonify(response.data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -225,8 +256,7 @@ def reset_password(user_id):
 
         # Update user's password in Supabase
         supabase.auth.admin.update_user_by_id(
-            user_id,
-            {"password": new_password}
+            user_id, {"password": new_password}
         )
 
         return jsonify({"message": "Password updated successfully"}), 200
@@ -243,9 +273,9 @@ def update_username(user_id):
             return jsonify({"error": "New username is required"}), 400
 
         # Update username in profiles table
-        supabase.table('profiles').update({
-            'username': new_username
-        }).eq('id', user_id).execute()
+        supabase.table("profiles").update({"username": new_username}).eq(
+            "id", user_id
+        ).execute()
 
         return jsonify({"message": "Username updated successfully"}), 200
     except Exception as e:
@@ -258,7 +288,7 @@ def delete_user(user_id):
     try:
         # Delete user from auth and profiles
         supabase.auth.admin.delete_user(user_id)
-        supabase.table('profiles').delete().eq('id', user_id).execute()
+        supabase.table("profiles").delete().eq("id", user_id).execute()
 
         return jsonify({"message": "User deleted successfully"}), 200
     except Exception as e:
