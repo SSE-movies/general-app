@@ -1,0 +1,18 @@
+# Ignore environment and dependency folders
+.venv/
+venv/
+node_modules/
+
+# Ignore Git-related files
+.git/
+.gitignore
+
+# Ignore build artifacts, logs, and system files
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.out
+
+# Ignore OS-generated file
+.DS_Store
