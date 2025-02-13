@@ -15,7 +15,7 @@ jobs:
 
     - name: Log in to GitHub Container Registry
       run: |
-        echo "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" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
+        echo "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" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
 
     - name: Build Docker Image
       run: |
