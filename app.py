@@ -12,6 +12,7 @@ import os
 from supabase import create_client, Client
 import requests
 from dotenv import load_dotenv
+import bcrypt
 
 # Load environment variables
 load_dotenv()
@@ -45,12 +46,9 @@ def login_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print(f"Checking admin status. Session: {session}")
         if "user_id" not in session:
-            print("No user_id in session")
             return redirect(url_for("login"))
         if not session.get("is_admin"):
-            print("User is not admin")
             return redirect(url_for("login"))
         return f(*args, **kwargs)
 
@@ -70,64 +68,26 @@ def login():
             username = request.form["username"]
             password = request.form["password"]
 
-            # Use pgcrypto to verify password
-            user_response = supabase.rpc(
-                "verify_user", {"p_username": username, "p_password": password}
-            ).execute()
-
-            print(f"Login attempt - Username: {username}")
-            print(f"Query response: {user_response}")
+            # Get user from database
+            user_response = supabase.table("profiles").select("*").eq("username", username).execute()
 
             if not user_response.data:
-                return render_template(
-                    "login.html", error="Invalid credentials"
-                )
+                return render_template("login.html", error="Invalid credentials")
 
-            user_data = user_response.data[
-                0
-            ]  # Get first (and should be only) result
+            user_data = user_response.data[0]
 
-            # Store user info in session
-            session["user_id"] = user_data["id"]
-            session["username"] = user_data["username"]
-            session["is_admin"] = user_data["is_admin"]
+            # Verify password
+            if bcrypt.checkpw(password.encode('utf-8'), user_data['password'].encode('utf-8')):
+                # Store user info in session
+                session["user_id"] = user_data["id"]
+                session["username"] = user_data["username"]
+                session["is_admin"] = user_data["is_admin"]
 
-            if user_data["is_admin"]:
-                return redirect(url_for("admin"))
-            return redirect(url_for("search"))
-
-            print(f"Session data: {session}")
-            print(f"Is admin?: {user_response.data['is_admin']}")
-
-            if (
-                user_response.data["is_admin"] == True
-            ):  # Explicitly check for True
-                print("Redirecting to admin page")
-                return redirect(url_for("admin"))
-            print("Redirecting to search page")
-            return redirect(url_for("search"))
-
-            # Store session info
-            session["access_token"] = auth_response.session.access_token
-            session["username"] = username  # Store username instead of email
-
-            # Check if user is admin
-            user_data = (
-                supabase.table("profiles")
-                .select("is_admin")
-                .eq("id", auth_response.user.id)
-                .single()
-                .execute()
-            )
-            session["is_admin"] = (
-                user_data.data.get("is_admin", False)
-                if user_data.data
-                else False
-            )
-
-            if session["is_admin"]:
-                return redirect(url_for("admin"))
-            return redirect(url_for("search"))
+                if user_data["is_admin"]:
+                    return redirect(url_for("admin"))
+                return redirect(url_for("search"))
+            else:
+                return render_template("login.html", error="Invalid credentials")
 
         except Exception as e:
             print(f"Login error: {e}")
@@ -146,7 +106,7 @@ def register():
             if not username or not password:
                 return render_template(
                     "register.html", error="Username and password are required"
-                )  # We'll use this format for Supabase
+                )
 
             # Check if username already exists
             existing_user = (
@@ -160,10 +120,14 @@ def register():
                     "register.html", error="Username already exists"
                 )
 
+            # Hash the password
+            salt = bcrypt.gensalt()
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+
             # Create profile entry
             profile_data = {
                 "username": username,
-                "password": password,  # You might want to hash this
+                "password": hashed_password.decode('utf-8'),
                 "is_admin": False,
             }
 
@@ -204,8 +168,6 @@ def search():
 
     filtered_movies = movies_data
 
-    # Your existing filter logic here...
-
     return render_template(
         "search.html", username=session.get("username"), movies=filtered_movies
     )
@@ -213,11 +175,6 @@ def search():
 
 @app.route("/logout")
 def logout():
-    try:
-        if "access_token" in session:
-            supabase.auth.sign_out()
-    except Exception as e:
-        print(f"Logout error: {e}")
     session.clear()
     return redirect(url_for("index"))
 
@@ -254,10 +211,14 @@ def reset_password(user_id):
         if not new_password:
             return jsonify({"error": "New password is required"}), 400
 
+        # Hash the new password
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+
         # Update user's password in Supabase
-        supabase.auth.admin.update_user_by_id(
-            user_id, {"password": new_password}
-        )
+        supabase.table("profiles").update(
+            {"password": hashed_password.decode('utf-8')}
+        ).eq("id", user_id).execute()
 
         return jsonify({"message": "Password updated successfully"}), 200
     except Exception as e:
@@ -286,10 +247,8 @@ def update_username(user_id):
 @admin_required
 def delete_user(user_id):
     try:
-        # Delete user from auth and profiles
-        supabase.auth.admin.delete_user(user_id)
+        # Delete user from profiles
         supabase.table("profiles").delete().eq("id", user_id).execute()
-
         return jsonify({"message": "User deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
