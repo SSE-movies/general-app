@@ -69,15 +69,24 @@ def login():
             password = request.form["password"]
 
             # Get user from database
-            user_response = supabase.table("profiles").select("*").eq("username", username).execute()
+            user_response = (
+                supabase.table("profiles")
+                .select("*")
+                .eq("username", username)
+                .execute()
+            )
 
             if not user_response.data:
-                return render_template("login.html", error="Invalid credentials")
+                return render_template(
+                    "login.html", error="Invalid credentials"
+                )
 
             user_data = user_response.data[0]
 
             # Verify password
-            if bcrypt.checkpw(password.encode('utf-8'), user_data['password'].encode('utf-8')):
+            if bcrypt.checkpw(
+                password.encode("utf-8"), user_data["password"].encode("utf-8")
+            ):
                 # Store user info in session
                 session["user_id"] = user_data["id"]
                 session["username"] = user_data["username"]
@@ -87,7 +96,9 @@ def login():
                     return redirect(url_for("admin"))
                 return redirect(url_for("search"))
             else:
-                return render_template("login.html", error="Invalid credentials")
+                return render_template(
+                    "login.html", error="Invalid credentials"
+                )
 
         except Exception as e:
             print(f"Login error: {e}")
@@ -122,12 +133,12 @@ def register():
 
             # Hash the password
             salt = bcrypt.gensalt()
-            hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+            hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
 
             # Create profile entry
             profile_data = {
                 "username": username,
-                "password": hashed_password.decode('utf-8'),
+                "password": hashed_password.decode("utf-8"),
                 "is_admin": False,
             }
 
@@ -213,11 +224,11 @@ def reset_password(user_id):
 
         # Hash the new password
         salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+        hashed_password = bcrypt.hashpw(new_password.encode("utf-8"), salt)
 
         # Update user's password in Supabase
         supabase.table("profiles").update(
-            {"password": hashed_password.decode('utf-8')}
+            {"password": hashed_password.decode("utf-8")}
         ).eq("id", user_id).execute()
 
         return jsonify({"message": "Password updated successfully"}), 200
