@@ -231,7 +231,7 @@ def reset_password(user_id):
             {"password": hashed_password.decode("utf-8")}
         ).eq("id", user_id).execute()
 
-        return jsonify({"message": "Password updated successfully 12345"}), 200
+        return jsonify({"message": "Password updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
