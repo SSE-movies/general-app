@@ -46,13 +46,13 @@
                             <td class="p-3">{{ 'Admin' if user.is_admin else 'User' }}</td>
                             <td class="p-3 text-right">
                                 <button 
-                                    data-user-id="{{ user._id }}"
+                                    data-user-id="{{ user.id }}"
                                     class="change-password-btn bg-golden text-cream px-3 py-1 rounded hover:opacity-90 mr-2"
                                 >
                                     Change Password
                                 </button>
-                                <button 
-                                    data-user-id="{{ user._id }}"
+                                <button
+                                    data-user-id="{{ user.id }}"
                                     class="delete-user-btn bg-sage text-cream px-3 py-1 rounded hover:opacity-90"
                                 >
                                     Delete
