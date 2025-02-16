@@ -5,6 +5,7 @@
     <title>{% block title %}My App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
+    {% if show_navbar|default(true) %}
     <!-- Navbar JS -->
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script>
@@ -16,6 +17,7 @@
             });
         });
     </script>
+{%  endif %}
 </head>
 <body class="bg-dark-forest text-cream min-h-screen">
     {% block content %}{% endblock %}

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <ul class="w-full flex justify-center space-x-6 mt-2 md:mt-0">
                     <li><a href="/search" class="text-cream hover:text-taupe">Search</a></li>
-                    <li><a href="/watchlist" class="text-cream hover:text-taupe">Watchlist</a></li>
+                    <li><a href="/my_watchlist" class="text-cream hover:text-taupe">Watchlist</a></li>
                 </ul>
             </nav>
         `;
