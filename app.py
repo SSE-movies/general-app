@@ -33,6 +33,7 @@ supabase: Client = create_client(
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk",
 )
 
+
 def get_unique_categories():
     """
     Fetches all 'listedIn' strings from the 'movies' table in Supabase,
@@ -41,7 +42,9 @@ def get_unique_categories():
     try:
         # Query the 'movies' table for the 'listedIn' column
         response = supabase.table("movies").select("listedIn").execute()
-        rows = response.data  # Each row is a dict, e.g. {"listedIn": "Documentaries, International Movies"}
+        rows = (
+            response.data
+        )  # Each row is a dict, e.g. {"listedIn": "Documentaries, International Movies"}
 
         categories = set()
         if rows:
@@ -57,6 +60,7 @@ def get_unique_categories():
     except Exception as e:
         print(f"Error fetching categories: {e}")
         return []
+
 
 def login_required(f):
     @wraps(f)
