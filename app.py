@@ -57,7 +57,7 @@ def admin_required(f):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", show_navbar=False)
 
 
 @app.route("/login", methods=["GET", "POST"])
