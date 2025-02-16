@@ -220,6 +220,34 @@ def add_to_watchlist():
         return redirect(url_for("search"))
 
 
+@app.route("/my_watchlist")
+@login_required
+def my_watchlist():
+    try:
+        username = session.get("username")
+
+        # Retrieve watchlist entries for the current user
+        watchlist_response = supabase.table("watchlist").select("*").eq("username", username).execute()
+        watchlist_entries = watchlist_response.data
+
+        # Extract showIDs from the watchlist entries
+        show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
+
+        # Query movies table for details about each movie in the watchlist
+        if show_ids:
+            movies_response = supabase.table("movies").select("*").in_("showId", show_ids).execute()
+            movies = movies_response.data
+        else:
+            movies = []
+
+        # Render the watchlist page with movie details
+        return render_template("my_watchlist.html", username=username, movies=movies)
+    except Exception as e:
+        print(f"Error retrieving watchlist: {e}")
+        return "Error retrieving watchlist", 500
+
+
+
 @app.route("/logout")
 def logout():
     session.clear()
