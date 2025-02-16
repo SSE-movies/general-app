@@ -275,7 +275,9 @@ def remove_from_watchlist():
         # Get the username from the session
         username = session.get("username")
         # Delete the watchlist entry for this user
-        supabase.table("watchlist").delete().eq("username", username).eq("showId", show_id).execute()
+        supabase.table("watchlist").delete().eq("username", username).eq(
+            "showId", show_id
+        ).execute()
 
         # Redirect to the watchlist page after deletion
         return redirect(url_for("my_watchlist"))
