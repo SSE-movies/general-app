@@ -187,8 +187,8 @@ def search():
 @login_required
 def add_to_watchlist():
     try:
-        movie_id = request.form.get("showId")
-        if not movie_id:
+        show_id = request.form.get("showId")
+        if not show_id:
             return redirect(url_for("search"))
 
         # Get username from the session
@@ -199,7 +199,7 @@ def add_to_watchlist():
             supabase.table("watchlist")
             .select("*")
             .eq("username", username)
-            .eq("showId", movie_id)
+            .eq("showId", show_id)
             .execute()
         )
 
@@ -210,7 +210,7 @@ def add_to_watchlist():
         # Insert new watchlist entry
         supabase.table("watchlist").insert({
             "username": username,
-            "showId": movie_id
+            "showId": show_id
         }).execute()
 
         return redirect(url_for("search"))
