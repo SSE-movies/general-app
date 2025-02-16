@@ -229,7 +229,9 @@ def search():
     filtered_movies = []
     for movie in movies_data:
         # movie['listedIn'] is e.g. "Documentaries, International Movies"
-        if any(cat.strip() in movie['listedIn'] for cat in selected_categories):
+        if any(
+            cat.strip() in movie["listedIn"] for cat in selected_categories
+        ):
             filtered_movies.append(movie)
 
     # Render template, passing both the movies and the unique category list
