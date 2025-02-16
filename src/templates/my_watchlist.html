@@ -19,12 +19,13 @@
             {% if movie.director %}
               <p><strong>Director:</strong> {{ movie.director }}</p>
             {% endif %}
-            {% if movie.releaseYear %}
-              <p><strong>Release Year:</strong> {{ movie.releaseYear }}</p>
-            {% endif %}
-            {% if movie.description %}
-              <p>{{ movie.description }}</p>
-            {% endif %}
+
+          <!-- Remove from watchlist form -->
+          <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
+              <input type="hidden" name="showId" value="{{ movie.showId }}">
+              <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
+          </form>
+
           </div>
         {% endfor %}
       </div>

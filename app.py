@@ -263,6 +263,27 @@ def my_watchlist():
         return "Error retrieving watchlist", 500
 
 
+@app.route("/remove_from_watchlist", methods=["POST"])
+@login_required
+def remove_from_watchlist():
+    try:
+        # Retrieve the showID from the form data
+        show_id = request.form.get("showId")
+        if not show_id:
+            return redirect(url_for("my_watchlist"))
+
+        # Get the username from the session
+        username = session.get("username")
+        # Delete the watchlist entry for this user
+        supabase.table("watchlist").delete().eq("username", username).eq("showId", show_id).execute()
+
+        # Redirect to the watchlist page after deletion
+        return redirect(url_for("my_watchlist"))
+    except Exception as e:
+        print(f"Error removing movie from watchlist: {e}")
+        return redirect(url_for("my_watchlist"))
+
+
 @app.route("/logout")
 def logout():
     session.clear()
