@@ -207,25 +207,37 @@ def register():
 @login_required
 def search():
     try:
-        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=1000")
+        # Fetch all movies (for demo: page=1&per_page=20)
+        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=20")
         response.raise_for_status()
         movies_data = response.json().get("movies", [])
-
     except requests.RequestException as e:
         print(f"Error fetching movies: {e}")
-        return render_template(
-            "search.html", username=session.get("username"), movies=[]
-        )
+        movies_data = []
+
+    # Get all categories from the database
+    categories = get_unique_categories()
 
     if request.method == "POST":
         search_data = request.form
+        selected_categories = request.form.getlist("categories")
     else:
         search_data = request.args
+        selected_categories = request.args.getlist("categories")
 
-    filtered_movies = movies_data
+    # Filter the movies_data based on selected_categories
+    filtered_movies = []
+    for movie in movies_data:
+        # movie['listedIn'] is e.g. "Documentaries, International Movies"
+        if any(cat.strip() in movie['listedIn'] for cat in selected_categories):
+            filtered_movies.append(movie)
 
+    # Render template, passing both the movies and the unique category list
     return render_template(
-        "search.html", username=session.get("username"), movies=filtered_movies
+        "search.html",
+        username=session.get("username"),
+        movies=filtered_movies,  # Or movies_data if not filtering
+        categories=categories,
     )
 
 
