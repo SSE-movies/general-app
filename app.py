@@ -207,12 +207,13 @@ def register():
 @login_required
 def search():
     try:
-        # Fetch all movies (for demo: page=1&per_page=20)
-        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=20")
+        # Fetch all movies (for demo: page=1&per_page=1000)
+        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=1000")
         response.raise_for_status()
         movies_data = response.json().get("movies", [])
     except requests.RequestException as e:
         print(f"Error fetching movies: {e}")
+        # If there's an error, we'll default to an empty list
         movies_data = []
 
     # Get all categories from the database
