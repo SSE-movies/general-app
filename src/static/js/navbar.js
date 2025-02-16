@@ -8,16 +8,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Create navbar element
         const navbarHtml = `
-            <nav class="bg-sage p-4 flex justify-between items-center">
-                <h1 class="text-taupe text-2xl font-bold">${title}</h1>
-                <div class="flex items-center space-x-4">
-                    <span class="text-cream hidden md:inline">
-                        Logged in as: ${username}
-                    </span>
-                    <a href="${logoutUrl}" class="bg-golden text-cream px-4 py-2 rounded hover:opacity-90">
-                        Logout
-                    </a>
+            <nav class="bg-sage p-4 flex flex-col md:flex-row md:justify-between items-center">
+                <div class="w-full flex justify-between items-center">
+                    <h1 class="text-taupe text-2xl font-bold">${title}</h1>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-cream hidden md:inline">
+                            Logged in as: ${username}
+                        </span>
+                        <a href="${logoutUrl}" class="bg-golden text-cream px-4 py-2 rounded hover:opacity-90">
+                            Logout
+                        </a>
+                    </div>
                 </div>
+                <ul class="w-full flex justify-center space-x-6 mt-2 md:mt-0">
+                    <li><a href="/search" class="text-cream hover:text-taupe">Search</a></li>
+                    <li><a href="/watchlist" class="text-cream hover:text-taupe">Watchlist</a></li>
+                </ul>
             </nav>
         `;
 

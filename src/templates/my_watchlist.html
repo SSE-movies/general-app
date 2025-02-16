@@ -1,56 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Watchlist</title>
-  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-</head>
-<body class="bg-dark-forest min-h-screen flex flex-col items-center justify-center text-cream p-4">
-  <div class="max-w-4xl mx-auto text-center">
+{% extends "base.html" %}
+
+{% block title %}My Watchlist% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto text-center">
     <h1 class="text-4xl font-bold mb-6 text-golden">My Watchlist</h1>
 
     {% if movies %}
-      <div class="movie-list space-y-4">
-        {% for movie in movies %}
-          <div class="movie bg-taupe p-4 rounded-lg">
-            <h2 class="text-2xl font-semibold">{{ movie.title }}</h2>
-            <p><strong>Watched:</strong> {{ movie.watched }}</p>
+        <div class="movie-list space-y-4">
+            {% for movie in movies %}
+                <div class="movie bg-taupe p-4 rounded-lg">
+                    <h2 class="text-2xl font-semibold">{{ movie.title }}</h2>
+                    <p><strong>Watched:</strong> {{ movie.watched }}</p>
 
-            <!-- Additional details -->
-            {% if movie.director %}
-                <p><strong>Director:</strong> {{ movie.director }}</p>
-            {% endif %}
+                    <!-- Additional details -->
+                    {% if movie.director %}
+                        <p><strong>Director:</strong> {{ movie.director }}</p>
+                    {% endif %}
 
-          <!-- Remove from watchlist form -->
-          <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
-              <input type="hidden" name="showId" value="{{ movie.showId }}">
-              <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
-          </form>
+                    <!-- Remove from watchlist form -->
+                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
+                        <input type="hidden" name="showId" value="{{ movie.showId }}">
+                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
+                    </form>
 
-          <!-- Toggle watched status form -->
-          {% if movie.watched %}
-              <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
-                  <input type="hidden" name="showId" value="{{ movie.showId }}">
-                  <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as Unwatched</button>
-              </form>
-          {% else %}
-              <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
-                  <input type="hidden" name="showId" value="{{ movie.showId }}">
-                  <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
-              </form>
-          {% endif %}
+                    <!-- Toggle watched status form -->
+                    {% if movie.watched %}
+                        <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
+                            <input type="hidden" name="showId" value="{{ movie.showId }}">
+                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as Unwatched</button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
+                            <input type="hidden" name="showId" value="{{ movie.showId }}">
+                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
+                        </form>
+                    {% endif %}
 
-          </div>
-        {% endfor %}
-      </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-      <p>Your watchlist is empty.</p>
+        <p>Your watchlist is empty.</p>
     {% endif %}
 
     <div class="mt-6">
-      <a href="{{ url_for('search') }}" class="text-golden underline">Back to Search</a>
+        <a href="{{ url_for('search') }}" class="text-golden underline">Back to Search</a>
     </div>
-  </div>
-</body>
-</html>
+</div>
+{% endblock %}
