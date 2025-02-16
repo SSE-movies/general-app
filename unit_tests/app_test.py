@@ -3,6 +3,7 @@ from ..app import app
 
 # import requests
 
+
 # ---------------------------------------------------------------------------
 # Pytest Fixture: 'client'
 # ---------------------------------------------------------------------------
@@ -12,11 +13,12 @@ from ..app import app
 @pytest.fixture
 def client():
     # Enable testing mode to propagate exceptions to the test client
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
 
     # Create a test client that can be used to make HTTP requests to the app.
     with app.test_client() as client:
         yield client
+
 
 # ---------------------------------------------------------------------------
 # Helper Function: login_test_user
@@ -30,6 +32,7 @@ def login_test_user(client):
         sess["username"] = "test_user"
         # Set admin flag to False for non-admin tests
         sess["is_admin"] = False
+
 
 # ---------------------------------------------------------------------------
 # Test: Homepage Loads Correctly
