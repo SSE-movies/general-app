@@ -78,7 +78,9 @@ def login():
 
             if not user_response.data:
                 return render_template(
-                    "login.html", show_navbar=False, error="Invalid credentials"
+                    "login.html",
+                    show_navbar=False,
+                    error="Invalid credentials",
                 )
 
             user_data = user_response.data[0]
@@ -97,12 +99,16 @@ def login():
                 return redirect(url_for("search"))
             else:
                 return render_template(
-                    "login.html", show_navbar=False, error="Invalid credentials"
+                    "login.html",
+                    show_navbar=False,
+                    error="Invalid credentials",
                 )
 
         except Exception as e:
             print(f"Login error: {e}")
-            return render_template("login.html", show_navbar=False, error="Invalid credentials")
+            return render_template(
+                "login.html", show_navbar=False, error="Invalid credentials"
+            )
 
     return render_template("login.html", show_navbar=False, success=success)
 
@@ -116,7 +122,9 @@ def register():
 
             if not username or not password:
                 return render_template(
-                    "register.html", show_navbar=False, error="Username and password are required"
+                    "register.html",
+                    show_navbar=False,
+                    error="Username and password are required",
                 )
 
             # Check if username already exists
@@ -128,7 +136,9 @@ def register():
             )
             if existing_user.data:
                 return render_template(
-                    "register.html", show_navbar=False, error="Username already exists"
+                    "register.html",
+                    show_navbar=False,
+                    error="Username already exists",
                 )
 
             # Hash the password
@@ -154,9 +164,14 @@ def register():
         except Exception as e:
             print(f"Registration error: {e}")
             error_message = str(e)
-            return render_template("register.html", show_navbar=False, error=error_message)
+            return render_template(
+                "register.html", show_navbar=False, error=error_message
+            )
 
-    return render_template("register.html", show_navbar=False,)
+    return render_template(
+        "register.html",
+        show_navbar=False,
+    )
 
 
 @app.route("/search", methods=["GET", "POST"])
