@@ -20,9 +20,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         </a>
                     </div>
                 </div>
-                <ul class="w-full flex justify-center space-x-6 mt-2 md:mt-0">
-                    <li><a href="/search" class="text-cream hover:text-taupe">Search</a></li>
-                    <li><a href="/my_watchlist" class="text-cream hover:text-taupe">Watchlist</a></li>
+                <ul class="w-full flex justify-center space-x-10 mt-2 md:mt-0">
+                    <li>
+                        <a href="/search" class="text-cream hover:text-taupe px-4 py-2 rounded transition-colors">
+                            Search
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/my_watchlist" class="text-cream hover:text-taupe px-4 py-2 rounded transition-colors">
+                            Watchlist
+                        </a>
+                    </li>
                 </ul>
             </nav>
         `;
