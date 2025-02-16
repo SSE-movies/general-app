@@ -286,6 +286,50 @@ def remove_from_watchlist():
         return redirect(url_for("my_watchlist"))
 
 
+@app.route("/mark_watched", methods=["POST"])
+@login_required
+def mark_watched():
+    try:
+        # Retrieve the showID from the form data
+        show_id = request.form.get("showId")
+        if not show_id:
+            return redirect(url_for("my_watchlist"))
+
+        # Get the username from the session
+        username = session.get("username")
+        # Update the watchlist entry
+        supabase.table("watchlist").update({"watched": True}).eq("username", username).eq("showId", show_id).execute()
+
+        # Redirect to the watchlist page after database is updated
+        return redirect(url_for("my_watchlist"))
+
+    except Exception as e:
+        print(f"Error marking movie as watched: {e}")
+        return redirect(url_for("my_watchlist"))
+
+
+@app.route("/mark_unwatched", methods=["POST"])
+@login_required
+def mark_unwatched():
+    try:
+        # Retrieve the showID from the form data
+        show_id = request.form.get("showId")
+        if not show_id:
+            return redirect(url_for("my_watchlist"))
+
+        # Get the username from the session
+        username = session.get("username")
+        # Update the watchlist entry
+        supabase.table("watchlist").update({"watched": False}).eq("username", username).eq("showId", show_id).execute()
+
+        # Redirect to the watchlist page after database is updated
+        return redirect(url_for("my_watchlist"))
+
+    except Exception as e:
+        print(f"Error marking movie as unwatched: {e}")
+        return redirect(url_for("my_watchlist"))
+
+
 @app.route("/logout")
 def logout():
     session.clear()

@@ -15,9 +15,11 @@
         {% for movie in movies %}
           <div class="movie bg-taupe p-4 rounded-lg">
             <h2 class="text-2xl font-semibold">{{ movie.title }}</h2>
-            <!-- Optionally include additional details -->
+            <p><strong>Watched:</strong> {{ movie.watched }}</p>
+
+            <!-- Additional details -->
             {% if movie.director %}
-              <p><strong>Director:</strong> {{ movie.director }}</p>
+                <p><strong>Director:</strong> {{ movie.director }}</p>
             {% endif %}
 
           <!-- Remove from watchlist form -->
@@ -25,6 +27,19 @@
               <input type="hidden" name="showId" value="{{ movie.showId }}">
               <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
           </form>
+
+          <!-- Toggle watched status form -->
+          {% if movie.watched %}
+              <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
+                  <input type="hidden" name="showId" value="{{ movie.showId }}">
+                  <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as Unwatched</button>
+              </form>
+          {% else %}
+              <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
+                  <input type="hidden" name="showId" value="{{ movie.showId }}">
+                  <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
+              </form>
+          {% endif %}
 
           </div>
         {% endfor %}
