@@ -183,6 +183,7 @@ def search():
         "search.html", username=session.get("username"), movies=filtered_movies
     )
 
+
 @app.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist():
@@ -208,10 +209,9 @@ def add_to_watchlist():
             return redirect(url_for("search"))
 
         # Insert new watchlist entry
-        supabase.table("watchlist").insert({
-            "username": username,
-            "showId": show_id
-        }).execute()
+        supabase.table("watchlist").insert(
+            {"username": username, "showId": show_id}
+        ).execute()
 
         return redirect(url_for("search"))
 
@@ -227,25 +227,40 @@ def my_watchlist():
         username = session.get("username")
 
         # Retrieve watchlist entries for the current user
-        watchlist_response = supabase.table("watchlist").select("*").eq("username", username).execute()
+        watchlist_response = (
+            supabase.table("watchlist")
+            .select("*")
+            .eq("username", username)
+            .execute()
+        )
         watchlist_entries = watchlist_response.data
 
         # Extract showIDs from the watchlist entries
-        show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
+        show_ids = (
+            [entry["showId"] for entry in watchlist_entries]
+            if watchlist_entries
+            else []
+        )
 
         # Query movies table for details about each movie in the watchlist
         if show_ids:
-            movies_response = supabase.table("movies").select("*").in_("showId", show_ids).execute()
+            movies_response = (
+                supabase.table("movies")
+                .select("*")
+                .in_("showId", show_ids)
+                .execute()
+            )
             movies = movies_response.data
         else:
             movies = []
 
         # Render the watchlist page with movie details
-        return render_template("my_watchlist.html", username=username, movies=movies)
+        return render_template(
+            "my_watchlist.html", username=username, movies=movies
+        )
     except Exception as e:
         print(f"Error retrieving watchlist: {e}")
         return "Error retrieving watchlist", 500
-
 
 
 @app.route("/logout")
