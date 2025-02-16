@@ -183,6 +183,42 @@ def search():
         "search.html", username=session.get("username"), movies=filtered_movies
     )
 
+@app.route("/add_to_watchlist", methods=["POST"])
+@login_required
+def add_to_watchlist():
+    try:
+        movie_id = request.form.get("showId")
+        if not movie_id:
+            return redirect(url_for("search"))
+
+        # Get username from the session
+        username = session.get("username")
+
+        # Check if the movie is already in watchlist
+        existing_entry = (
+            supabase.table("watchlist")
+            .select("*")
+            .eq("username", username)
+            .eq("showId", movie_id)
+            .execute()
+        )
+
+        if existing_entry.data:
+            # Already in watchlist: redirect (avoids duplication bugs and resubmitting form)
+            return redirect(url_for("search"))
+
+        # Insert new watchlist entry
+        supabase.table("watchlist").insert({
+            "username": username,
+            "showId": movie_id
+        }).execute()
+
+        return redirect(url_for("search"))
+
+    except Exception as e:
+        print(f"Error adding movie to watchlist: {e}")
+        return redirect(url_for("search"))
+
 
 @app.route("/logout")
 def logout():
