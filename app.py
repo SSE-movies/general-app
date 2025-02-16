@@ -298,7 +298,9 @@ def mark_watched():
         # Get the username from the session
         username = session.get("username")
         # Update the watchlist entry
-        supabase.table("watchlist").update({"watched": True}).eq("username", username).eq("showId", show_id).execute()
+        supabase.table("watchlist").update({"watched": True}).eq(
+            "username", username
+        ).eq("showId", show_id).execute()
 
         # Redirect to the watchlist page after database is updated
         return redirect(url_for("my_watchlist"))
@@ -320,7 +322,9 @@ def mark_unwatched():
         # Get the username from the session
         username = session.get("username")
         # Update the watchlist entry
-        supabase.table("watchlist").update({"watched": False}).eq("username", username).eq("showId", show_id).execute()
+        supabase.table("watchlist").update({"watched": False}).eq(
+            "username", username
+        ).eq("showId", show_id).execute()
 
         # Redirect to the watchlist page after database is updated
         return redirect(url_for("my_watchlist"))
