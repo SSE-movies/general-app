@@ -166,6 +166,7 @@ def search():
         response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=1000")
         response.raise_for_status()
         movies_data = response.json().get("movies", [])
+
     except requests.RequestException as e:
         print(f"Error fetching movies: {e}")
         return render_template(
