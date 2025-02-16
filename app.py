@@ -21,7 +21,8 @@ app = Flask(
     __name__, template_folder="src/templates", static_folder="src/static"
 )
 
-MOVIES_API_URL = "https://bookapi.impaas.uk/movies"
+# Fetching movie API
+MOVIES_API_URL = "http://sse-movieapi-project2.guech2d0cbchaye0.uksouth.azurecontainer.io/movies"
 
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
