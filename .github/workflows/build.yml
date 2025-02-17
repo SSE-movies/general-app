@@ -59,8 +59,26 @@ jobs:
       - name: Build Tailwind CSS
         run: npm run build:css
 
-  deploy-to-impaas:
+  unit-testing:
     needs: build-tailwind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run tests
+        working-directory: ./unit_tests
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/..
+          pytest user_auth_tests.py
+
+  deploy-to-impaas:
+    needs: unit-testing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
