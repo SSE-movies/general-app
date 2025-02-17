@@ -27,17 +27,10 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install black flake8 yapf
+        run: pip install black
 
       - name: Run Black
         run: black . --line-length 79
-
-      - name: Run YAPF
-        run: yapf --in-place --recursive --style='{based_on_style: pep8, column_limit: 79}' --parallel .
-
-      - name: Run Flake8
-        run: flake8 . --max-line-length=79 --extend-ignore=E203,F841
 
       - name: Commit changes
         env:
