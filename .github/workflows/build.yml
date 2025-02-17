@@ -1,7 +1,5 @@
 name: Build
-
 on: [push]
-
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -36,7 +34,7 @@ jobs:
         run: black . --line-length 79
 
       - name: Run YAPF
-        run: yapf --in-place --recursive --style="{ based_on_style: pep8, column_limit: 79 }" --parallel .
+        run: yapf --in-place --recursive --style='{based_on_style: pep8, column_limit: 79}' --parallel .
 
       - name: Run Flake8
         run: flake8 . --max-line-length=79 --extend-ignore=E203,F841
