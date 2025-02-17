@@ -8,30 +8,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Create navbar element
         const navbarHtml = `
-            <nav class="bg-sage p-4 flex flex-col md:flex-row items-center w-full">
-              <!-- Left: Title -->
-              <div class="flex-1 flex justify-start">
+            <nav class="bg-sage px-6 py-4 flex flex-col md:flex-row items-center w-full">
+              <!-- Left Column: Title -->
+              <div class="md:flex-1 flex justify-start items-center">
                 <h1 class="text-taupe text-2xl font-bold">
                   ${title}
                 </h1>
               </div>
             
-              <!-- Center: Links -->
-              <ul class="flex-1 flex justify-center space-x-10 mt-2 md:mt-0">
-                <li>
-                  <a href="/search" class="text-cream hover:text-taupe px-4 py-2 rounded transition-colors">
-                    Search
-                  </a>
-                </li>
-                <li>
-                  <a href="/my_watchlist" class="text-cream hover:text-taupe px-4 py-2 rounded transition-colors">
-                    Watchlist
-                  </a>
-                </li>
-              </ul>
+              <!-- Center Column: Navigation Links -->
+              <div class="md:flex-1 flex justify-center mt-2 md:mt-0">
+                <ul class="flex space-x-8">
+                  <li>
+                    <a href="/search" class="text-cream hover:text-taupe px-3 py-2 rounded transition-colors">
+                      Search
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/my_watchlist" class="text-cream hover:text-taupe px-3 py-2 rounded transition-colors">
+                      Watchlist
+                    </a>
+                  </li>
+                </ul>
+              </div>
             
-              <!-- Right: Logged-in info & Logout -->
-              <div class="flex-1 flex justify-end items-center space-x-4 mt-2 md:mt-0">
+              <!-- Right Column: Username & Logout -->
+              <div class="md:flex-1 flex justify-end items-center space-x-4 mt-2 md:mt-0">
                 <span class="text-cream hidden md:inline">
                   Logged in as: ${username}
                 </span>
