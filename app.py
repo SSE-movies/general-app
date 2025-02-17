@@ -473,7 +473,7 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 
 @app.route("/results", methods=["GET"])
 @login_required
@@ -517,7 +517,7 @@ def results():
         "results.html",
         username=session.get("username"),
         movies=movies_data,
-        categories=categories
+        categories=categories,
     )
 
 
