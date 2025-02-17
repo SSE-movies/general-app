@@ -20,19 +20,27 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: |
-          pip install black flake8 autopep8
+          pip install black flake8 yapf
+
       - name: Run Black
         run: black . --line-length 79
-      - name: Run autopep8
-        run: autopep8 --in-place --recursive --aggressive --aggressive --max-line-length 79 .
+
+      - name: Run YAPF
+        run:
+          yapf --in-place --recursive --style=pep8 --style='{based_on_style:
+            pep8, column_limit: 79}' .
+
       - name: Run Flake8
-        run: flake8 . --max-line-length=79 --extend-ignore=E203
+        run: flake8 . --max-line-length=79 --extend-ignore=E203,F841
+
       - name: Commit changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
