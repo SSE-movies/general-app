@@ -21,7 +21,7 @@ app = Flask(__name__, template_folder="src/templates", static_folder="src/static
 
 # Fetching movie API
 MOVIES_API_URL = (
-    "http://sse-movieapi-project2.guech2d0cbchaye0.uksouth.azurecontainer.io/movies"
+    "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azurecontainer.io/movies"
 )
 # MOVIES_API_URL = "http://127.0.0.1:81/movies"
 
