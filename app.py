@@ -17,12 +17,13 @@ import bcrypt
 # Load environment variables
 load_dotenv()
 
-app = Flask(
-    __name__, template_folder="src/templates", static_folder="src/static"
-)
+app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
 # Fetching movie API
-MOVIES_API_URL = "http://sse-movieapi-project2.guech2d0cbchaye0.uksouth.azurecontainer.io/movies"
+MOVIES_API_URL = (
+    "http://sse-movieapi-project2.guech2d0cbchaye0.uksouth.azurecontainer.io/movies"
+)
+# MOVIES_API_URL = "http://127.0.0.1:81/movies"
 
 # Configuration
 app.config["SECRET_KEY"] = os.urandom(24)
@@ -30,7 +31,14 @@ app.config["SECRET_KEY"] = os.urandom(24)
 # Initialize Supabase client
 supabase: Client = create_client(
     "https://euibanwordbygkxadvrx.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk",
+    (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+    "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJh"
+    "bndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24i"
+    "LCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkz"
+    "OTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8"
+    "XhJ4jvwoEk"
+    )
 )
 
 
@@ -230,9 +238,7 @@ def search():
     filtered_movies = []
     for movie in movies_data:
         # movie['listedIn'] is e.g. "Documentaries, International Movies"
-        if any(
-            cat.strip() in movie["listedIn"] for cat in selected_categories
-        ):
+        if any(cat.strip() in movie["listedIn"] for cat in selected_categories):
             filtered_movies.append(movie)
 
     # Render template, passing both the movies and the unique category list
@@ -288,10 +294,7 @@ def my_watchlist():
 
         # Retrieve watchlist entries for the current user
         watchlist_response = (
-            supabase.table("watchlist")
-            .select("*")
-            .eq("username", username)
-            .execute()
+            supabase.table("watchlist").select("*").eq("username", username).execute()
         )
         watchlist_entries = watchlist_response.data
 
@@ -305,19 +308,14 @@ def my_watchlist():
         # Query movies table for details about each movie in the watchlist
         if show_ids:
             movies_response = (
-                supabase.table("movies")
-                .select("*")
-                .in_("showId", show_ids)
-                .execute()
+                supabase.table("movies").select("*").in_("showId", show_ids).execute()
             )
             movies = movies_response.data
         else:
             movies = []
 
         # Render the watchlist page with movie details
-        return render_template(
-            "my_watchlist.html", username=username, movies=movies
-        )
+        return render_template("my_watchlist.html", username=username, movies=movies)
     except Exception as e:
         print(f"Error retrieving watchlist: {e}")
         return "Error retrieving watchlist", 500
@@ -502,12 +500,15 @@ def results():
         query_params["release_year"] = release_year
 
     try:
+        # Debugging to be deleted
+        print("DEBUG: Query Params being sent to API:", query_params)
         # Query the SSE Movie API with the built params
         response = requests.get(MOVIES_API_URL, params=query_params)
         response.raise_for_status()
         movies_data = response.json().get("movies", [])
     except requests.RequestException as e:
         print(f"Error fetching movies: {e}")
+
         movies_data = []
 
     # You could also re-fetch categories if you want to show them in the results page, but optional
@@ -522,4 +523,4 @@ def results():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
