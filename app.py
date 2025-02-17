@@ -473,6 +473,52 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route("/results", methods=["GET"])
+@login_required
+def results():
+    """
+    Renders a results page displaying movies after the user searches on /search.
+    The GET parameters for title, type, categories, and release_year are picked up here.
+    """
+    title_query = request.args.get("title", "")
+    type_query = request.args.get("type", "")
+    selected_categories = request.args.getlist("categories")
+    release_year = request.args.get("release_year", "")
+
+    # Build query params for the external SSE Movie API (or Supabase).
+    # Adjust this to match your backend's actual query conventions.
+    query_params = {}
+
+    if title_query:
+        query_params["title"] = title_query
+    if type_query:
+        query_params["type"] = type_query
+    if selected_categories:
+        # e.g. for the SSE Movie API, categories can be passed as a comma-separated string
+        query_params["categories"] = ",".join(selected_categories)
+    if release_year:
+        query_params["release_year"] = release_year
+
+    try:
+        # Query the SSE Movie API with the built params
+        response = requests.get(MOVIES_API_URL, params=query_params)
+        response.raise_for_status()
+        movies_data = response.json().get("movies", [])
+    except requests.RequestException as e:
+        print(f"Error fetching movies: {e}")
+        movies_data = []
+
+    # You could also re-fetch categories if you want to show them in the results page, but optional
+    categories = get_unique_categories()
+
+    return render_template(
+        "results.html",
+        username=session.get("username"),
+        movies=movies_data,
+        categories=categories
+    )
 
 
 if __name__ == "__main__":
