@@ -11,7 +11,8 @@ jobs:
           export FLASK_APP=app.py
           echo "Setup complete"
 
-  needs: setup
+  python-format:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,14 +31,6 @@ jobs:
         run: black . --line-length 79
       - name: Run Flake8
         run: flake8 . --max-line-length=79 --extend-ignore=E203
-      - name: Commit changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting")ing changes" && git push)
 
   build-tailwind:
     needs: python-format
