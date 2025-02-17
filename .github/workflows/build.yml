@@ -72,3 +72,24 @@ jobs:
           app-name: movie-app
           deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
           method: PLATFORM
+
+  build-docker-image:
+    needs: deploy-to-impaas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.SSE_ProjectII }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/oosborgschmitz/main:latest
+          docker build -t $IMAGE_NAME .
+
+      - name: Push Docker Image to GHCR
+        run: |
+          IMAGE_NAME=ghcr.io/oosborgschmitz/main:latest
+          docker push $IMAGE_NAME
