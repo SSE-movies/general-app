@@ -304,35 +304,35 @@ def my_watchlist():
         # Fetch all the movie rows for these showIDs
         show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
         if show_ids:
-            movies_response = (
+            movies_data = (
                 supabase.table("movies")
                 .select("*")
                 .in_("showId", show_ids)
                 .execute()
+                .data
             )
-            movies_data = movies_response.data
         else:
             movies_data = []
 
-        # Create a dictionary mapping showIDs to show details
-        movies_dict = {m["showId"]: m for m in movies_data}
-
-        # Merge each watchlist entry with its corresponding info
-        combined_entries = []
-        for wl_entry in watchlist_entries:
-            show_id = wl_entry["showId"]
-            # If there's a matching movie in the dictionary, merge them:
-            if show_id in movies_dict:
-                movie_info = movies_dict[show_id]
-                # Merge them into a single dict so you have both .title and .watched
-                combined_entry = {**movie_info, **wl_entry}
-                combined_entries.append(combined_entry)
+        # # Create a dictionary mapping showIDs to show details
+        # movies_dict = {m["showId"]: m for m in movies_data}
+        #
+        # # Merge each watchlist entry with its corresponding info
+        # combined_entries = []
+        # for wl_entry in watchlist_entries:
+        #     show_id = wl_entry["showId"]
+        #     # If there's a matching movie in the dictionary, merge them:
+        #     if show_id in movies_dict:
+        #         movie_info = movies_dict[show_id]
+        #         # Merge them into a single dict so you have both .title and .watched
+        #         combined_entry = {**movie_info, **wl_entry}
+        #         combined_entries.append(combined_entry)
 
         # Render the watchlist page with movie details
         return render_template(
             "my_watchlist.html",
             username=username,
-            movies=combined_entries
+            movies=movies_data
         )
 
     except Exception as e:
