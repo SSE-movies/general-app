@@ -40,19 +40,16 @@
                             </p>
                         {% endif %}
 
-                        <p class="text-sm text-cream mb-3">
-                            <strong>Watched:</strong> {{ movie.watched }}
-                        </p>
                         <!-- Toggle watched status form -->
                         {% if movie.watched %}
-                            <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
+                            <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block mr-4">
                                 <input type="hidden" name="showId" value="{{ movie.showId }}">
                                 <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as
                                     Unwatched
                                 </button>
                             </form>
                         {% else %}
-                            <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
+                            <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block mr-4">
                                 <input type="hidden" name="showId" value="{{ movie.showId }}">
                                 <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as
                                     Watched
