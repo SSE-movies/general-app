@@ -3,75 +3,78 @@
 {% block title %}My Watchlist{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto text-center">
-    <h1 class="text-4xl font-bold mb-6 text-golden">My Watchlist</h1>
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-6 text-golden">My Watchlist</h1>
 
-    {% if movies %}
-        <div class="movie-list space-y-4">
+        {% if movies %}
+            <div class="movie-list space-y-4">
 
-            {% for movie in movies %}
-                <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
-                    <!-- Title -->
-                    {% if movie.title %}
-                    <h2 class="text-xl font-semibold text-cream mb-1">
-                      {{ movie.title }}
-                    </h2>
-                    {% endif %}
+                {% for movie in movies %}
+                    <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
+                        <!-- Title -->
+                        {% if movie.title %}
+                            <h2 class="text-xl font-semibold text-cream mb-1">
+                                {{ movie.title }}
+                            </h2>
+                        {% endif %}
 
-                    <!-- Categories -->
-                    {% if movie.listedIn %}
-                    <p class="text-sm text-cream mb-1">
-                      <strong>Categories:</strong> {{ movie.listedIn }}
-                    </p>
-                    {% endif %}
-                    {% if movie.releaseYear %}
-                    <p class="text-sm text-cream mb-1">
-                      <strong>Year:</strong> {{ movie.releaseYear }}
-                    </p>
-                    {% endif %}
-                    {% if movie.type %}
-                    <p class="text-sm text-cream mb-1">
-                      <strong>Type:</strong> {{ movie.type }}
-                    </p>
-                    {% endif %}
-                    {% if movie.description %}
-                    <p class="text-sm text-cream mb-3">
-                      <strong>Description:</strong> {{ movie.description }}
-                    </p>
-                    {% endif %}
+                        <!-- Categories -->
+                        {% if movie.listedIn %}
+                            <p class="text-sm text-cream mb-1">
+                                <strong>Categories:</strong> {{ movie.listedIn }}
+                            </p>
+                        {% endif %}
+                        {% if movie.releaseYear %}
+                            <p class="text-sm text-cream mb-1">
+                                <strong>Year:</strong> {{ movie.releaseYear }}
+                            </p>
+                        {% endif %}
+                        {% if movie.type %}
+                            <p class="text-sm text-cream mb-1">
+                                <strong>Type:</strong> {{ movie.type }}
+                            </p>
+                        {% endif %}
+                        {% if movie.description %}
+                            <p class="text-sm text-cream mb-3">
+                                <strong>Description:</strong> {{ movie.description }}
+                            </p>
+                        {% endif %}
 
-                    <p class="text-sm text-cream mb-3">
-                      <strong>Watched:</strong> {{ movie.watched }}
-                    </p>
+                        <p class="text-sm text-cream mb-3">
+                            <strong>Watched:</strong> {{ movie.watched }}
+                        </p>
+                        <!-- Toggle watched status form -->
+                        {% if movie.watched %}
+                            <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
+                                <input type="hidden" name="showId" value="{{ movie.showId }}">
+                                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as
+                                    Unwatched
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
+                                <input type="hidden" name="showId" value="{{ movie.showId }}">
+                                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as
+                                    Watched
+                                </button>
+                            </form>
+                        {% endif %}
 
-                    <!-- Remove from watchlist form -->
-                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
-                        <input type="hidden" name="showId" value="{{ movie.showId }}">
-                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
-                    </form>
-
-                    <!-- Toggle watched status form -->
-                    {% if movie.watched %}
-                        <form method="POST" action="{{ url_for('mark_unwatched') }}" class="inline-block">
+                        <!-- Remove from watchlist form -->
+                        <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
                             <input type="hidden" name="showId" value="{{ movie.showId }}">
-                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as Unwatched</button>
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
                         </form>
-                    {% else %}
-                        <form method="POST" action="{{ url_for('mark_watched') }}" class="inline-block">
-                            <input type="hidden" name="showId" value="{{ movie.showId }}">
-                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
-                        </form>
-                    {% endif %}
 
-                </div>
-            {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Your watchlist is empty.</p>
+        {% endif %}
+
+        <div class="mt-6">
+            <a href="{{ url_for('search') }}" class="text-golden underline">Back to Search</a>
         </div>
-    {% else %}
-        <p>Your watchlist is empty.</p>
-    {% endif %}
-
-    <div class="mt-6">
-        <a href="{{ url_for('search') }}" class="text-golden underline">Back to Search</a>
     </div>
-</div>
 {% endblock %}
