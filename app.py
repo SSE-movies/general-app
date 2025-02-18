@@ -32,12 +32,12 @@ app.config["SECRET_KEY"] = os.urandom(24)
 supabase: Client = create_client(
     "https://euibanwordbygkxadvrx.supabase.co",
     (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-    "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJh"
-    "bndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24i"
-    "LCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkz"
-    "OTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8"
-    "XhJ4jvwoEk"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+        "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJh"
+        "bndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24i"
+        "LCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkz"
+        "OTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8"
+        "XhJ4jvwoEk"
     )
 )
 
@@ -124,7 +124,7 @@ def login():
 
             # Verify password
             if bcrypt.checkpw(
-                password.encode("utf-8"), user_data["password"].encode("utf-8")
+                    password.encode("utf-8"), user_data["password"].encode("utf-8")
             ):
                 # Store user info in session
                 session["user_id"] = user_data["id"]
@@ -302,8 +302,6 @@ def my_watchlist():
             .data
         )
 
-        print("--------------1-----------------")
-
         # Fetch all the movie rows for these showIDs
         show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
         if show_ids:
@@ -316,8 +314,6 @@ def my_watchlist():
             movies_data = movies_response.data
         else:
             movies_data = []
-
-        print("--------------2-----------------")
 
         # Create a dictionary mapping showIDs to show details
         movies_dict = {m["showId"]: m for m in movies_data}
@@ -332,8 +328,6 @@ def my_watchlist():
                 # Merge them into a single dict so you have both .title and .watched
                 combined_entry = {**movie_info, **wl_entry}
                 combined_entries.append(combined_entry)
-
-        print("--------------3-----------------")
 
         # Render the watchlist page with movie details
         return render_template(
