@@ -301,6 +301,8 @@ def my_watchlist():
             .data
         )
 
+        print("--------------1-----------------")
+
         # Fetch all the movie rows for these showIDs
         show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
         if show_ids:
@@ -313,6 +315,8 @@ def my_watchlist():
             movies_data = movies_response.data
         else:
             movies_data = []
+
+        print("--------------2-----------------")
 
         # Create a dictionary mapping showIDs to show details
         movies_dict = {m["showId"]: m for m in movies_data}
@@ -327,6 +331,8 @@ def my_watchlist():
                 # Merge them into a single dict so you have both .title and .watched
                 combined_entry = {**movie_info, **wl_entry}
                 combined_entries.append(combined_entry)
+
+        print("--------------3-----------------")
 
         # Render the watchlist page with movie details
         return render_template(
