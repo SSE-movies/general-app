@@ -5,51 +5,72 @@ Results
 {% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto py-6 px-4">
-  <h1 class="text-3xl font-bold text-center mb-8 text-golden">Search Results</h1>
+<!-- "Hero" banner section -->
+<div class="relative bg-dark-forest text-cream min-h-[40vh] flex items-center justify-center">
+  <!-- Background gradient or image could go here -->
+  <div class="absolute inset-0 bg-gradient-to-b from-dark-forest via-dark-forest to-dark-forest opacity-80"></div>
+  
+  <!-- Hero content -->
+  <div class="relative z-10 text-center">
+    <h1 class="text-5xl md:text-6xl font-extrabold text-golden drop-shadow-lg">
+      Search Results
+    </h1>
+    <p class="mt-3 text-cream text-lg md:text-xl max-w-2xl mx-auto">
+      Discover movies and shows that match your search
+    </p>
+  </div>
+</div>
 
-  <!-- Optionally, show the query or a "Refine Search" link back to /search -->
-  <!-- <p class="text-center text-cream mb-4">Showing results for: {{ request.args.title }}</p> -->
-
-  <!-- Movies Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+<!-- Main content container -->
+<div class="bg-dark-forest text-cream py-8 px-4 md:px-8">
+  <!-- If you want to show a small subtitle or search summary -->
+  <!-- <p class="mb-6 text-cream text-center">Showing results for: "{{ request.args.title }}"</p> -->
+  
+  <!-- Movies Grid (poster-like cards) -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
     {% for movie in movies %}
-      <div class="bg-taupe p-3 rounded-md shadow-md flex flex-col h-full">
-        <div class="mb-4">
-          <!-- Title -->
-          <h2 class="text-lg font-semibold text-cream mb-1 leading-tight">
-            {{ movie.title }}
-          </h2>
-          <!-- Categories -->
-          <p class="text-sm text-cream mb-1">
-            <span class="font-medium">Categories:</span> {{ movie.listedIn }}
-          </p>
-          <!-- Year (if exists) -->
-          {% if movie.release_year %}
-            <p class="text-sm text-cream mb-1">
+      <!-- Single Movie Card -->
+      <div class="relative group overflow-hidden rounded-lg shadow-md bg-taupe">
+        
+        <!-- Poster image or placeholder gradient -->
+        <!-- If you have an actual poster_url, replace the <div> with <img src="{{ movie.poster_url }}"> -->
+        <div class="h-60 w-full bg-gradient-to-br from-taupe to-dark-forest group-hover:opacity-90 transition-opacity duration-300"></div>
+
+        <!-- Hover overlay with movie details -->
+        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition duration-300 flex flex-col justify-end p-4">
+          <!-- This content is hidden until hover -->
+          <div class="opacity-0 group-hover:opacity-100 transition duration-300">
+            <h2 class="text-lg font-bold text-golden mb-1 leading-tight">
+              {{ movie.title }}
+            </h2>
+            <p class="text-sm mb-1">
+              <span class="font-medium">Categories:</span> {{ movie.listedIn }}
+            </p>
+            {% if movie.release_year %}
+            <p class="text-sm mb-1">
               <span class="font-medium">Year:</span> {{ movie.release_year }}
             </p>
-          {% endif %}
-          <!-- Type (if exists) -->
-          {% if movie.type %}
-            <p class="text-sm text-cream">
+            {% endif %}
+            {% if movie.type %}
+            <p class="text-sm mb-3">
               <span class="font-medium">Type:</span> {{ movie.type }}
             </p>
-          {% endif %}
-        </div>
-        <!-- Add to Watchlist Button -->
-        <div class="mt-auto">
-          <form method="POST" action="{{ url_for('add_to_watchlist') }}">
-            <input type="hidden" name="showId" value="{{ movie.showId }}">
-            <button 
-              type="submit" 
-              class="bg-golden text-dark-forest w-full py-2 rounded hover:bg-opacity-80 transition-colors 
-                     text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cream focus:ring-offset-2
-                     focus:ring-offset-taupe"
-            >
-              Add to Watchlist
-            </button>
-          </form>
+            {% endif %}
+
+            <!-- Add to Watchlist button -->
+            <form method="POST" action="{{ url_for('add_to_watchlist') }}">
+              <input type="hidden" name="showId" value="{{ movie.showId }}">
+              <button 
+                type="submit" 
+                class="bg-golden text-dark-forest w-full py-2 rounded 
+                       hover:bg-opacity-80 transition-colors 
+                       font-medium text-sm focus:outline-none 
+                       focus:ring-2 focus:ring-golden"
+              >
+                Add to Watchlist
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     {% endfor %}
@@ -57,7 +78,9 @@ Results
 
   <!-- No results message -->
   {% if movies|length == 0 %}
-    <p class="text-cream text-center mt-8">No movies found matching your search.</p>
+    <p class="text-center mt-8 text-cream text-xl">
+      No movies found matching your search.
+    </p>
   {% endif %}
 </div>
 {% endblock %}
