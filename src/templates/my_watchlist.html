@@ -12,14 +12,18 @@
             {% for movie in movies %}
                 <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
                     <!-- Title -->
+                    {% if movie.title %}
                     <h2 class="text-xl font-semibold text-cream mb-1">
                       {{ movie.title }}
                     </h2>
+                    {% endif %}
 
                     <!-- Categories -->
+                    {% if movie.listedIn %}
                     <p class="text-sm text-cream mb-1">
                       <strong>Categories:</strong> {{ movie.listedIn }}
                     </p>
+                    {% endif %}
                     {% if movie.releaseYear %}
                     <p class="text-sm text-cream mb-1">
                       <strong>Year:</strong> {{ movie.releaseYear }}
@@ -41,10 +45,10 @@
 {#                    </p>#}
 
                     <!-- Remove from watchlist form -->
-                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
-                        <input type="hidden" name="showId" value="{{ movie.showId }}">
-                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
-                    </form>
+{#                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">#}
+{#                        <input type="hidden" name="showId" value="{{ movie.showId }}">#}
+{#                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>#}
+{#                    </form>#}
 
 {#                    <!-- Toggle watched status form -->#}
 {#                    {% if movie.watched %}#}
