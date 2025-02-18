@@ -12,7 +12,7 @@
   <!-- 3 Cards per row on large screens, 2 on medium, 1 on small -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for movie in movies %}
-      <div class="bg-taupe p-4 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
+      <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
         <!-- Title -->
         <h2 class="text-xl font-semibold text-cream mb-1">
           {{ movie.title }}
@@ -38,7 +38,7 @@
         {% endif %}
 
         <!-- Button at the bottom -->
-        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto pt-4">
+        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto mt-4">
           <input type="hidden" name="showId" value="{{ movie.showId }}">
           <button
             type="submit"
