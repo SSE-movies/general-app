@@ -351,6 +351,19 @@ def remove_from_watchlist():
 
         # Get the username from the session
         username = session.get("username")
+
+        # Check if entry exists
+        existing_entry = (
+            supabase.table("watchlist")
+            .select("*")
+            .eq("username", username)
+            .eq("showId", show_id)
+            .execute()
+        )
+
+        if not existing_entry.data:
+            return redirect(url_for("my_watchlist"))
+
         # Delete the watchlist entry for this user
         supabase.table("watchlist").delete().eq("username", username).eq(
             "showId", show_id
@@ -358,6 +371,7 @@ def remove_from_watchlist():
 
         # Redirect to the watchlist page after deletion
         return redirect(url_for("my_watchlist"))
+
     except Exception as e:
         print(f"Error removing movie from watchlist: {e}")
         return redirect(url_for("my_watchlist"))

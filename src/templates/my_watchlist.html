@@ -45,10 +45,10 @@
                     </p>
 
                     <!-- Remove from watchlist form -->
-{#                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">#}
-{#                        <input type="hidden" name="showId" value="{{ movie.showId }}">#}
-{#                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>#}
-{#                    </form>#}
+                    <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">
+                        <input type="hidden" name="showId" value="{{ movie.showId }}">
+                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Remove</button>
+                    </form>
 
                     <!-- Toggle watched status form -->
                     {% if movie.watched %}
