@@ -293,29 +293,48 @@ def my_watchlist():
         username = session.get("username")
 
         # Retrieve watchlist entries for the current user
-        watchlist_response = (
-            supabase.table("watchlist").select("*").eq("username", username).execute()
-        )
-        watchlist_entries = watchlist_response.data
-
-        # Extract showIDs from the watchlist entries
-        show_ids = (
-            [entry["showId"] for entry in watchlist_entries]
-            if watchlist_entries
-            else []
+        watchlist_entries = (
+            supabase.table("watchlist")
+            .select("*")
+            .eq("username", username)
+            .execute()
+            .data
         )
 
-        # Query movies table for details about each movie in the watchlist
+        # Fetch all the movie rows for these showIDs
+        show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
         if show_ids:
             movies_response = (
-                supabase.table("movies").select("*").in_("showId", show_ids).execute()
+                supabase.table("movies")
+                .select("*")
+                .in_("showId", show_ids)
+                .execute()
             )
-            movies = movies_response.data
+            movies_data = movies_response.data
         else:
-            movies = []
+            movies_data = []
+
+        # Create a dictionary mapping showIDs to show details
+        movies_dict = {m["showId"]: m for m in movies_data}
+
+        # Merge each watchlist entry with its corresponding info
+        combined_entries = []
+        for wl_entry in watchlist_entries:
+            show_id = wl_entry["showId"]
+            # If there's a matching movie in the dictionary, merge them:
+            if show_id in movies_dict:
+                movie_info = movies_dict[show_id]
+                # Merge them into a single dict so you have both .title and .watched
+                combined_entry = {**movie_info, **wl_entry}
+                combined_entries.append(combined_entry)
 
         # Render the watchlist page with movie details
-        return render_template("my_watchlist.html", username=username, movies=movies)
+        return render_template(
+            "my_watchlist.html",
+            username=session.get("username"),
+            movies=combined_entries
+        )
+
     except Exception as e:
         print(f"Error retrieving watchlist: {e}")
         return "Error retrieving watchlist", 500
