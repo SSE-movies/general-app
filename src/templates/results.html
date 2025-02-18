@@ -37,8 +37,11 @@
         </p>
         {% endif %}
 
+        <!-- Spacer to push the form to the bottom -->
+        <div class="flex-grow"></div>
+
         <!-- Button at the bottom -->
-        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto mt-4">
+        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto">
           <input type="hidden" name="showId" value="{{ movie.showId }}">
           <button
             type="submit"
