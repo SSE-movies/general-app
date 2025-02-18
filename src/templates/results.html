@@ -38,7 +38,7 @@
         {% endif %}
 
         <!-- Button at the bottom -->
-        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto">
+        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto pt-4">
           <input type="hidden" name="showId" value="{{ movie.showId }}">
           <button
             type="submit"
