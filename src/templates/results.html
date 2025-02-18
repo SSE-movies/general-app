@@ -5,41 +5,57 @@ Results
 {% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto py-8">
-  <h1 class="text-4xl font-bold text-center mb-6 text-golden">Search Results</h1>
+<div class="max-w-6xl mx-auto py-6 px-4">
+  <h1 class="text-3xl font-bold text-center mb-8 text-golden">Search Results</h1>
 
-  <!-- Optionally, show the query or add a "Refine Search" link back to /search -->
-  <!-- e.g. <p class="text-center text-cream">Showing results for: {{ request.args.title }}</p> -->
+  <!-- Optionally, show the query or a "Refine Search" link back to /search -->
+  <!-- <p class="text-center text-cream mb-4">Showing results for: {{ request.args.title }}</p> -->
 
   <!-- Movies Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
     {% for movie in movies %}
-      <div class="bg-taupe p-4 rounded-lg shadow-md flex flex-col justify-between">
-        <div>
-          <h2 class="text-xl font-semibold text-cream mb-2">{{ movie.title }}</h2>
-          <p class="text-cream mb-1"><strong>Categories:</strong> {{ movie.listedIn }}</p>
+      <div class="bg-taupe p-3 rounded-md shadow-md flex flex-col h-full">
+        <div class="mb-4">
+          <!-- Title -->
+          <h2 class="text-lg font-semibold text-cream mb-1 leading-tight">
+            {{ movie.title }}
+          </h2>
+          <!-- Categories -->
+          <p class="text-sm text-cream mb-1">
+            <span class="font-medium">Categories:</span> {{ movie.listedIn }}
+          </p>
+          <!-- Year (if exists) -->
           {% if movie.release_year %}
-          <p class="text-cream mb-1"><strong>Year:</strong> {{ movie.release_year }}</p>
+            <p class="text-sm text-cream mb-1">
+              <span class="font-medium">Year:</span> {{ movie.release_year }}
+            </p>
           {% endif %}
-          <!-- Optionally display whether it's a movie or TV show if you have that data -->
+          <!-- Type (if exists) -->
           {% if movie.type %}
-          <p class="text-cream mb-4"><strong>Type:</strong> {{ movie.type }}</p>
+            <p class="text-sm text-cream">
+              <span class="font-medium">Type:</span> {{ movie.type }}
+            </p>
           {% endif %}
         </div>
-        <form method="POST" action="{{ url_for('add_to_watchlist') }}">
-          <input type="hidden" name="showId" value="{{ movie.showId }}">
-          <button 
-            type="submit" 
-            class="bg-golden text-dark-forest w-full py-2 rounded hover:bg-opacity-80 transition"
-          >
-            Add to Watchlist
-          </button>
-        </form>
+        <!-- Add to Watchlist Button -->
+        <div class="mt-auto">
+          <form method="POST" action="{{ url_for('add_to_watchlist') }}">
+            <input type="hidden" name="showId" value="{{ movie.showId }}">
+            <button 
+              type="submit" 
+              class="bg-golden text-dark-forest w-full py-2 rounded hover:bg-opacity-80 transition-colors 
+                     text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cream focus:ring-offset-2
+                     focus:ring-offset-taupe"
+            >
+              Add to Watchlist
+            </button>
+          </form>
+        </div>
       </div>
     {% endfor %}
   </div>
 
-  <!-- If you wanted to show a "No results found" message when empty -->
+  <!-- No results message -->
   {% if movies|length == 0 %}
     <p class="text-cream text-center mt-8">No movies found matching your search.</p>
   {% endif %}
