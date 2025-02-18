@@ -314,19 +314,12 @@ def my_watchlist():
         else:
             movies_data = []
 
-        # # Create a dictionary mapping showIDs to show details
-        # movies_dict = {m["showId"]: m for m in movies_data}
-        #
-        # # Merge each watchlist entry with its corresponding info
-        # combined_entries = []
-        # for wl_entry in watchlist_entries:
-        #     show_id = wl_entry["showId"]
-        #     # If there's a matching movie in the dictionary, merge them:
-        #     if show_id in movies_dict:
-        #         movie_info = movies_dict[show_id]
-        #         # Merge them into a single dict so you have both .title and .watched
-        #         combined_entry = {**movie_info, **wl_entry}
-        #         combined_entries.append(combined_entry)
+        # Create a dictionary mapping showId to watched status
+        watched_dict = {entry["showId"]: entry.get("watched", False) for entry in watchlist_entries}
+
+        # Append the watched value to each movie in movies_data
+        for movie in movies_data:
+            movie["watched"] = watched_dict.get(movie["showId"], False)
 
         # Render the watchlist page with movie details
         return render_template(
@@ -388,6 +381,7 @@ def mark_watched():
 
         # Get the username from the session
         username = session.get("username")
+
         # Update the watchlist entry
         supabase.table("watchlist").update({"watched": True}).eq(
             "username", username
@@ -412,6 +406,7 @@ def mark_unwatched():
 
         # Get the username from the session
         username = session.get("username")
+
         # Update the watchlist entry
         supabase.table("watchlist").update({"watched": False}).eq(
             "username", username
