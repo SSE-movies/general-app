@@ -8,15 +8,37 @@
 
     {% if movies %}
         <div class="movie-list space-y-4">
-            {% for movie in movies %}
-                <div class="movie bg-taupe p-4 rounded-lg">
-                    <h2 class="text-2xl font-semibold">{{ movie.title }}</h2>
-                    <p><strong>Watched:</strong> {{ movie.watched }}</p>
 
-                    <!-- Additional details -->
-                    {% if movie.director %}
-                        <p><strong>Director:</strong> {{ movie.director }}</p>
+            {% for movie in movies %}
+                <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
+                    <!-- Title -->
+                    <h2 class="text-xl font-semibold text-cream mb-1">
+                      {{ movie.title }}
+                    </h2>
+
+                    <!-- Categories -->
+                    <p class="text-sm text-cream mb-1">
+                      <strong>Categories:</strong> {{ movie.listedIn }}
+                    </p>
+                    {% if movie.release_year %}
+                    <p class="text-sm text-cream mb-1">
+                      <strong>Year:</strong> {{ movie.release_year }}
+                    </p>
                     {% endif %}
+                    {% if movie.type %}
+                    <p class="text-sm text-cream mb-1">
+                      <strong>Type:</strong> {{ movie.type }}
+                    </p>
+                    {% endif %}
+                    {% if movie.description %}
+                    <p class="text-sm text-cream mb-3">
+                      <strong>Description:</strong> {{ movie.description }}
+                    </p>
+                    {% endif %}
+
+                    <p class="text-sm text-cream mb-3">
+                      <strong>Watched:</strong> {{ movie.watched }}
+                    </p>
 
                     <!-- Remove from watchlist form -->
                     <form method="POST" action="{{ url_for('remove_from_watchlist') }}" class="inline-block mr-2">

@@ -331,7 +331,7 @@ def my_watchlist():
         # Render the watchlist page with movie details
         return render_template(
             "my_watchlist.html",
-            username=session.get("username"),
+            username=username,
             movies=combined_entries
         )
 
