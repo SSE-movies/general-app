@@ -275,10 +275,9 @@ def add_to_watchlist():
             return redirect(url_for("search"))
 
         # Insert new watchlist entry
-        response = supabase.table("watchlist").insert(
+        supabase.table("watchlist").insert(
             {"username": username, "showId": show_id}
         ).execute()
-        print("Insert response:", response)
 
         return redirect(url_for("search"))
 
