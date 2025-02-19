@@ -77,20 +77,6 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$(pwd)/..
           pytest user_auth_tests.py
 
-  deploy-to-impaas:
-    needs: unit-testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: ImPaaS-Deploy
-        uses: /impaas/impaas-deploy@v3
-        with:
-          app-name: movie-app
-          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
-          method: PLATFORM
-
   build-docker-image:
     needs: deploy-to-impaas
     runs-on: ubuntu-latest
