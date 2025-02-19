@@ -85,28 +85,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Azure Container Registry (ACR)
         run: |
-          echo "${{ secrets.ORG_GHCR_TOKEN }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
+          echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login ${{ secrets.AZURE_ACR_NAME }}.azurecr.io -u ${{ secrets.AZURE_ACR_USERNAME }} --password-stdin
 
       - name: Build Docker Image
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
+          IMAGE_NAME=${{ secrets.AZURE_ACR_NAME }}.azurecr.io/myapp:latest
           docker build -t $IMAGE_NAME .
 
-      - name: Push Docker Image to GHCR
+      - name: Push Docker Image to ACR
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
+          IMAGE_NAME=${{ secrets.AZURE_ACR_NAME }}.azurecr.io/myapp:latest
           docker push $IMAGE_NAME
-
-      - name: Azure Login
-        run: |
-          az login --use-device-code
-          az account set --subscription "<22c238f4-9d35-4143-97be-f5d02ba5b986>"
-
-      - name: Deploy to Azure Container App
-        run: |
-          az containerapp update \
-            --name <general-app-testing> \
-            --resource-group <SSE_ProjectII> \
-            --image ghcr.io/sse-movies/general-app:latest
