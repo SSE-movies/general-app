@@ -98,3 +98,15 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
           docker push $IMAGE_NAME
+
+      - name: Azure Login
+        run: |
+          az login --use-device-code
+          az account set --subscription "<22c238f4-9d35-4143-97be-f5d02ba5b986>"
+
+      - name: Deploy to Azure Container App
+        run: |
+          az containerapp update \
+            --name <general-app-testing> \
+            --resource-group <SSE_ProjectII> \
+            --image ghcr.io/sse-movies/general-app:latest
