@@ -92,22 +92,23 @@ jobs:
           method: PLATFORM
 
   build-docker-image:
-    needs: deploy-to-impaas
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+  needs: deploy-to-impaas
+  runs-on: ubuntu-latest
 
-      - name: Log in to GitHub Container Registry
-        run: |
-          echo "${{ secrets.SSE_ProjectII }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Build Docker Image
-        run: |
-          IMAGE_NAME=ghcr.io/oosborgschmitz/main:latest
-          docker build -t $IMAGE_NAME .
+    - name: Log in to GitHub Container Registry
+      run: |
+        echo "${{ secrets.ORG_GHCR_TOKEN }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
 
-      - name: Push Docker Image to GHCR
-        run: |
-          IMAGE_NAME=ghcr.io/oosborgschmitz/main:latest
-          docker push $IMAGE_NAME
+    - name: Build Docker Image
+      run: |
+        IMAGE_NAME=ghcr.io/SSE-movies/general-app:latest
+        docker build -t $IMAGE_NAME .
+
+    - name: Push Docker Image to GHCR
+      run: |
+        IMAGE_NAME=ghcr.io/SSE-movies/general-app:latest
+        docker push $IMAGE_NAME
