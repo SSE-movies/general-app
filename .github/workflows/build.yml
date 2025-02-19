@@ -91,10 +91,10 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:latest
           docker build -t $IMAGE_NAME .
 
       - name: Push Docker Image to GHCR
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:latest
           docker push $IMAGE_NAME
