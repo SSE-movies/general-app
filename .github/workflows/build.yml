@@ -85,16 +85,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Log in to Azure Container Registry (ACR)
+      - name: Log in to GitHub Container Registry
         run: |
-          echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login ${{ secrets.AZURE_ACR_NAME }}.azurecr.io -u ${{ secrets.AZURE_ACR_USERNAME }} --password-stdin
+          echo "${{ secrets.ORG_GHCR_TOKEN }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
 
       - name: Build Docker Image
         run: |
-          IMAGE_NAME=${{ secrets.AZURE_ACR_NAME }}.azurecr.io/myapp:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
           docker build -t $IMAGE_NAME .
 
-      - name: Push Docker Image to ACR
+      - name: Push Docker Image to GHCR
         run: |
-          IMAGE_NAME=${{ secrets.AZURE_ACR_NAME }}.azurecr.io/myapp:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app:latest
           docker push $IMAGE_NAME
