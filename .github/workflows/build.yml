@@ -78,6 +78,7 @@ jobs:
           pytest user_auth_tests.py
 
   build-docker-image:
+    needs: unit-testing
     runs-on: ubuntu-latest
 
     steps:
