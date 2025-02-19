@@ -78,7 +78,6 @@ jobs:
           pytest user_auth_tests.py
 
   build-docker-image:
-    needs: deploy-to-impaas
     runs-on: ubuntu-latest
 
     steps:
