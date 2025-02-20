@@ -3,7 +3,8 @@ import requests
 from .database import supabase, get_unique_categories, MOVIES_API_URL
 from .decorators import login_required
 
-search_bp = Blueprint('search', __name__)
+search_bp = Blueprint("search", __name__)
+
 
 @search_bp.route("/search", methods=["GET", "POST"])
 @login_required
@@ -27,7 +28,9 @@ def index():
 
     filtered_movies = []
     for movie in movies_data:
-        if any(cat.strip() in movie["listedIn"] for cat in selected_categories):
+        if any(
+            cat.strip() in movie["listedIn"] for cat in selected_categories
+        ):
             filtered_movies.append(movie)
 
     return render_template(
@@ -36,6 +39,7 @@ def index():
         movies=filtered_movies,
         categories=categories,
     )
+
 
 @search_bp.route("/results", methods=["GET"])
 @login_required

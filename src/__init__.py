@@ -3,7 +3,9 @@ from flask import Flask, render_template
 
 def create_app():
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "1168e24e45fd86b30c4dcaebe79a43422681755abb9111ff"
+    app.config["SECRET_KEY"] = (
+        "1168e24e45fd86b30c4dcaebe79a43422681755abb9111ff"
+    )
 
     # Import blueprints
     from .auth import auth_bp

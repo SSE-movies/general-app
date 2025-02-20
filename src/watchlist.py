@@ -1,8 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    jsonify,
+)
 from .database import supabase
 from .decorators import login_required
 
-watchlist_bp = Blueprint('watchlist', __name__)
+watchlist_bp = Blueprint("watchlist", __name__)
+
 
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
@@ -40,6 +49,7 @@ def add_to_watchlist():
         print(f"Error adding movie to watchlist: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 @watchlist_bp.route("/my_watchlist")
 @login_required
 def view_watchlist():
@@ -54,7 +64,11 @@ def view_watchlist():
             .data
         )
 
-        show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
+        show_ids = (
+            [entry["showId"] for entry in watchlist_entries]
+            if watchlist_entries
+            else []
+        )
         if show_ids:
             movies_data = (
                 supabase.table("movies")
@@ -66,20 +80,22 @@ def view_watchlist():
         else:
             movies_data = []
 
-        watched_dict = {entry["showId"]: entry.get("watched", False) for entry in watchlist_entries}
+        watched_dict = {
+            entry["showId"]: entry.get("watched", False)
+            for entry in watchlist_entries
+        }
 
         for movie in movies_data:
             movie["watched"] = watched_dict.get(movie["showId"], False)
 
         return render_template(
-            "my_watchlist.html",
-            username=username,
-            movies=movies_data
+            "my_watchlist.html", username=username, movies=movies_data
         )
 
     except Exception as e:
         print(f"Error retrieving watchlist: {e}")
         return "Error retrieving watchlist", 500
+
 
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
@@ -112,6 +128,7 @@ def remove_from_watchlist():
         print(f"Error removing movie from watchlist: {e}")
         return redirect(url_for("watchlist.view_watchlist"))
 
+
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched():
@@ -131,6 +148,7 @@ def mark_watched():
     except Exception as e:
         print(f"Error marking movie as watched: {e}")
         return redirect(url_for("watchlist.view_watchlist"))
+
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required

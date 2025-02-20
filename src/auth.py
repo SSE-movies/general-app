@@ -1,8 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+)
 import bcrypt
 from .database import supabase
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -29,7 +37,7 @@ def login():
             user_data = user_response.data[0]
 
             if bcrypt.checkpw(
-                    password.encode("utf-8"), user_data["password"].encode("utf-8")
+                password.encode("utf-8"), user_data["password"].encode("utf-8")
             ):
                 session["user_id"] = user_data["id"]
                 session["username"] = user_data["username"]
@@ -52,6 +60,7 @@ def login():
             )
 
     return render_template("login.html", show_navbar=False, success=success)
+
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -105,6 +114,7 @@ def register():
             )
 
     return render_template("register.html", show_navbar=False)
+
 
 @auth_bp.route("/logout")
 def logout():

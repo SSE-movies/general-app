@@ -3,7 +3,8 @@ import bcrypt
 from .database import supabase
 from .decorators import admin_required
 
-admin_bp = Blueprint('admin', __name__)
+admin_bp = Blueprint("admin", __name__)
+
 
 @admin_bp.route("/admin")
 @admin_required
@@ -12,13 +13,12 @@ def dashboard():
         response = supabase.table("profiles").select("*").execute()
         users = response.data
         return render_template(
-            "admin.html",
-            username=session.get("username"),
-            users=users
+            "admin.html", username=session.get("username"), users=users
         )
     except Exception as e:
         print(f"Admin page error: {e}")
         return "Error loading admin page", 500
+
 
 @admin_bp.route("/api/users")
 @admin_required
@@ -28,6 +28,7 @@ def get_users():
         return jsonify(response.data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @admin_bp.route("/api/users/<user_id>/reset-password", methods=["POST"])
 @admin_required
@@ -47,6 +48,7 @@ def reset_password(user_id):
         return jsonify({"message": "Password updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @admin_bp.route("/api/users/<user_id>/username", methods=["PUT"])
 @admin_required
@@ -69,7 +71,13 @@ def update_username(user_id):
 @admin_required
 def delete_user(user_id):
     try:
-        user_data = supabase.table("profiles").select("*").eq("id", user_id).execute().data
+        user_data = (
+            supabase.table("profiles")
+            .select("*")
+            .eq("id", user_id)
+            .execute()
+            .data
+        )
 
         if not user_data:
             return jsonify({"error": "User not found"}), 404
@@ -77,7 +85,9 @@ def delete_user(user_id):
         if user_data[0].get("is_admin"):
             return jsonify({"error": "Cannot delete admin user"}), 403
 
-        supabase.table("watchlist").delete().eq("username", user_data[0]["username"]).execute()
+        supabase.table("watchlist").delete().eq(
+            "username", user_data[0]["username"]
+        ).execute()
 
         supabase.table("profiles").delete().eq("id", user_id).execute()
 
