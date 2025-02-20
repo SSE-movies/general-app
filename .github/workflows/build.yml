@@ -98,3 +98,28 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:latest
           docker push $IMAGE_NAME
+  
+  deploy-azure-container-app:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.GENERALAPPTESTING_AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container App
+        run: |
+          az containerapp update \
+            --name general-app-testing \
+            --resource-group SSE-movies \
+            --image ghcr.io/sse-movies/general-app-testing:latest \
+            --registry-server ghcr.io \
+            --registry-username oosborgschmitz \
+            --registry-password ${{ secrets.ORG_GHCR_TOKEN }}
+
+      - name: Azure Logout
