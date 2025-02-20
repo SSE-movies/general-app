@@ -26,7 +26,7 @@ MOVIES_API_URL = (
 # MOVIES_API_URL = "http://127.0.0.1:81/movies"
 
 # Configuration
-app.config["SECRET_KEY"] = os.urandom(24)
+app.config["SECRET_KEY"] = "1168e24e45fd86b30c4dcaebe79a43422681755abb9111ff"
 
 # Initialize Supabase client
 supabase: Client = create_client(
