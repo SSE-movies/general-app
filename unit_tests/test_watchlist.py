@@ -23,6 +23,7 @@ def test_movie():
     # Optional: Cleanup (if needed)
     supabase.table("movies").delete().eq("showId", movie_id).execute()
 
+
 def test_add_to_watchlist(auth_headers, test_movie):
     response = auth_headers.post(
         "/add_to_watchlist", json={"showId": test_movie["showId"]}
