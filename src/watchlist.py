@@ -1,4 +1,5 @@
 """Watchlist blueprint for managing user movie watchlists."""
+
 from flask import (
     Blueprint,
     render_template,
@@ -90,7 +91,9 @@ def view_watchlist():
             .select("*")
             .in_("showId", show_ids)
             .execute()
-            .data if show_ids else []
+            .data
+            if show_ids
+            else []
         )
 
         # Create a dictionary of watched status
