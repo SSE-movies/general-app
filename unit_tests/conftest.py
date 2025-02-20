@@ -23,11 +23,14 @@ def runner(app):
 
 @pytest.fixture
 def test_user():
-    # Create a test user
+    """Creates a unique test user and ensures no duplicate entry exists."""
     username = "testuser"
     password = "testpass"
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
+
+    # Ensure the user does not exist before inserting
+    supabase.table("profiles").delete().eq("username", username).execute()
 
     user_data = {
         "username": username,
@@ -35,23 +38,28 @@ def test_user():
         "is_admin": False,
     }
 
-    # Insert test user into database
+    # Insert user and handle any failure
     response = supabase.table("profiles").insert(user_data).execute()
-    user = response.data[0]
+    if not response.data:
+        raise Exception(f"Failed to insert test user: {response}")
 
+    user = response.data[0]
     yield {"username": username, "password": password, "id": user["id"]}
 
-    # Cleanup: Delete test user
+    # Cleanup: Ensure the user is deleted after tests
     supabase.table("profiles").delete().eq("username", username).execute()
 
 
 @pytest.fixture
 def test_admin():
-    # Create a test admin user
+    """Creates a unique test admin user and ensures no duplicate entry exists."""
     username = "testadmin"
     password = "adminpass"
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
+
+    # Ensure the admin does not exist before inserting
+    supabase.table("profiles").delete().eq("username", username).execute()
 
     admin_data = {
         "username": username,
@@ -59,37 +67,41 @@ def test_admin():
         "is_admin": True,
     }
 
-    # Insert test admin into database
+    # Insert admin user and handle any failure
     response = supabase.table("profiles").insert(admin_data).execute()
-    admin = response.data[0]
+    if not response.data:
+        raise Exception(f"Failed to insert test admin: {response}")
 
+    admin = response.data[0]
     yield {"username": username, "password": password, "id": admin["id"]}
 
-    # Cleanup: Delete test admin
+    # Cleanup: Ensure the admin is deleted after tests
     supabase.table("profiles").delete().eq("username", username).execute()
 
 
 @pytest.fixture
 def auth_headers(client, test_user):
-    # Login and get session
-    client.post(
+    """Logs in as a test user and returns authenticated client."""
+    response = client.post(
         "/login",
         data={
             "username": test_user["username"],
             "password": test_user["password"],
         },
     )
+    assert response.status_code == 200, "Test user login failed"
     return client
 
 
 @pytest.fixture
 def admin_headers(client, test_admin):
-    # Login as admin and get session
-    client.post(
+    """Logs in as an admin user and returns authenticated client."""
+    response = client.post(
         "/login",
         data={
             "username": test_admin["username"],
             "password": test_admin["password"],
         },
     )
+    assert response.status_code == 200, "Test admin login failed"
     return client
