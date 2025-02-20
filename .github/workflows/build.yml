@@ -1,5 +1,6 @@
 name: Build
 on: [push]
+
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -20,18 +21,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-
-      - name: Install dependencies
+      - name: Install Black
         run: pip install black
-
       - name: Run Black
-        run: black . --line-length 79
-
+        run: black . --line-length 79 --exclude "Blueprint/__init__.py"
       - name: Commit changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,7 +36,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting")
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
 
   build-tailwind:
     needs: python-format
