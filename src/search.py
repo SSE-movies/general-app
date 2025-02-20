@@ -21,13 +21,20 @@ def index():
     """
     Displays the search page and fetches movies based on user-selected filters.
     """
-    selected_categories = request.form.getlist("categories") if request.method == "POST" else request.args.getlist(
-        "categories")
+    selected_categories = (
+        request.form.getlist("categories")
+        if request.method == "POST"
+        else request.args.getlist("categories")
+    )
 
     movies_data = []  # Default to empty list (no movies shown by default)
 
     if selected_categories:  # Fetch movies only if categories are selected
-        query_params = {"page": 1, "per_page": 100, "categories": ",".join(selected_categories)}
+        query_params = {
+            "page": 1,
+            "per_page": 100,
+            "categories": ",".join(selected_categories),
+        }
 
         try:
             response = requests.get(MOVIES_API_URL, params=query_params)
@@ -46,13 +53,18 @@ def index():
         categories=categories,
     )
 
+
 @search_bp.route("/results", methods=["GET"])
 @login_required
 def results():
     """
     Handles filtering movies based on search parameters.
     """
-    query_params = {key: request.args.get(key) for key in ["title", "type", "release_year"] if request.args.get(key)}
+    query_params = {
+        key: request.args.get(key)
+        for key in ["title", "type", "release_year"]
+        if request.args.get(key)
+    }
     selected_categories = request.args.getlist("categories")
 
     if selected_categories:
@@ -65,7 +77,10 @@ def results():
         movies_data = response.json().get("movies", [])
     except requests.RequestException as e:
         logger.error(f"Error fetching movies: {e}")
-        flash("Error retrieving search results. Please try again later.", "danger")
+        flash(
+            "Error retrieving search results. Please try again later.",
+            "danger",
+        )
         movies_data = []
 
     categories = get_unique_categories()
