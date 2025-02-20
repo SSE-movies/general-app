@@ -18,12 +18,6 @@ watchlist_bp = Blueprint("watchlist", __name__)
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist():
-    """
-    Add a movie to the user's watchlist.
-
-    Handles both JSON and form data requests.
-    Returns a JSON response indicating success or failure.
-    """
     try:
         if request.is_json:
             data = request.get_json()
@@ -45,7 +39,7 @@ def add_to_watchlist():
         )
 
         if existing_entry.data:
-            return jsonify({"message": "Already in watchlist"}), 200
+            return jsonify({"message": "Already in watchlist"}), 400
 
         supabase.table("watchlist").insert(
             {"username": username, "showId": show_id}
@@ -54,10 +48,8 @@ def add_to_watchlist():
         return jsonify({"message": "Successfully added to watchlist"}), 200
 
     except Exception as e:
-        # More specific error handling would be better
         print(f"Error adding movie to watchlist: {e}")
-        return jsonify({"error": "Internal server error"}), 500
-
+        return jsonify({"error": str(e)}), 500
 
 @watchlist_bp.route("/my_watchlist")
 @login_required
@@ -119,55 +111,39 @@ def view_watchlist():
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
 def remove_from_watchlist():
-    """
-    Remove a movie from the user's watchlist.
-
-    Redirects back to the watchlist view after removal.
-    """
     try:
-        show_id = request.form.get("showId")
+        if request.is_json:
+            show_id = request.get_json().get("showId")
+        else:
+            show_id = request.form.get("showId")
+
         if not show_id:
-            return redirect(url_for("watchlist.view_watchlist"))
+            return jsonify({"error": "No show ID provided"}), 400
 
         username = session.get("username")
 
-        # Check if entry exists before attempting to delete
-        existing_entry = (
-            supabase.table("watchlist")
-            .select("*")
-            .eq("username", username)
-            .eq("showId", show_id)
-            .execute()
-        )
-
-        if not existing_entry.data:
-            return redirect(url_for("watchlist.view_watchlist"))
-
-        # Delete the specific watchlist entry
         supabase.table("watchlist").delete().eq("username", username).eq(
             "showId", show_id
         ).execute()
 
-        return redirect(url_for("watchlist.view_watchlist"))
+        return jsonify({"message": "Successfully removed from watchlist"}), 200
 
     except Exception as e:
-        # Log the error, but don't expose details to the user
         print(f"Error removing movie from watchlist: {e}")
-        return redirect(url_for("watchlist.view_watchlist"))
+        return jsonify({"error": str(e)}), 500
 
 
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched():
-    """
-    Mark a movie in the watchlist as watched.
-
-    Redirects back to the watchlist view after updating.
-    """
     try:
-        show_id = request.form.get("showId")
+        if request.is_json:
+            show_id = request.get_json().get("showId")
+        else:
+            show_id = request.form.get("showId")
+
         if not show_id:
-            return redirect(url_for("watchlist.view_watchlist"))
+            return jsonify({"error": "No show ID provided"}), 400
 
         username = session.get("username")
 
@@ -175,26 +151,23 @@ def mark_watched():
             "username", username
         ).eq("showId", show_id).execute()
 
-        return redirect(url_for("watchlist.view_watchlist"))
+        return jsonify({"message": "Marked as watched"}), 200
 
     except Exception as e:
-        # Log the error, but don't expose details to the user
         print(f"Error marking movie as watched: {e}")
-        return redirect(url_for("watchlist.view_watchlist"))
-
+        return jsonify({"error": str(e)}), 500
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required
 def mark_unwatched():
-    """
-    Mark a movie in the watchlist as unwatched.
-
-    Redirects back to the watchlist view after updating.
-    """
     try:
-        show_id = request.form.get("showId")
+        if request.is_json:
+            show_id = request.get_json().get("showId")
+        else:
+            show_id = request.form.get("showId")
+
         if not show_id:
-            return redirect(url_for("watchlist.view_watchlist"))
+            return jsonify({"error": "No show ID provided"}), 400
 
         username = session.get("username")
 
@@ -202,9 +175,8 @@ def mark_unwatched():
             "username", username
         ).eq("showId", show_id).execute()
 
-        return redirect(url_for("watchlist.view_watchlist"))
+        return jsonify({"message": "Marked as unwatched"}), 200
 
     except Exception as e:
-        # Log the error, but don't expose details to the user
         print(f"Error marking movie as unwatched: {e}")
-        return redirect(url_for("watchlist.view_watchlist"))
+        return jsonify({"error": str(e)}), 500
