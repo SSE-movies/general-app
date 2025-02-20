@@ -254,11 +254,16 @@ def search():
 @login_required
 def add_to_watchlist():
     try:
-        show_id = request.form.get("showId")
-        if not show_id:
-            return redirect(url_for("search"))
+        # Check if request is JSON
+        if request.is_json:
+            data = request.get_json()
+            show_id = data.get("showId")
+        else:
+            show_id = request.form.get("showId")
 
-        # Get username from the session
+        if not show_id:
+            return jsonify({"error": "No show ID provided"}), 400
+
         username = session.get("username")
 
         # Check if the movie is already in watchlist
@@ -271,19 +276,18 @@ def add_to_watchlist():
         )
 
         if existing_entry.data:
-            # Already in watchlist: redirect (avoids duplication bugs and resubmitting form)
-            return redirect(url_for("search"))
+            return jsonify({"message": "Already in watchlist"}), 200
 
         # Insert new watchlist entry
         supabase.table("watchlist").insert(
             {"username": username, "showId": show_id}
         ).execute()
 
-        return redirect(url_for("search"))
+        return jsonify({"message": "Successfully added to watchlist"}), 200
 
     except Exception as e:
         print(f"Error adding movie to watchlist: {e}")
-        return redirect(url_for("search"))
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/my_watchlist")

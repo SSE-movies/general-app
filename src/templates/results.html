@@ -9,7 +9,6 @@
     Browse through the titles that match your search
   </p>
 
-  <!-- should print 3 Cards per row on large screens, 2 on medium, 1 on small, but it doesn't -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for movie in movies %}
       <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
@@ -37,19 +36,19 @@
         </p>
         {% endif %}
 
-        <!-- Spacer to push the form to the bottom -->
+        <!-- Spacer to push the button to the bottom -->
         <div class="flex-grow"></div>
 
-        <!-- Button at the bottom -->
-        <form method="POST" action="{{ url_for('add_to_watchlist') }}" class="mt-auto">
-          <input type="hidden" name="showId" value="{{ movie.showId }}">
+        <!-- Button with corrected styling to match original -->
+        <div class="mt-auto">
           <button
-            type="submit"
-            class="bg-golden text-dark-forest px-4 py-2 text-sm rounded-full font-medium hover:bg-opacity-90 transition"
+            onclick="addToWatchlist(event, '{{ movie.showId }}')"
+            id="watchlist-btn-{{ movie.showId }}"
+            class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block hover:bg-opacity-90 transition"
           >
             Add to Watchlist
           </button>
-        </form>
+        </div>
       </div>
     {% endfor %}
   </div>
@@ -61,4 +60,43 @@
     </p>
   {% endif %}
 </div>
+
+{% block scripts %}
+<script>
+async function addToWatchlist(event, showId) {
+    event.preventDefault();
+    const button = document.getElementById(`watchlist-btn-${showId}`);
+
+    try {
+        const response = await fetch('{{ url_for("add_to_watchlist") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ showId: showId })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Simply show "Added to Watchlist" text
+            button.textContent = 'Added to Watchlist';
+            button.disabled = true;
+            button.classList.add('opacity-75');
+        } else {
+            throw new Error(data.error || 'Failed to add to watchlist');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        const originalText = button.textContent;
+        button.textContent = 'Error - Try Again';
+
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    }
+}
+</script>
+{% endblock %}
+
 {% endblock %}
