@@ -1,4 +1,5 @@
 """Flask application factory module for the movie tracking application."""
+
 from flask import Flask, render_template
 
 

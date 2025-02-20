@@ -51,6 +51,7 @@ def add_to_watchlist():
         print(f"Error adding movie to watchlist: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 @watchlist_bp.route("/my_watchlist")
 @login_required
 def view_watchlist():
@@ -156,6 +157,7 @@ def mark_watched():
     except Exception as e:
         print(f"Error marking movie as watched: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required

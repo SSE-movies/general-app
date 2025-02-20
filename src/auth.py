@@ -1,4 +1,5 @@
 """Authentication blueprint for user login, registration, and logout."""
+
 from flask import (
     Blueprint,
     render_template,
@@ -41,7 +42,9 @@ def register():
         )
 
         if existing_user.data:
-            return render_template("register.html", error="Username already exists")
+            return render_template(
+                "register.html", error="Username already exists"
+            )
 
         # Hash password
         salt = bcrypt.gensalt()
@@ -59,7 +62,9 @@ def register():
             return redirect(url_for("auth.login"))
         except Exception as e:
             print(f"Registration error: {e}")
-            return render_template("register.html", error="Registration failed")
+            return render_template(
+                "register.html", error="Registration failed"
+            )
 
     return render_template("register.html")
 
@@ -85,27 +90,38 @@ def login():
         )
 
         if not user_response.data:
-            return render_template("login.html", error="Invalid username or password"), 401
+            return (
+                render_template(
+                    "login.html", error="Invalid username or password"
+                ),
+                401,
+            )
 
         user = user_response.data[0]
 
         # Verify password
         if not bcrypt.checkpw(
-                password.encode("utf-8"), user["password"].encode("utf-8")
+            password.encode("utf-8"), user["password"].encode("utf-8")
         ):
-            return render_template("login.html", error="Invalid username or password"), 401
+            return (
+                render_template(
+                    "login.html", error="Invalid username or password"
+                ),
+                401,
+            )
 
         # Set session
         session["username"] = username
         session["is_admin"] = user.get("is_admin", False)
 
         # For testing, adjust the response
-        if current_app.config.get('TESTING'):
+        if current_app.config.get("TESTING"):
             return render_template("search.html"), 200
 
         return redirect(url_for("index"))
 
     return render_template("login.html")
+
 
 @auth_bp.route("/logout")
 @login_required

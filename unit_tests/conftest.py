@@ -1,32 +1,33 @@
 """Pytest configuration and shared fixtures for testing."""
+
 import pytest
 import uuid
 import bcrypt
 from src import create_app
 from src.database import supabase
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def app():
     """Create a Flask app configured for testing."""
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-        "WTF_CSRF_ENABLED": False
-    })
+    app.config.update({"TESTING": True, "WTF_CSRF_ENABLED": False})
     return app
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def client(app):
     """Create a test client for making requests."""
     return app.test_client()
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def runner(app):
     """Create a test CLI runner."""
     return app.test_cli_runner()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_user(client):
     """
     Create and return a test user.
@@ -66,7 +67,7 @@ def test_user(client):
     yield {
         "username": username,
         "password": password,
-        "id": user['id'] if user else None
+        "id": user["id"] if user else None,
     }
 
     # Cleanup: Delete test user and associated data
@@ -77,7 +78,7 @@ def test_user(client):
         pass
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_admin(client):
     """
     Create and return a test admin user.
@@ -117,7 +118,7 @@ def test_admin(client):
     yield {
         "username": username,
         "password": password,
-        "id": admin['id'] if admin else None
+        "id": admin["id"] if admin else None,
     }
 
     # Cleanup: Delete test admin and associated data
@@ -126,6 +127,7 @@ def test_admin(client):
         supabase.table("profiles").delete().eq("username", username).execute()
     except Exception:
         pass
+
 
 @pytest.fixture
 def auth_headers(client, test_user):
@@ -144,10 +146,14 @@ def auth_headers(client, test_user):
         data={
             "username": test_user["username"],
             "password": test_user["password"],
-        }
+        },
     )
-    assert response.status_code in [200, 302], f"Login failed: {response.status_code}"
+    assert response.status_code in [
+        200,
+        302,
+    ], f"Login failed: {response.status_code}"
     return client
+
 
 @pytest.fixture
 def admin_headers(client, test_admin):
@@ -166,10 +172,14 @@ def admin_headers(client, test_admin):
         data={
             "username": test_admin["username"],
             "password": test_admin["password"],
-        }
+        },
     )
-    assert response.status_code in [200, 302], f"Admin login failed: {response.status_code}"
+    assert response.status_code in [
+        200,
+        302,
+    ], f"Admin login failed: {response.status_code}"
     return client
+
 
 @pytest.fixture
 def test_movie(client):
@@ -185,7 +195,7 @@ def test_movie(client):
         "title": "Test Movie",
         "listed_in": "Action & Adventure",
         "type": "Movie",
-        "description": "Test description"
+        "description": "Test description",
     }
 
     # First, delete any existing test movie
@@ -195,10 +205,7 @@ def test_movie(client):
     response = supabase.table("movies").insert(movie_data).execute()
     movie = response.data[0] if response.data else None
 
-    yield {
-        "showId": "test123",
-        "title": "Test Movie"
-    }
+    yield {"showId": "test123", "title": "Test Movie"}
 
     # Cleanup: Delete test movie
     supabase.table("movies").delete().eq("showId", "test123").execute()

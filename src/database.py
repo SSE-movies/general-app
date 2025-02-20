@@ -1,4 +1,5 @@
 """Supabase database client configuration module."""
+
 from supabase import create_client, Client
 import requests
 
@@ -12,6 +13,7 @@ MOVIES_API_URL = "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azureconta
 # Create Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 def get_unique_categories():
     """
     Retrieve unique movie categories from the database.
@@ -21,14 +23,18 @@ def get_unique_categories():
     """
     try:
         # Fetch movies and extract unique categories
-        movies_response = supabase.table("movies").select("listed_in").execute()
+        movies_response = (
+            supabase.table("movies").select("listed_in").execute()
+        )
 
         # Extract and clean up categories
         all_categories = []
         for movie in movies_response.data:
-            if movie.get('listed_in'):
+            if movie.get("listed_in"):
                 # Split categories and strip whitespace
-                categories = [cat.strip() for cat in movie['listed_in'].split(',')]
+                categories = [
+                    cat.strip() for cat in movie["listed_in"].split(",")
+                ]
                 all_categories.extend(categories)
 
         # Remove duplicates and sort

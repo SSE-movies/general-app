@@ -10,6 +10,7 @@ from flask import session, redirect, url_for, flash, current_app
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
+
 def login_required(f):
     """
     Decorator to restrict access to authenticated users.
@@ -18,7 +19,7 @@ def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        testing = current_app.config.get('TESTING', False)
+        testing = current_app.config.get("TESTING", False)
         if "username" not in session:
             if testing:
                 return redirect(url_for("auth.login"), code=302)
@@ -27,6 +28,7 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
 
 def admin_required(f):
     """
