@@ -2,6 +2,7 @@ import json
 import pytest
 from src.database import supabase
 
+
 @pytest.fixture
 def test_movie():
     # Add a test movie to the database
