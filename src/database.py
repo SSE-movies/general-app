@@ -1,3 +1,4 @@
+"""Database configuration and client setup module."""
 from supabase import create_client, Client
 
 # Initialize Supabase client

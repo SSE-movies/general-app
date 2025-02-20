@@ -1,3 +1,4 @@
+"""Watchlist blueprint for managing user movie watchlists."""
 from flask import (
     Blueprint,
     render_template,
@@ -16,6 +17,12 @@ watchlist_bp = Blueprint("watchlist", __name__)
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist():
+    """
+    Add a movie to the user's watchlist.
+
+    Handles both JSON and form data requests.
+    Returns a JSON response indicating success or failure.
+    """
     try:
         if request.is_json:
             data = request.get_json()
@@ -46,13 +53,20 @@ def add_to_watchlist():
         return jsonify({"message": "Successfully added to watchlist"}), 200
 
     except Exception as e:
+        # More specific error handling would be better
         print(f"Error adding movie to watchlist: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @watchlist_bp.route("/my_watchlist")
 @login_required
 def view_watchlist():
+    """
+    Retrieve and display the user's watchlist.
+
+    Fetches watchlist entries and corresponding movie details.
+    Renders the watchlist template with movie information.
+    """
     try:
         username = session.get("username")
 
@@ -69,22 +83,23 @@ def view_watchlist():
             if watchlist_entries
             else []
         )
-        if show_ids:
-            movies_data = (
-                supabase.table("movies")
-                .select("*")
-                .in_("showId", show_ids)
-                .execute()
-                .data
-            )
-        else:
-            movies_data = []
 
+        # Fetch movie details for watchlist entries
+        movies_data = (
+            supabase.table("movies")
+            .select("*")
+            .in_("showId", show_ids)
+            .execute()
+            .data if show_ids else []
+        )
+
+        # Create a dictionary of watched status
         watched_dict = {
             entry["showId"]: entry.get("watched", False)
             for entry in watchlist_entries
         }
 
+        # Add watched status to movie data
         for movie in movies_data:
             movie["watched"] = watched_dict.get(movie["showId"], False)
 
@@ -93,6 +108,7 @@ def view_watchlist():
         )
 
     except Exception as e:
+        # More specific error handling would be better
         print(f"Error retrieving watchlist: {e}")
         return "Error retrieving watchlist", 500
 
@@ -100,6 +116,11 @@ def view_watchlist():
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
 def remove_from_watchlist():
+    """
+    Remove a movie from the user's watchlist.
+
+    Redirects back to the watchlist view after removal.
+    """
     try:
         show_id = request.form.get("showId")
         if not show_id:
@@ -107,6 +128,7 @@ def remove_from_watchlist():
 
         username = session.get("username")
 
+        # Check if entry exists before attempting to delete
         existing_entry = (
             supabase.table("watchlist")
             .select("*")
@@ -118,6 +140,7 @@ def remove_from_watchlist():
         if not existing_entry.data:
             return redirect(url_for("watchlist.view_watchlist"))
 
+        # Delete the specific watchlist entry
         supabase.table("watchlist").delete().eq("username", username).eq(
             "showId", show_id
         ).execute()
@@ -125,6 +148,7 @@ def remove_from_watchlist():
         return redirect(url_for("watchlist.view_watchlist"))
 
     except Exception as e:
+        # Log the error, but don't expose details to the user
         print(f"Error removing movie from watchlist: {e}")
         return redirect(url_for("watchlist.view_watchlist"))
 
@@ -132,6 +156,11 @@ def remove_from_watchlist():
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched():
+    """
+    Mark a movie in the watchlist as watched.
+
+    Redirects back to the watchlist view after updating.
+    """
     try:
         show_id = request.form.get("showId")
         if not show_id:
@@ -146,6 +175,7 @@ def mark_watched():
         return redirect(url_for("watchlist.view_watchlist"))
 
     except Exception as e:
+        # Log the error, but don't expose details to the user
         print(f"Error marking movie as watched: {e}")
         return redirect(url_for("watchlist.view_watchlist"))
 
@@ -153,6 +183,11 @@ def mark_watched():
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required
 def mark_unwatched():
+    """
+    Mark a movie in the watchlist as unwatched.
+
+    Redirects back to the watchlist view after updating.
+    """
     try:
         show_id = request.form.get("showId")
         if not show_id:
@@ -167,5 +202,6 @@ def mark_unwatched():
         return redirect(url_for("watchlist.view_watchlist"))
 
     except Exception as e:
+        # Log the error, but don't expose details to the user
         print(f"Error marking movie as unwatched: {e}")
         return redirect(url_for("watchlist.view_watchlist"))
