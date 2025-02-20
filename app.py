@@ -17,12 +17,12 @@ import bcrypt
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
+app = Flask(
+    __name__, template_folder="src/templates", static_folder="src/static"
+)
 
 # Fetching movie API
-MOVIES_API_URL = (
-    "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azurecontainer.io/movies"
-)
+MOVIES_API_URL = "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azurecontainer.io/movies"
 # MOVIES_API_URL = "http://127.0.0.1:81/movies"
 
 # Configuration
@@ -38,7 +38,7 @@ supabase: Client = create_client(
         "LCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkz"
         "OTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8"
         "XhJ4jvwoEk"
-    )
+    ),
 )
 
 
@@ -124,7 +124,7 @@ def login():
 
             # Verify password
             if bcrypt.checkpw(
-                    password.encode("utf-8"), user_data["password"].encode("utf-8")
+                password.encode("utf-8"), user_data["password"].encode("utf-8")
             ):
                 # Store user info in session
                 session["user_id"] = user_data["id"]
@@ -238,7 +238,9 @@ def search():
     filtered_movies = []
     for movie in movies_data:
         # movie['listedIn'] is e.g. "Documentaries, International Movies"
-        if any(cat.strip() in movie["listedIn"] for cat in selected_categories):
+        if any(
+            cat.strip() in movie["listedIn"] for cat in selected_categories
+        ):
             filtered_movies.append(movie)
 
     # Render template, passing both the movies and the unique category list
@@ -306,7 +308,11 @@ def my_watchlist():
         )
 
         # Fetch all the movie rows for these showIDs
-        show_ids = [entry["showId"] for entry in watchlist_entries] if watchlist_entries else []
+        show_ids = (
+            [entry["showId"] for entry in watchlist_entries]
+            if watchlist_entries
+            else []
+        )
         if show_ids:
             movies_data = (
                 supabase.table("movies")
@@ -319,7 +325,10 @@ def my_watchlist():
             movies_data = []
 
         # Create a dictionary mapping showId to watched status
-        watched_dict = {entry["showId"]: entry.get("watched", False) for entry in watchlist_entries}
+        watched_dict = {
+            entry["showId"]: entry.get("watched", False)
+            for entry in watchlist_entries
+        }
 
         # Append the watched value to each movie in movies_data
         for movie in movies_data:
@@ -327,9 +336,7 @@ def my_watchlist():
 
         # Render the watchlist page with movie details
         return render_template(
-            "my_watchlist.html",
-            username=username,
-            movies=movies_data
+            "my_watchlist.html", username=username, movies=movies_data
         )
 
     except Exception as e:
