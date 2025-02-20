@@ -7,10 +7,7 @@ import bcrypt
 @pytest.fixture
 def app():
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-        "WTF_CSRF_ENABLED": False
-    })
+    app.config.update({"TESTING": True, "WTF_CSRF_ENABLED": False})
     yield app
 
 
@@ -35,7 +32,7 @@ def test_user():
     user_data = {
         "username": username,
         "password": hashed_password.decode("utf-8"),
-        "is_admin": False
+        "is_admin": False,
     }
 
     # Insert test user into database
@@ -59,7 +56,7 @@ def test_admin():
     admin_data = {
         "username": username,
         "password": hashed_password.decode("utf-8"),
-        "is_admin": True
+        "is_admin": True,
     }
 
     # Insert test admin into database
@@ -75,18 +72,24 @@ def test_admin():
 @pytest.fixture
 def auth_headers(client, test_user):
     # Login and get session
-    client.post("/login", data={
-        "username": test_user["username"],
-        "password": test_user["password"]
-    })
+    client.post(
+        "/login",
+        data={
+            "username": test_user["username"],
+            "password": test_user["password"],
+        },
+    )
     return client
 
 
 @pytest.fixture
 def admin_headers(client, test_admin):
     # Login as admin and get session
-    client.post("/login", data={
-        "username": test_admin["username"],
-        "password": test_admin["password"]
-    })
+    client.post(
+        "/login",
+        data={
+            "username": test_admin["username"],
+            "password": test_admin["password"],
+        },
+    )
     return client
