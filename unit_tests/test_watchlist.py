@@ -1,22 +1,27 @@
 import json
 import pytest
+import uuid
 from src.database import supabase
 
 
 @pytest.fixture
 def test_movie():
-    # Add a test movie to the database
+    # Generate a valid UUID for showId
+    movie_id = str(uuid.uuid4())
+
     movie_data = {
-        "showId": "test123",
+        "showId": movie_id,  # Use valid UUID
         "title": "Test Movie",
         "listedIn": "Action & Adventure",
         "type": "Movie",
         "description": "Test description",
     }
     response = supabase.table("movies").insert(movie_data).execute()
-    yield response.data[0]
-    # Cleanup not needed as we want to keep movies in the database
 
+    yield response.data[0]  # Pass the created movie data to tests
+
+    # Optional: Cleanup (if needed)
+    supabase.table("movies").delete().eq("showId", movie_id).execute()
 
 def test_add_to_watchlist(auth_headers, test_movie):
     response = auth_headers.post(

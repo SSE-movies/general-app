@@ -1,6 +1,6 @@
 import json
+import uuid  # Import uuid for generating unique usernames
 from src.database import supabase
-
 
 def test_login_page(client):
     response = client.get("/login")
@@ -35,17 +35,17 @@ def test_register_page(client):
 
 
 def test_successful_registration(client):
+    unique_username = f"user_{uuid.uuid4().hex[:8]}"  # Generate a unique username
+
     response = client.post(
         "/register",
-        data={"username": "newuser", "password": "newpass"},
+        data={"username": unique_username, "password": "newpass"},
         follow_redirects=True,
     )
     assert response.status_code == 200
     assert b"Registration successful" in response.data
 
-    # Cleanup
-    supabase.table("profiles").delete().eq("username", "newuser").execute()
-
+    supabase.table("profiles").delete().eq("username", unique_username).execute()
 
 def test_logout(auth_headers):
     response = auth_headers.get("/logout", follow_redirects=True)
