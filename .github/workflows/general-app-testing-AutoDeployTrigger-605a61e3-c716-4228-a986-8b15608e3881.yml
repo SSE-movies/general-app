@@ -30,7 +30,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          _dockerfilePathKey_: _dockerfilePath_
+          _dockerfilePathKey_: ./Dockerfile
           registryUrl: ghcr.io/sse-movies/general-app-testing:latest
           registryUsername: ${{ secrets.GENERALAPPTESTING_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.GENERALAPPTESTING_REGISTRY_PASSWORD }}
