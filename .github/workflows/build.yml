@@ -39,7 +39,7 @@ jobs:
           git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
 
   build-tailwind:
-    needs: python-format
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,7 +57,7 @@ jobs:
         run: npm run build:css
 
   unit-testing:
-    needs: build-tailwind
+    needs: [python-format, build-tailwind]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
