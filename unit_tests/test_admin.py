@@ -1,3 +1,5 @@
+import json
+
 def test_admin_page_access(admin_headers):
     response = admin_headers.get("/admin")
     assert response.status_code == 200

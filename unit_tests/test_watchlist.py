@@ -1,5 +1,5 @@
 import json
-
+import pytest
 
 @pytest.fixture
 def test_movie():
@@ -61,7 +61,6 @@ def test_remove_from_watchlist(auth_headers, test_movie):
     # Verify it's removed
     response = auth_headers.get("/my_watchlist")
     assert bytes(test_movie["title"], 'utf-8') not in response.data
-
 
 def test_mark_watched(auth_headers, test_movie):
     # Add movie to watchlist
