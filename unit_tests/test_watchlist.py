@@ -1,6 +1,6 @@
 import json
 import pytest
-
+from src.database import supabase
 
 @pytest.fixture
 def test_movie():

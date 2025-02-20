@@ -1,5 +1,5 @@
 import json
-
+from src.database import supabase
 
 def test_login_page(client):
     response = client.get("/login")
