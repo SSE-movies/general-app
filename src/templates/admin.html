@@ -24,13 +24,13 @@
                         <td class="p-3">{{ 'Admin' if user.is_admin else 'User' }}</td>
                         <td class="p-3 text-right">
                             <button 
-                                data-user-id="{{ user.id }}"
+                                onclick="openPasswordModal('{{ user.id }}')"
                                 class="change-password-btn bg-golden text-cream px-3 py-1 rounded hover:opacity-90 mr-2"
                             >
                                 Change Password
                             </button>
                             <button
-                                data-user-id="{{ user.id }}"
+                                onclick="deleteUser('{{ user.id }}')"
                                 class="delete-user-btn bg-sage text-cream px-3 py-1 rounded hover:opacity-90"
                             >
                                 Delete
@@ -49,21 +49,21 @@
     <div class="bg-sage p-6 rounded-lg shadow-lg w-96">
         <h3 class="text-lg font-bold mb-4 text-taupe">Change Password</h3>
         <div class="space-y-4">
-            <input 
-                type="password" 
-                id="newPassword" 
-                placeholder="Enter new password" 
+            <input
+                type="password"
+                id="newPassword"
+                placeholder="Enter new password"
                 class="w-full p-2 rounded bg-dark-forest text-cream border-2 border-golden focus:outline-none focus:border-taupe"
             >
             <div class="flex justify-end space-x-3">
-                <button 
-                    id="closePasswordModalBtn"
+                <button
+                    onclick="closePasswordModal()"
                     class="px-4 py-2 rounded text-cream hover:opacity-90"
                 >
                     Cancel
                 </button>
-                <button 
-                    id="savePasswordBtn"
+                <button
+                    onclick="savePassword()"
                     class="bg-golden px-4 py-2 rounded text-cream hover:opacity-90"
                 >
                     Save
@@ -72,4 +72,74 @@
         </div>
     </div>
 </div>
+
+<script>
+let currentUserId = null;
+const passwordModal = document.getElementById('passwordModal');
+const newPasswordInput = document.getElementById('newPassword');
+
+function openPasswordModal(userId) {
+    currentUserId = userId;
+    passwordModal.classList.remove('hidden');
+    newPasswordInput.value = '';
+}
+
+function closePasswordModal() {
+    passwordModal.classList.add('hidden');
+}
+
+async function savePassword() {
+    const newPassword = newPasswordInput.value;
+    if (!newPassword) return;
+
+    try {
+        const response = await fetch(`/api/users/${currentUserId}/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ newPassword })
+        });
+
+        if (response.ok) {
+            passwordModal.classList.add('hidden');
+            alert('Password updated successfully');
+        } else {
+            throw new Error('Failed to update password');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update password');
+    }
+}
+
+async function deleteUser(userId) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
+    try {
+        const response = await fetch(`/api/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete user');
+        }
+
+        const data = await response.json();
+        if (data.message === "User deleted successfully") {
+            // Find and remove the row
+            const row = document.querySelector(`tr:has(button[onclick="deleteUser('${userId}')"])`);
+            if (row) row.remove();
+        } else {
+            throw new Error('Failed to delete user');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to delete user. You cannot delete an admin user.');
+    }
+}
+</script>
 {% endblock %}

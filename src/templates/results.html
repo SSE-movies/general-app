@@ -68,7 +68,7 @@ async function addToWatchlist(event, showId) {
     const button = document.getElementById(`watchlist-btn-${showId}`);
 
     try {
-        const response = await fetch('{{ url_for("add_to_watchlist") }}', {
+        const response = await fetch('{{ url_for("watchlist.add_to_watchlist") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
