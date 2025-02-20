@@ -123,3 +123,4 @@ jobs:
             --registry-password ${{ secrets.ORG_GHCR_TOKEN }}
 
       - name: Azure Logout
+        run: az logout
