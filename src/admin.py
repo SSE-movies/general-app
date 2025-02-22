@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # Fix the Blueprint creation syntax
 admin_bp = Blueprint("admin", __name__)
 
+
 def get_user(user_id):
     """
     Fetch a user from the database by ID.
@@ -34,15 +35,13 @@ def get_user(user_id):
     """
     try:
         response = (
-            supabase.table("profiles")
-            .select("*")
-            .eq("id", user_id)
-            .execute()
+            supabase.table("profiles").select("*").eq("id", user_id).execute()
         )
         return response.data[0] if response.data else None
     except Exception as e:
         logger.error(f"Error fetching user {user_id}: {e}")
         return None
+
 
 def validate_new_username(username):
     """
@@ -59,7 +58,12 @@ def validate_new_username(username):
 
     # Check if username already exists
     try:
-        existing = supabase.table("profiles").select("*").eq("username", username).execute()
+        existing = (
+            supabase.table("profiles")
+            .select("*")
+            .eq("username", username)
+            .execute()
+        )
         if existing.data:
             return False, "Username already exists"
     except Exception as e:
@@ -67,6 +71,7 @@ def validate_new_username(username):
         return False, "Error validating username"
 
     return True, None
+
 
 @admin_bp.route("/admin")
 @admin_required
@@ -78,12 +83,16 @@ def dashboard():
             "admin.html",
             username=session.get("username"),
             users=users,
-            is_admin=session.get("is_admin", False)
+            is_admin=session.get("is_admin", False),
         )
     except Exception as e:
         logger.error(f"Admin page error: {e}")
         flash("Error loading admin dashboard", "error")
-        return render_template("admin.html", error="Failed to load user data"), 500
+        return (
+            render_template("admin.html", error="Failed to load user data"),
+            500,
+        )
+
 
 @admin_bp.route("/api/users")
 @admin_required
@@ -99,6 +108,7 @@ def get_users():
         logger.error(f"Error fetching users: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500
 
+
 @admin_bp.route("/api/users/<user_id>/reset-password", methods=["POST"])
 @admin_required
 def reset_password(user_id):
@@ -106,7 +116,12 @@ def reset_password(user_id):
     try:
         new_password = request.json.get("newPassword")
         if not new_password or len(new_password) < 8:
-            return jsonify({"error": "Password must be at least 8 characters long"}), 400
+            return (
+                jsonify(
+                    {"error": "Password must be at least 8 characters long"}
+                ),
+                400,
+            )
 
         # Check if user exists
         user = get_user(user_id)
@@ -115,18 +130,18 @@ def reset_password(user_id):
 
         # Hash and update password
         hashed_password = bcrypt.hashpw(
-            new_password.encode("utf-8"),
-            bcrypt.gensalt()
+            new_password.encode("utf-8"), bcrypt.gensalt()
         ).decode("utf-8")
 
-        supabase.table("profiles").update(
-            {"password": hashed_password}
-        ).eq("id", user_id).execute()
+        supabase.table("profiles").update({"password": hashed_password}).eq(
+            "id", user_id
+        ).execute()
 
         return jsonify({"message": "Password updated successfully"}), 200
     except Exception as e:
         logger.error(f"Error resetting password: {e}")
         return jsonify({"error": "Failed to reset password"}), 500
+
 
 @admin_bp.route("/api/users/<user_id>/username", methods=["PUT"])
 @admin_required
@@ -146,19 +161,20 @@ def update_username(user_id):
             return jsonify({"error": "User not found"}), 404
 
         # Update username in profiles
-        supabase.table("profiles").update(
-            {"username": new_username}
-        ).eq("id", user_id).execute()
+        supabase.table("profiles").update({"username": new_username}).eq(
+            "id", user_id
+        ).execute()
 
         # Update username in watchlist
-        supabase.table("watchlist").update(
-            {"username": new_username}
-        ).eq("username", user["username"]).execute()
+        supabase.table("watchlist").update({"username": new_username}).eq(
+            "username", user["username"]
+        ).execute()
 
         return jsonify({"message": "Username updated successfully"}), 200
     except Exception as e:
         logger.error(f"Error updating username: {e}")
         return jsonify({"error": "Failed to update username"}), 500
+
 
 @admin_bp.route("/api/users/<user_id>", methods=["DELETE"])
 @admin_required

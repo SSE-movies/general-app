@@ -1,6 +1,13 @@
 """Watchlist blueprint for managing user movie watchlists."""
 
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+)
 from .database import supabase, MOVIES_API_URL
 from .decorators import login_required
 import requests
@@ -42,7 +49,9 @@ def my_watchlist():
         # Normalize movie data before filtering
         for movie in all_movies:
             if "show_id" in movie:
-                movie["showId"] = movie.pop("show_id")  # Convert to match DB format
+                movie["showId"] = movie.pop(
+                    "show_id"
+                )  # Convert to match DB format
 
         # Now filter movies correctly
         movies_data = []
@@ -54,9 +63,7 @@ def my_watchlist():
         print(f"Filtered movies in watchlist: {movies_data}")
 
         return render_template(
-            "my_watchlist.html",
-            username=username,
-            movies=movies_data
+            "my_watchlist.html", username=username, movies=movies_data
         )
 
     except Exception as e:
@@ -65,9 +72,8 @@ def my_watchlist():
             "my_watchlist.html",
             username=username,
             movies=[],
-            error="Error retrieving watchlist"
+            error="Error retrieving watchlist",
         )
-
 
     except Exception as e:
         print(f"Error retrieving watchlist: {e}")
@@ -75,8 +81,9 @@ def my_watchlist():
             "my_watchlist.html",
             username=username,
             movies=[],
-            error="Error retrieving watchlist"
+            error="Error retrieving watchlist",
         )
+
 
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
@@ -99,11 +106,9 @@ def add_to_watchlist():
 
         if not existing_entry.data:
             # Add to watchlist
-            supabase.table("watchlist").insert({
-                "username": username,
-                "showId": show_id,
-                "watched": False
-            }).execute()
+            supabase.table("watchlist").insert(
+                {"username": username, "showId": show_id, "watched": False}
+            ).execute()
 
         # Return to previous page
         return redirect(request.referrer or url_for("search.index"))
@@ -111,6 +116,7 @@ def add_to_watchlist():
     except Exception as e:
         print(f"Error adding to watchlist: {e}")
         return redirect(request.referrer or url_for("search.index"))
+
 
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
@@ -133,6 +139,7 @@ def remove_from_watchlist():
         print(f"Error removing from watchlist: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
 
+
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched():
@@ -153,6 +160,7 @@ def mark_watched():
     except Exception as e:
         print(f"Error marking as watched: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
+
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required

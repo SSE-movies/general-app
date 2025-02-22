@@ -17,18 +17,20 @@ MOVIES_API_URL = "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azureconta
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 def get_movies(query_params=None):
     """
     Fetches movies from the Azure API.
     """
     try:
-        params = query_params or {'page': 1, 'per_page': 1000}
+        params = query_params or {"page": 1, "per_page": 1000}
         response = requests.get(MOVIES_API_URL, params=params)
         response.raise_for_status()
         return response.json().get("movies", [])
     except requests.RequestException as e:
         logger.error(f"Error fetching movies: {e}")
         return []
+
 
 def get_unique_categories():
     """
@@ -50,7 +52,9 @@ def get_unique_categories():
         categories = set()
         for movie in movies:
             # Try both possible field names
-            categories_str = movie.get("listed_in") or movie.get("listedIn") or ""
+            categories_str = (
+                movie.get("listed_in") or movie.get("listedIn") or ""
+            )
             logger.info(f"Categories string: {categories_str}")
 
             for category in categories_str.split(","):
@@ -115,7 +119,11 @@ def get_watchlist(username):
             .eq("username", username)
             .execute()
         )
-        return {entry["showId"] for entry in response.data} if response.data else set()
+        return (
+            {entry["showId"] for entry in response.data}
+            if response.data
+            else set()
+        )
     except Exception as e:
         logger.error(f"Error fetching watchlist: {e}")
         return set()

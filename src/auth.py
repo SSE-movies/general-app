@@ -16,6 +16,7 @@ import re
 
 auth_bp = Blueprint("auth", __name__)
 
+
 def is_valid_password(password):
     """Check if password meets security requirements."""
     if len(password) < 8:
@@ -27,6 +28,7 @@ def is_valid_password(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
         return "Password must contain at least one special character."
     return None
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -50,15 +52,14 @@ def login():
                 return render_template(
                     "login.html",
                     show_navbar=False,
-                    error="Invalid credentials"
+                    error="Invalid credentials",
                 )
 
             user_data = user_response.data[0]
 
             # Verify password
             if bcrypt.checkpw(
-                password.encode("utf-8"),
-                user_data["password"].encode("utf-8")
+                password.encode("utf-8"), user_data["password"].encode("utf-8")
             ):
                 # Store user info in session
                 session["user_id"] = user_data["id"]
@@ -75,24 +76,24 @@ def login():
                 return render_template(
                     "login.html",
                     show_navbar=False,
-                    error="Invalid credentials"
+                    error="Invalid credentials",
                 )
 
         except Exception as e:
             current_app.logger.error(f"Login error: {e}")
             return render_template(
-                "login.html",
-                show_navbar=False,
-                error="Invalid credentials"
+                "login.html", show_navbar=False, error="Invalid credentials"
             )
 
     return render_template("login.html", show_navbar=False, success=success)
+
 
 @auth_bp.route("/logout")
 def logout():
     """Log out the user by clearing session data."""
     session.clear()  # Remove user data from session
     return redirect(url_for("auth.login"))  # Redirect to login page
+
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -147,7 +148,7 @@ def register():
             return redirect(
                 url_for(
                     "auth.login",
-                    success="Registration successful. Please login now."
+                    success="Registration successful. Please login now.",
                 )
             )
 

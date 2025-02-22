@@ -24,7 +24,7 @@ def test_user():
         "id": str(uuid.uuid4()),
         "username": f"testuser_{uuid.uuid4()}",  # Unique username with UUID
         "is_admin": False,
-        "password": "password123"
+        "password": "password123",
     }
     response = supabase.table("profiles").insert(user_data).execute()
 
@@ -33,6 +33,7 @@ def test_user():
     else:
         pytest.fail(f"Failed to create test user: {response.error}")
 
+
 @pytest.fixture(scope="module")
 def test_admin():
     """Create an admin user in Supabase with a UUID."""
@@ -40,7 +41,7 @@ def test_admin():
         "id": str(uuid.uuid4()),
         "username": f"adminuser_{uuid.uuid4()}",  # Unique username for admin
         "is_admin": True,
-        "password": "adminpass123"
+        "password": "adminpass123",
     }
     response = supabase.table("profiles").insert(admin_data).execute()
 
@@ -49,10 +50,17 @@ def test_admin():
     else:
         pytest.fail(f"Failed to create test admin: {response.error}")
 
+
 @pytest.fixture(scope="module")
 def auth_headers(client, test_user):
     """Return authentication headers for a regular user."""
-    response = client.post("/auth/login", json={"username": test_user["username"], "password": test_user["password"]})
+    response = client.post(
+        "/auth/login",
+        json={
+            "username": test_user["username"],
+            "password": test_user["password"],
+        },
+    )
     token = response.json.get("access_token")
 
     if not token:
@@ -64,7 +72,13 @@ def auth_headers(client, test_user):
 @pytest.fixture(scope="module")
 def admin_headers(client, test_admin):
     """Return authentication headers for an admin user."""
-    response = client.post("/auth/login", json={"username": test_admin["username"], "password": test_admin["password"]})
+    response = client.post(
+        "/auth/login",
+        json={
+            "username": test_admin["username"],
+            "password": test_admin["password"],
+        },
+    )
     token = response.json.get("access_token")
 
     if not token:

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 search_bp = Blueprint("search", __name__)
 
+
 def get_user_watchlist(username):
     """Get list of movie IDs in user's watchlist."""
     try:
@@ -24,6 +25,7 @@ def get_user_watchlist(username):
         logger.error(f"Error fetching watchlist: {e}")
         return set()
 
+
 @search_bp.route("/search", methods=["GET", "POST"])
 @login_required
 def index():
@@ -32,10 +34,9 @@ def index():
     """
     categories = get_unique_categories()
     return render_template(
-        "search.html",
-        username=session.get("username"),
-        categories=categories
+        "search.html", username=session.get("username"), categories=categories
     )
+
 
 @search_bp.route("/results", methods=["GET"])
 @login_required
@@ -79,9 +80,7 @@ def results():
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
         return render_template(
-            "results.html",
-            username=username,
-            movies=movies_data
+            "results.html", username=username, movies=movies_data
         )
     except Exception as e:
         logger.error(f"Error fetching results: {e}")
@@ -89,5 +88,5 @@ def results():
             "results.html",
             username=session.get("username"),
             movies=[],
-            error="Failed to fetch results"
+            error="Failed to fetch results",
         )
