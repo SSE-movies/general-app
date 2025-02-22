@@ -35,117 +35,120 @@ def test_add_to_watchlist(client, auth_headers, test_movie):
     """Test adding a movie to the watchlist."""
     response = client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Ensure authenticated request
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
-    assert (
-        response.status_code == 200
-    ), f"Unexpected status code: {response.status_code}"
-    data = json.loads(response.data)
-    assert (
-        data["message"] == "Successfully added to watchlist"
-    ), f"Unexpected message: {data}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    data = response.get_json()
+    assert data["message"] == "Successfully added to watchlist", f"Unexpected message: {data}"
+
 
 
 def test_duplicate_watchlist_add(client, auth_headers, test_movie):
     """Ensure adding the same movie twice does not create duplicates."""
     client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
 
     response = client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
-    assert (
-        response.status_code == 400
-    ), f"Unexpected status code: {response.status_code}"
-    data = json.loads(response.data)
-    assert (
-        "Already in watchlist" in data["message"]
-    ), f"Unexpected message: {data}"
+
+    assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+    data = response.get_json()
+    assert "Already in watchlist" in data["message"], f"Unexpected message: {data}"
 
 
 def test_view_watchlist(client, auth_headers, test_movie):
     """Ensure the user can view their watchlist."""
     client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
 
-    response = client.get("/my_watchlist")
-    assert (
-        response.status_code == 200
-    ), f"Unexpected status code: {response.status_code}"
-    assert (
-        bytes(test_movie["title"], "utf-8") in response.data
-    ), f"Movie title missing in watchlist: {response.data}"
+    response = client.get("/my_watchlist", headers=auth_headers)  # Added headers
+
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    data = response.get_json()
+    assert any(movie["title"] == test_movie["title"] for movie in data), f"Movie title missing in watchlist: {data}"
 
 
 def test_remove_from_watchlist(client, auth_headers, test_movie):
     """Ensure movies can be removed from the watchlist."""
     client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
 
     response = client.post(
         "/remove_from_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
-    assert (
-        response.status_code == 200
-    ), f"Unexpected status code: {response.status_code}"
+
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Verify movie is removed
-    response = client.get("/my_watchlist")
-    assert (
-        bytes(test_movie["title"], "utf-8") not in response.data
-    ), f"Movie still in watchlist: {response.data}"
+    response = client.get("/my_watchlist", headers=auth_headers)  # Added headers
+    data = response.get_json()
+
+    assert not any(movie["title"] == test_movie["title"] for movie in data), f"Movie still in watchlist: {data}"
 
 
 def test_mark_watched(client, auth_headers, test_movie):
     """Ensure a movie can be marked as watched."""
     client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
 
     response = client.post(
         "/mark_watched",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
-    assert (
-        response.status_code == 200
-    ), f"Unexpected status code: {response.status_code}"
+
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
 
 
 def test_mark_unwatched(client, auth_headers, test_movie):
     """Ensure a movie can be marked as unwatched."""
     client.post(
         "/add_to_watchlist",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
     client.post(
         "/mark_watched",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
 
     response = client.post(
         "/mark_unwatched",
+        headers=auth_headers,  # Added
         json={"showId": test_movie["showId"]},
         content_type="application/json",
     )
-    assert (
-        response.status_code == 200
-    ), f"Unexpected status code: {response.status_code}"
+
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+

@@ -29,12 +29,15 @@
                             >
                                 Change Password
                             </button>
-                            <button
-                                onclick="deleteUser('{{ user.id }}')"
-                                class="delete-user-btn bg-sage text-cream px-3 py-1 rounded hover:opacity-90"
-                            >
-                                Delete
-                            </button>
+
+                            {% if not user.is_admin and user.username != username %}
+                                <button
+                                    onclick="deleteUser('{{ user.id }}')"
+                                    class="delete-user-btn bg-sage text-cream px-3 py-1 rounded hover:opacity-90"
+                                >
+                                    Delete
+                                </button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -124,21 +127,17 @@ async function deleteUser(userId) {
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to delete user');
-        }
-
         const data = await response.json();
-        if (data.message === "User deleted successfully") {
-            // Find and remove the row
-            const row = document.querySelector(`tr:has(button[onclick="deleteUser('${userId}')"])`);
-            if (row) row.remove();
+
+        if (response.ok) {
+            // Remove user from UI
+            document.querySelector(`tr:has(button[onclick="deleteUser('${userId}')"])`).remove();
         } else {
-            throw new Error('Failed to delete user');
+            alert(data.error || "Failed to delete user");
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to delete user. You cannot delete an admin user.');
+        alert('Failed to delete user.');
     }
 }
 </script>
