@@ -10,9 +10,13 @@ def test_search_page_requires_login(client):
     ), f"Unexpected redirect location: {response.location}"
 
 
-def test_search_page_access(client, auth_headers):
+def test_search_page_access(
+    auth_client,
+):  # Changed from (client, auth_headers)
     """Ensure logged-in users can access the search page."""
-    response = client.get("/search", headers=auth_headers)
+    response = auth_client.get(
+        "/search"
+    )  # No need for headers with session auth
 
     assert (
         response.status_code == 200
@@ -22,13 +26,11 @@ def test_search_page_access(client, auth_headers):
     ), f"Search page content missing: {response.data}"
 
 
-def test_search_results(client, auth_headers):
+def test_search_results(auth_client):  # Changed from (client, auth_headers)
     """Test searching by category and title."""
 
     # Test search with specific categories
-    response = client.get(
-        "/results?categories=Action%20%26%20Adventure", headers=auth_headers
-    )
+    response = auth_client.get("/results?categories=Action%20%26%20Adventure")
 
     assert (
         response.status_code == 200
@@ -38,7 +40,7 @@ def test_search_results(client, auth_headers):
     ), f"Expected movie categories missing: {response.data}"
 
     # Test search with title
-    response = client.get("/results?title=test", headers=auth_headers)
+    response = auth_client.get("/results?title=test")
 
     assert (
         response.status_code == 200
@@ -48,11 +50,11 @@ def test_search_results(client, auth_headers):
     ), f"Expected title missing in results: {response.data}"
 
 
-def test_empty_search_results(client, auth_headers):
+def test_empty_search_results(
+    auth_client,
+):  # Changed from (client, auth_headers)
     """Ensure a search with no results displays the correct message."""
-    response = client.get(
-        "/results?title=nonexistentmovie123456", headers=auth_headers
-    )
+    response = auth_client.get("/results?title=nonexistentmovie123456")
 
     assert (
         response.status_code == 200

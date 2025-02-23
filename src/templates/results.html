@@ -27,6 +27,11 @@
                             <strong>Year:</strong> {{ movie.release_year }}
                         </p>
                     {% endif %}
+        {% if movie.releaseYear %}
+            <p class="text-sm text-cream mb-1">
+                <strong>Year:</strong> {{ movie.releaseYear }}
+            </p>
+            {% endif %}
 
                     {% if movie.type %}
                         <p class="text-sm text-cream mb-1">
@@ -67,35 +72,36 @@
                 </div>
             {% endfor %}
         </div>
-
-        <!-- Pagination Controls -->
-        <div class="flex justify-center items-center mt-8">
-            {% if has_prev %}
-                <a
-                        href="{{ url_for('search.results', title=request.args.get('title', ''), type=request.args.get('type', ''), categories=request.args.getlist('categories'), release_year=request.args.get('release_year', ''), page=page-1) }}"
-                        class="px-4 py-2 mx-1 bg-golden text-dark-forest rounded hover:bg-opacity-90 transition"
-                >
-                    Previous
-                </a>
-            {% endif %}
-
-            <span class="px-4 py-2 mx-1">Page {{ page }}</span>
-
-            {% if has_next %}
-                <a
-                        href="{{ url_for('search.results', title=request.args.get('title', ''), type=request.args.get('type', ''), categories=request.args.getlist('categories'), release_year=request.args.get('release_year', ''), page=page+1) }}"
-                        class="px-4 py-2 mx-1 bg-golden text-dark-forest rounded hover:bg-opacity-90 transition"
-                >
-                    Next
-                </a>
-            {% endif %}
+        <!-- Watchlist Button -->
+        <div class="mt-auto">
+          {% if movie.in_watchlist %}
+            <button
+              disabled
+              class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block opacity-75 cursor-not-allowed"
+            >
+              Added to Watchlist
+            </button>
+          {% else %}
+            <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
+              <input type="hidden" name="showId" value="{{ movie.showId }}">
+              <button
+                type="submit"
+                class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block hover:bg-opacity-90 transition"
+              >
+                Add to Watchlist
+              </button>
+            </form>
+          {% endif %}
         </div>
+      </div>
+    {% endfor %}
+  </div>
 
-        <!-- No results message -->
-        {% if movies|length == 0 %}
-            <p class="text-cream text-center mt-8">
-                No movies found matching your search.
-            </p>
-        {% endif %}
-    </div>
+  <!-- No results message -->
+  {% if movies|length == 0 %}
+    <p class="text-cream text-center mt-8">
+      No movies found matching your search.
+    </p>
+  {% endif %}
+</div>
 {% endblock %}
