@@ -1,12 +1,14 @@
 # Movie App
 
-A Flask-based web application for [brief description of what our app will do].
-[change that at the end]
+A Flask-based web application that allows users to browse, search, and manage their Netflix movies and TV shows watchlist. The application integrates with an Azure-hosted Netflix content database and uses Supabase for user management and watchlist features.
 
 ## Features (Coming Soon)
-- Feature 1
-- Feature 2
-- Feature 3
+- User Authentication (Login/Register)
+- Browse Netflix Content Catalog
+- Search Movies and Shows by Title, Type, and Categories
+- Personal Watchlist Management
+- Admin Dashboard for User Management
+- Responsive Design with Tailwind CSS and coherence of repeated components through js
 
 ## Components
 - **`app.py`**: Main application entry point
@@ -15,12 +17,15 @@ A Flask-based web application for [brief description of what our app will do].
 
 ## Prerequisites
 - Python 3.12
+- Node.js (for Tailwind CSS)
+- Supabase Account
+- Access to Azure Netflix Content API
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone git@github.com:tiagoriely/SSE_ProjectII.git
+git clone git@github.com:SSE-movies/general-app.git
 ```
 
 2. Create and activate virtual environment:
@@ -53,15 +58,31 @@ flask run
 ```
 
 ## Testing
-[to be completed]
+To run the test suite:
+```bash
+pytest
+```
+
+The test suite includes:
+- Authentication Tests
+- Netflix Content Search Tests
+- Watchlist Management Tests
+- Admin Functionality Tests
 
 ## CI/CD
 The project uses GitHub Actions for continuous integration and deployment, including:
-- Code formatting checks (black)
+- Automated code formatting checks and improvements (black)
 - Automated testing
+- Dependency security scanning
 - Deployment to ImPaaS
-- [to add]
 
 ## API Integration
 MovieApp integrates with:
-- [to add]
+- Azure Netflix Content API for movie and TV show catalog
+- Supabase for user management and watchlist storage
+
+## Security Features
+- Password hashing with bcrypt
+- Session-based authentication
+- Protected routes with custom decorators
+- Admin access control
