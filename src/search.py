@@ -67,5 +67,9 @@ def results():
             "results.html",
             username=session.get("username"),
             movies=[],
+            page=1,
+            has_next=False,
+            has_prev=False,
+            total=0,
             error="Failed to fetch results",
         )

@@ -85,7 +85,7 @@ def get_filtered_movies(query_params=None, username=None):
 
     except requests.RequestException as e:
         logger.error(f"Error fetching filtered movies: {e}")
-        return [], None, False, False, 0
+        return [], 1, False, False, 0
 
 
 def get_unique_categories():
