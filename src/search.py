@@ -42,12 +42,17 @@ def index():
 @login_required
 def results():
     """
-    Shows filtered search results.
+    Shows filtered search results with pagination
     """
     title_query = request.args.get("title", "")
     type_query = request.args.get("type", "")
     selected_categories = request.args.getlist("categories")
     release_year = request.args.get("release_year", "")
+
+    # Pagination parameters
+    page = request.args.get("page", 1, type=int)
+    results_per_page = 10
+    offset = (page - 1) * results_per_page
 
     try:
         # Get user's watchlist
@@ -65,10 +70,16 @@ def results():
         if release_year:
             query_params["release_year"] = release_year
 
+        # Add pagination parameters
+        query_params["limit"] = results_per_page
+        query_params["offset"] = offset
+
         # Fetch movies
         response = requests.get(MOVIES_API_URL, params=query_params)
         response.raise_for_status()
-        movies_data = response.json().get("movies", [])
+        data = response.json()
+        movies_data = data.get("movies", [])
+        total = data.get("total", 0) # Total number of results
 
         # Transform field names and add watchlist status
         for movie in movies_data:
@@ -79,8 +90,18 @@ def results():
             # Add watchlist status
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
+        # Determine if there are next/previous pages
+        has_next = offset + results_per_page < total
+        has_prev = page > 1
+
         return render_template(
-            "results.html", username=username, movies=movies_data
+            "results.html",
+            username=username,
+            movies=movies_data,
+            page=page,
+            has_next=has_next,
+            has_prev=has_prev,
+            total=total,
         )
     except Exception as e:
         logger.error(f"Error fetching results: {e}")
