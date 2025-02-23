@@ -81,7 +81,10 @@ def get_filtered_movies(query_params=None, username=None):
         has_next = offset + results_per_page < total
         has_prev = page > 1
 
-        return movies, page, has_next, has_prev, total
+        # Slice movies list for the current page
+        paginated_movies = movies[offset:offset + results_per_page]
+
+        return paginated_movies, page, has_next, has_prev, total
 
     except requests.RequestException as e:
         logger.error(f"Error fetching filtered movies: {e}")
