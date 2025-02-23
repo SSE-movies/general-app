@@ -2,6 +2,8 @@
 
 import requests
 import logging
+
+from flask import request
 from supabase import create_client, Client
 
 # Set up logging
@@ -50,7 +52,9 @@ def get_filtered_movies(query_params=None, username=None):
         # Fetch filtered movies
         response = requests.get(MOVIES_API_URL, params=params)
         response.raise_for_status()
-        movies = response.json().get("movies", [])
+        data = response.json()
+        movies = data.get("movies", [])
+        total = data.get("total", 0)  # Total number of results
 
         # Get user's watchlist if username provided
         watchlist_movies = set()
@@ -68,7 +72,16 @@ def get_filtered_movies(query_params=None, username=None):
                 movie["releaseYear"] = movie.pop("release_year")
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
-        return movies
+        # Pagination parameters
+        page = request.args.get("page", 1, type=int)
+        results_per_page = 10
+        offset = (page - 1) * results_per_page
+
+        # Determine if there are next/previous pages
+        has_next = offset + results_per_page < total
+        has_prev = page > 1
+
+        return movies, page, has_next, has_prev, total
 
     except requests.RequestException as e:
         logger.error(f"Error fetching filtered movies: {e}")
