@@ -34,8 +34,7 @@ def index():
 @search_bp.route("/results", methods=["GET"])
 @login_required
 def results():
-
-    """ Shows filtered search results with pagination. """
+    """Shows filtered search results with pagination."""
     try:
         # Get search parameters
         query_params = {
@@ -49,7 +48,9 @@ def results():
         username = session.get("username")
 
         # Get filtered movies with watchlist status
-        movies, page, has_next, has_prev, total = get_filtered_movies(query_params, username)
+        movies, page, has_next, has_prev, total = get_filtered_movies(
+            query_params, username
+        )
 
         return render_template(
             "results.html",
