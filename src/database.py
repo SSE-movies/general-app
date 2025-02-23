@@ -82,7 +82,7 @@ def get_filtered_movies(query_params=None, username=None):
         has_prev = page > 1
 
         # Slice movies list for the current page
-        paginated_movies = movies[offset:offset + results_per_page]
+        paginated_movies = movies[offset : offset + results_per_page]
 
         return paginated_movies, page, has_next, has_prev, total
 
