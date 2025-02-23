@@ -65,7 +65,7 @@ def results():
         response.raise_for_status()
         data = response.json()
         movies_data = data.get("movies", [])
-        total = data.get("total", 0) # Total number of results
+        total = data.get("total", 0)  # Total number of results
 
         # Transform field names and add watchlist status
         for movie in movies_data:
@@ -87,7 +87,7 @@ def results():
             page=page,
             has_next=has_next,
             has_prev=has_prev,
-            total=total
+            total=total,
         )
     except Exception as e:
         logger.error(f"Error fetching results: {e}")
