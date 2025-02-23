@@ -75,15 +75,6 @@ def my_watchlist():
             error="Error retrieving watchlist",
         )
 
-    except Exception as e:
-        print(f"Error retrieving watchlist: {e}")
-        return render_template(
-            "my_watchlist.html",
-            username=username,
-            movies=[],
-            error="Error retrieving watchlist",
-        )
-
 
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
