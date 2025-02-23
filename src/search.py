@@ -34,20 +34,13 @@ def index():
 @search_bp.route("/results", methods=["GET"])
 @login_required
 def results():
-    """
-    Shows filtered search results with pagination
-    """
-    title_query = request.args.get("title", "")
-    type_query = request.args.get("type", "")
-    selected_categories = request.args.getlist("categories")
-    release_year = request.args.get("release_year", "")
 
     # Pagination parameters
     page = request.args.get("page", 1, type=int)
     results_per_page = 10
     offset = (page - 1) * results_per_page
 
-    """Shows filtered search results."""
+    """ Shows filtered search results with pagination. """
     try:
         # Get search parameters
         query_params = {
@@ -62,6 +55,7 @@ def results():
 
         # Get filtered movies with watchlist status
         movies = get_filtered_movies(query_params, username)
+
         # Add pagination parameters
         query_params["limit"] = results_per_page
         query_params["offset"] = offset
@@ -87,14 +81,13 @@ def results():
         has_prev = page > 1
 
         return render_template(
-            "results.html", username=username, movies=movies
             "results.html",
             username=username,
             movies=movies_data,
             page=page,
             has_next=has_next,
             has_prev=has_prev,
-            total=total,
+            total=total
         )
     except Exception as e:
         logger.error(f"Error fetching results: {e}")
