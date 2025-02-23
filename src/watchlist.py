@@ -1,16 +1,24 @@
 """Watchlist blueprint for managing user movie watchlists."""
 
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+)
 from .database import (
     get_movies,
     get_watchlist,
     add_to_watchlist,
     remove_from_watchlist,
-    update_watched_status
+    update_watched_status,
 )
 from .decorators import login_required
 
 watchlist_bp = Blueprint("watchlist", __name__)
+
 
 @watchlist_bp.route("/my_watchlist")
 @login_required
@@ -54,6 +62,7 @@ def my_watchlist():
             error="Error retrieving watchlist",
         )
 
+
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist_handler():
@@ -69,6 +78,7 @@ def add_to_watchlist_handler():
     except Exception as e:
         print(f"Error adding to watchlist: {e}")
         return redirect(request.referrer or url_for("search.index"))
+
 
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
@@ -86,6 +96,7 @@ def remove_from_watchlist_handler():
         print(f"Error removing from watchlist: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
 
+
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched_handler():
@@ -101,6 +112,7 @@ def mark_watched_handler():
     except Exception as e:
         print(f"Error marking as watched: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
+
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required

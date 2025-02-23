@@ -17,6 +17,7 @@ MOVIES_API_URL = "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azureconta
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 def get_movies():
     """Get all movies for initial loading."""
     try:
@@ -26,6 +27,7 @@ def get_movies():
     except requests.RequestException as e:
         logger.error(f"Error fetching movies: {e}")
         return []
+
 
 def get_filtered_movies(query_params=None, username=None):
     """
@@ -72,6 +74,7 @@ def get_filtered_movies(query_params=None, username=None):
         logger.error(f"Error fetching filtered movies: {e}")
         return []
 
+
 def get_unique_categories():
     """Fetches and extracts unique categories from movies."""
     try:
@@ -117,6 +120,7 @@ def add_to_watchlist(username, showId):
         logger.error(f"Error in add_to_watchlist: {e}")
         return False
 
+
 def remove_from_watchlist(username, showId):
     """Removes a movie from the user's watchlist."""
     try:
@@ -132,6 +136,7 @@ def remove_from_watchlist(username, showId):
         logger.error(f"Error in remove_from_watchlist: {e}")
         return False
 
+
 def get_watchlist(username):
     """Fetches all movies in a user's watchlist."""
     try:
@@ -145,6 +150,7 @@ def get_watchlist(username):
     except Exception as e:
         logger.error(f"Error fetching watchlist: {e}")
         return []
+
 
 def update_watched_status(username, showId, watched):
     """Updates the watched status of a movie in the watchlist."""

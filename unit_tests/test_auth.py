@@ -18,7 +18,7 @@ def test_successful_login(client, test_user):
             "username": test_user["username"],
             "password": test_user["password"],
         },
-        follow_redirects=True
+        follow_redirects=True,
     )
 
     assert response.status_code == 200
@@ -29,11 +29,7 @@ def test_successful_login(client, test_user):
 def test_invalid_login(client):
     """Ensure incorrect credentials result in an error message."""
     response = client.post(
-        "/login",
-        data={
-            "username": "wronguser",
-            "password": "wrongpass"
-        }
+        "/login", data={"username": "wronguser", "password": "wrongpass"}
     )
 
     assert response.status_code == 200
@@ -55,19 +51,21 @@ def test_successful_registration(client):
 
     response = client.post(
         "/register",
-        data={
-            "username": unique_username,
-            "password": valid_password
-        },
-        follow_redirects=True
+        data={"username": unique_username, "password": valid_password},
+        follow_redirects=True,
     )
 
     assert response.status_code == 200
-    assert b"Registration successful" in response.data or b"Login" in response.data
+    assert (
+        b"Registration successful" in response.data
+        or b"Login" in response.data
+    )
 
     # Cleanup: Remove the test user
     try:
-        supabase.table("profiles").delete().eq("username", unique_username).execute()
+        supabase.table("profiles").delete().eq(
+            "username", unique_username
+        ).execute()
     except Exception as e:
         print(f"Failed to delete test user {unique_username}: {e}")
 
@@ -76,10 +74,7 @@ def test_duplicate_registration(client, test_user):
     """Test registration with existing username."""
     response = client.post(
         "/register",
-        data={
-            "username": test_user["username"],
-            "password": "TestPass123!"
-        }
+        data={"username": test_user["username"], "password": "TestPass123!"},
     )
 
     assert response.status_code == 200
@@ -92,8 +87,8 @@ def test_invalid_password_registration(client):
         "/register",
         data={
             "username": f"testuser_{uuid.uuid4()}",
-            "password": "weak"  # Too short, missing requirements
-        }
+            "password": "weak",  # Too short, missing requirements
+        },
     )
 
     assert response.status_code == 200

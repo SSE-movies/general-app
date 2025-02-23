@@ -23,13 +23,13 @@ def test_user():
     """Create a regular test user in Supabase with a UUID."""
     # Hash the password as your registration does
     password = "password123"
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     user_data = {
         "id": str(uuid.uuid4()),
         "username": f"testuser_{uuid.uuid4()}",  # Unique username with UUID
         "is_admin": False,
-        "password": hashed_password.decode('utf-8'),  # Store hashed password
+        "password": hashed_password.decode("utf-8"),  # Store hashed password
     }
     response = supabase.table("profiles").insert(user_data).execute()
 
@@ -39,7 +39,7 @@ def test_user():
             "id": user_data["id"],
             "username": user_data["username"],
             "is_admin": user_data["is_admin"],
-            "password": password  # Return original password for login
+            "password": password,  # Return original password for login
         }
     else:
         pytest.fail(f"Failed to create test user: {response.error}")
@@ -50,13 +50,13 @@ def test_admin():
     """Create an admin user in Supabase with a UUID."""
     # Hash the password
     password = "adminpass123"
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     admin_data = {
         "id": str(uuid.uuid4()),
         "username": f"adminuser_{uuid.uuid4()}",  # Unique username for admin
         "is_admin": True,
-        "password": hashed_password.decode('utf-8'),  # Store hashed password
+        "password": hashed_password.decode("utf-8"),  # Store hashed password
     }
     response = supabase.table("profiles").insert(admin_data).execute()
 
@@ -66,7 +66,7 @@ def test_admin():
             "id": admin_data["id"],
             "username": admin_data["username"],
             "is_admin": admin_data["is_admin"],
-            "password": password  # Return original password for login
+            "password": password,  # Return original password for login
         }
     else:
         pytest.fail(f"Failed to create test admin: {response.error}")
@@ -83,14 +83,16 @@ def auth_client(client, test_user):
                 "username": test_user["username"],
                 "password": test_user["password"],
             },
-            follow_redirects=True
+            follow_redirects=True,
         )
 
         if response.status_code != 200:
             pytest.fail(
-                f"Failed to authenticate test user. Status code: {response.status_code}, Response: {response.data}")
+                f"Failed to authenticate test user. Status code: {response.status_code}, Response: {response.data}"
+            )
 
     return client
+
 
 @pytest.fixture(scope="module")
 def admin_client(client, test_admin):
@@ -103,7 +105,7 @@ def admin_client(client, test_admin):
                 "username": test_admin["username"],
                 "password": test_admin["password"],
             },
-            follow_redirects=True
+            follow_redirects=True,
         )
 
         if response.status_code != 200:
@@ -117,8 +119,13 @@ def admin_client(client, test_admin):
 def cleanup(test_user, test_admin):
     yield
     # Delete test users from database after tests
-    supabase.table("profiles").delete().eq("username", test_user["username"]).execute()
-    supabase.table("profiles").delete().eq("username", test_admin["username"]).execute()
+    supabase.table("profiles").delete().eq(
+        "username", test_user["username"]
+    ).execute()
+    supabase.table("profiles").delete().eq(
+        "username", test_admin["username"]
+    ).execute()
+
 
 @pytest.fixture
 def test_movie():
@@ -132,7 +139,7 @@ def test_movie():
         "description": "Test description",
         "release_year": 2024,
         "duration": "90 min",
-        "rating": "TV-14"
+        "rating": "TV-14",
     }
 
     yield movie_data
