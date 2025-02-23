@@ -22,11 +22,11 @@
           <strong>Categories:</strong> {{ movie.listedIn }}
         </p>
 
-        {% if movie.release_year %}
-        <p class="text-sm text-cream mb-1">
-          <strong>Year:</strong> {{ movie.release_year }}
-        </p>
-        {% endif %}
+        {% if movie.releaseYear %}
+            <p class="text-sm text-cream mb-1">
+                <strong>Year:</strong> {{ movie.releaseYear }}
+            </p>
+            {% endif %}
 
         {% if movie.type %}
         <p class="text-sm text-cream mb-1">
@@ -53,7 +53,7 @@
               Added to Watchlist
             </button>
           {% else %}
-            <form method="POST" action="{{ url_for('watchlist.add_to_watchlist') }}">
+            <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
               <input type="hidden" name="showId" value="{{ movie.showId }}">
               <button
                 type="submit"
