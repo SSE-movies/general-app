@@ -72,7 +72,7 @@ def get_filtered_movies(query_params=None, username=None):
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
         # Pagination parameters
-        total = data.get("total", 0)  # Total number of results
+        total = len(movies)  # Total number of results
         page = request.args.get("page", 1, type=int)
         results_per_page = 10
         offset = (page - 1) * results_per_page
