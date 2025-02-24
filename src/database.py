@@ -54,7 +54,6 @@ def get_filtered_movies(query_params=None, username=None):
         response.raise_for_status()
         data = response.json()
         movies = data.get("movies", [])
-        total = data.get("total", 0)  # Total number of results
 
         # Get user's watchlist if username provided
         watchlist_movies = set()
@@ -73,16 +72,17 @@ def get_filtered_movies(query_params=None, username=None):
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
         # Pagination parameters
+        total = data.get("total", 0)  # Total number of results
         page = request.args.get("page", 1, type=int)
         results_per_page = 10
         offset = (page - 1) * results_per_page
 
         # Determine if there are next/previous pages
-        has_next = offset + results_per_page < total
+        has_next = (offset + results_per_page) < total
         has_prev = page > 1
 
         # Slice movies list for the current page
-        paginated_movies = movies[offset : offset + results_per_page]
+        paginated_movies = movies[offset : (offset + results_per_page)]
 
         return paginated_movies, page, has_next, has_prev, total
 
