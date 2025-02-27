@@ -37,10 +37,17 @@ def test_user():
 
     # Hash the password before storing
     salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt).decode(
+        "utf-8"
+    )
 
     # Check if user exists first
-    existing_user = supabase.table("profiles").select("*").eq("username", username).execute()
+    existing_user = (
+        supabase.table("profiles")
+        .select("*")
+        .eq("username", username)
+        .execute()
+    )
 
     if not existing_user.data:
         # Create new user only if doesn't exist

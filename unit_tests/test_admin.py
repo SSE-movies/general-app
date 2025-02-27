@@ -54,7 +54,13 @@ def test_admin():
 @pytest.fixture(scope="module")
 def admin_user():
     """Get the existing admin user for tests."""
-    admin = supabase.table("profiles").select("*").eq("is_admin", True).limit(1).execute()
+    admin = (
+        supabase.table("profiles")
+        .select("*")
+        .eq("is_admin", True)
+        .limit(1)
+        .execute()
+    )
     if not admin.data:
         pytest.skip("No admin user found in database")
     return admin.data[0]
