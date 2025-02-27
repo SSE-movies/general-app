@@ -15,9 +15,9 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Get configuration from environment
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-MOVIES_API_URL = os.getenv('MOVIES_API_URL')
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+MOVIES_API_URL = os.getenv("MOVIES_API_URL")
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
