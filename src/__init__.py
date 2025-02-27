@@ -11,12 +11,14 @@ load_dotenv()
 def create_app(testing=False):  # Add 'testing' parameter
     """Create and configure the Flask application."""
     app = Flask(__name__)
-    
+
     # Set secret key from environment or use a default for testing
     if testing:
         app.config["SECRET_KEY"] = "test_secret_key"
     else:
-        app.config["SECRET_KEY"] = os.getenv('FLASK_SECRET_KEY', 'default-dev-key')
+        app.config["SECRET_KEY"] = os.getenv(
+            "FLASK_SECRET_KEY", "default-dev-key"
+        )
 
     # Set testing configurations if testing mode is enabled
     if testing:

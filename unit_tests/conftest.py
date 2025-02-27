@@ -15,7 +15,7 @@ def app():
     os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk'
     
     app = create_app(testing=True)
-    app.config['SECRET_KEY'] = 'test_secret_key'
+    app.config["SECRET_KEY"] = "test_secret_key"
     yield app
 
 
