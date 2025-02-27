@@ -102,13 +102,13 @@ def get_unique_categories():
         response = requests.get(MOVIES_API_URL, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         movies = response.json().get("movies", [])
-        
+
         # Extract and flatten categories
         categories = set()
         for movie in movies:
             movie_categories = movie.get("listed_in", "").split(",")
             categories.update(cat.strip() for cat in movie_categories)
-        
+
         return sorted(list(categories))
     except requests.RequestException as e:
         logger.error(f"Error fetching categories: {e}")
