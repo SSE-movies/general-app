@@ -97,26 +97,21 @@ def get_filtered_movies(query_params=None, username=None):
 
 
 def get_unique_categories():
-    """Fetches and extracts unique categories from movies."""
+    """Get list of unique categories from all movies."""
     try:
-        response = requests.get(f"{MOVIES_API_URL}?page=1&per_page=1000")
+        response = requests.get(MOVIES_API_URL, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
-        data = response.json()
-
-        movies = data.get("movies", [])
+        movies = response.json().get("movies", [])
+        
+        # Extract and flatten categories
         categories = set()
         for movie in movies:
-            categories_str = (
-                movie.get("listed_in") or movie.get("listedIn") or ""
-            )
-            for category in categories_str.split(","):
-                clean_cat = category.strip()
-                if clean_cat:
-                    categories.add(clean_cat)
-
+            movie_categories = movie.get("listed_in", "").split(",")
+            categories.update(cat.strip() for cat in movie_categories)
+        
         return sorted(list(categories))
-    except Exception as e:
-        logger.error(f"Error in get_unique_categories: {e}")
+    except requests.RequestException as e:
+        logger.error(f"Error fetching categories: {e}")
         return []
 
 
