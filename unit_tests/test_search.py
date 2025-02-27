@@ -29,31 +29,35 @@ def test_search_page_access(
 def test_search_results(auth_client):
     """Test searching by category and title."""
     import os
-    
+
     # Debug log the environment variable
     print(f"MOVIES_API_URL in test: {os.environ.get('MOVIES_API_URL')}")
-    
+
     # Test search with specific categories
     response = auth_client.get("/results?categories=Action%20%26%20Adventure")
-    
+
     assert response.status_code == 200
-    
+
     # Accept either movie results or no results message
-    assert any([
-        b"Action" in response.data,
-        b"Adventure" in response.data,
-        b"No movies found" in response.data
-    ]), "Expected either movie categories or no results message"
-    
+    assert any(
+        [
+            b"Action" in response.data,
+            b"Adventure" in response.data,
+            b"No movies found" in response.data,
+        ]
+    ), "Expected either movie categories or no results message"
+
     # Test search with title
     response = auth_client.get("/results?title=test")
-    
+
     assert response.status_code == 200
-    assert any([
-        b"test" in response.data.lower(),
-        b"movie" in response.data.lower(),
-        b"No movies found" in response.data
-    ]), "Expected either movie results or no results message"
+    assert any(
+        [
+            b"test" in response.data.lower(),
+            b"movie" in response.data.lower(),
+            b"No movies found" in response.data,
+        ]
+    ), "Expected either movie results or no results message"
 
 
 def test_empty_search_results(
