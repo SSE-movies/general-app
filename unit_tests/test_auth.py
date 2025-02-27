@@ -12,6 +12,9 @@ def test_login_page(client):
 
 def test_successful_login(client, test_user):
     """Ensure a user can log in with correct credentials."""
+    with client.session_transaction() as sess:
+        sess['_fresh'] = True
+    
     response = client.post(
         "/login",
         data={
