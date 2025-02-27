@@ -1,0 +1,22 @@
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
+ignore=CVS,venv,.git,__pycache__
+
+[MESSAGES CONTROL]
+disable=
+    C0415,  # Import outside toplevel
+    W0718,  # Broad exception caught
+    W1203,  # f-string in logging
+    E0401,  # Unable to import
+    C0103,  # Invalid name
+    R1719,  # Simplifiable if expression
+    R0914,  # Too many local variables
+    C0116,  # Missing docstring
+    W0612,  # Unused variable
+    R1705   # Unnecessary else after return
+
+[FORMAT]
+max-line-length=100
+
+[BASIC]
+good-names=e,id,bp
