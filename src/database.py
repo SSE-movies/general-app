@@ -9,6 +9,9 @@ from supabase import create_client, Client
 # Set up logging
 logger = logging.getLogger(__name__)
 
+# Constants
+TIMEOUT_SECONDS = 10  # Add a reasonable timeout constant
+
 # Get configuration from environment
 MOVIES_API_URL = os.environ.get("MOVIES_API_URL")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -23,7 +26,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 def get_movies():
     """Get all movies for initial loading."""
     try:
-        response = requests.get(MOVIES_API_URL)
+        response = requests.get(MOVIES_API_URL, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         return response.json().get("movies", [])
     except requests.RequestException as e:
@@ -50,7 +53,11 @@ def get_filtered_movies(query_params=None, username=None):
                 params["release_year"] = query_params["release_year"]
 
         # Fetch filtered movies
-        response = requests.get(MOVIES_API_URL, params=params)
+        response = requests.get(
+            MOVIES_API_URL,
+            params=params,
+            timeout=TIMEOUT_SECONDS
+        )
         response.raise_for_status()
         data = response.json()
         movies = data.get("movies", [])
@@ -182,3 +189,17 @@ def update_watched_status(username, showId, watched):
     except Exception as e:
         logger.error(f"Error updating watched status: {e}")
         return False
+
+
+def get_movie_by_id(movie_id):
+    """Get a specific movie by its ID."""
+    try:
+        response = requests.get(
+            f"{MOVIES_API_URL}/{movie_id}",
+            timeout=TIMEOUT_SECONDS
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logger.error(f"Error fetching movie {movie_id}: {e}")
+        return None
