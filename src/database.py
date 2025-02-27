@@ -1,4 +1,4 @@
-"""Database and API configuration module."""
+"""Database and API configuration module"""
 
 import logging
 import os
