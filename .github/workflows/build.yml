@@ -38,8 +38,23 @@ jobs:
           git add .
           git diff --quiet && git diff --staged --quiet || (git commit -m "Apply automatic formatting changes" && git push)
 
+  build-tailwind:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Build Tailwind CSS
+        run: npm run build:css
+
   python-lint:
-    needs: python-format
+    needs: [python-format, build-tailwind]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,21 +70,6 @@ jobs:
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           pylint src/
-
-  build-tailwind:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-      - name: Install npm dependencies
-        run: npm install
-      - name: Build Tailwind CSS
-        run: npm run build:css
 
   unit-testing:
     needs: [python-format, build-tailwind]
