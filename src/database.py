@@ -1,8 +1,8 @@
 """Database and API configuration module."""
 
+import logging
 import os
 import requests
-import logging
 from flask import request
 from supabase import create_client, Client
 

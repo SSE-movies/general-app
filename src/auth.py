@@ -1,5 +1,6 @@
 """Authentication blueprint for user login, registration, and logout."""
 
+import re
 from flask import (
     Blueprint,
     render_template,
@@ -11,8 +12,6 @@ from flask import (
 )
 import bcrypt
 from .database import supabase
-from .decorators import login_required
-import re
 
 auth_bp = Blueprint("auth", __name__)
 
