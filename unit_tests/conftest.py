@@ -31,29 +31,32 @@ def client(app):
 
 @pytest.fixture(scope="module")
 def test_user():
-    """Create a regular test user in Supabase with a UUID."""
-    # Hash the password as your registration does
+    """Create a test user for authentication tests."""
+    username = f"testuser_{uuid.uuid4()}"
     password = "password123"
-    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
-    user_data = {
-        "id": str(uuid.uuid4()),
-        "username": f"testuser_{uuid.uuid4()}",  # Unique username with UUID
-        "is_admin": False,
-        "password": hashed_password.decode("utf-8"),  # Store hashed password
-    }
-    response = supabase.table("profiles").insert(user_data).execute()
-
-    if response.data:
-        # Return user data with plain password for testing
-        return {
-            "id": user_data["id"],
-            "username": user_data["username"],
-            "is_admin": user_data["is_admin"],
-            "password": password,  # Return original password for login
-        }
-    else:
-        pytest.fail(f"Failed to create test user: {response.error}")
+    
+    # Hash the password before storing
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    
+    # Check if user exists first
+    existing_user = supabase.table("profiles").select("*").eq("username", username).execute()
+    
+    if not existing_user.data:
+        # Create new user only if doesn't exist
+        supabase.table("profiles").insert({
+            "username": username,
+            "password": hashed_password,
+            "is_admin": False  # Ensure we never create test admin users
+        }).execute()
+    
+    yield {"username": username, "password": password}
+    
+    # Cleanup - remove test user after tests
+    try:
+        supabase.table("profiles").delete().eq("username", username).execute()
+    except Exception as e:
+        print(f"Cleanup error: {e}")
 
 
 @pytest.fixture(scope="module")

@@ -49,3 +49,12 @@ def test_admin():
         return admin_data  # Return the created admin user data
     else:
         pytest.fail(f"Failed to create test admin: {response.error}")
+
+
+@pytest.fixture(scope="module")
+def admin_user():
+    """Get the existing admin user for tests."""
+    admin = supabase.table("profiles").select("*").eq("is_admin", True).limit(1).execute()
+    if not admin.data:
+        pytest.skip("No admin user found in database")
+    return admin.data[0]
