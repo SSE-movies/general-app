@@ -10,9 +10,9 @@ from supabase import create_client, Client
 logger = logging.getLogger(__name__)
 
 # Get configuration from environment
-MOVIES_API_URL = os.environ.get('MOVIES_API_URL')
-SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+MOVIES_API_URL = os.environ.get("MOVIES_API_URL")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 logger.debug(f"MOVIES_API_URL: {MOVIES_API_URL}")
 
