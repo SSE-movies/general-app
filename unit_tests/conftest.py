@@ -9,7 +9,7 @@ from src.database import supabase  # Import Supabase client
 def app():
     """Create and configure a new app instance for each test module."""
     app = create_app(testing=True)
-    app.config['SECRET_KEY'] = 'test_secret_key'
+    app.config["SECRET_KEY"] = "test_secret_key"
     yield app
 
 
