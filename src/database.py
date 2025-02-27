@@ -54,9 +54,7 @@ def get_filtered_movies(query_params=None, username=None):
 
         # Fetch filtered movies
         response = requests.get(
-            MOVIES_API_URL,
-            params=params,
-            timeout=TIMEOUT_SECONDS
+            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
         )
         response.raise_for_status()
         data = response.json()
@@ -195,8 +193,7 @@ def get_movie_by_id(movie_id):
     """Get a specific movie by its ID."""
     try:
         response = requests.get(
-            f"{MOVIES_API_URL}/{movie_id}",
-            timeout=TIMEOUT_SECONDS
+            f"{MOVIES_API_URL}/{movie_id}", timeout=TIMEOUT_SECONDS
         )
         response.raise_for_status()
         return response.json()
