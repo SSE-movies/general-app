@@ -1,14 +1,15 @@
 """Flask application factory module."""
-
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template
 
+# Load environment variables
+load_dotenv()
 
 def create_app(testing=False):  # Add 'testing' parameter
     """Create and configure the Flask application."""
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = (
-        "1168e24e45fd86b30c4dcaebe79a43422681755abb9111ff"
-    )
+    app.config["SECRET_KEY"] = os.getenv('FLASK_SECRET_KEY')
 
     # Set testing configurations if testing mode is enabled
     if testing:

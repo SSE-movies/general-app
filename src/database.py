@@ -1,20 +1,23 @@
 """Database and API configuration module."""
 
+import os
+from dotenv import load_dotenv
 import requests
 import logging
 
 from flask import request
 from supabase import create_client, Client
 
+# Load environment variables
+load_dotenv()
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
-# Supabase credentials
-SUPABASE_URL = "https://euibanwordbygkxadvrx.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aWJhbndvcmRieWdreGFkdnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzNjM2NDcsImV4cCI6MjA1NDkzOTY0N30.E5AeoS2-6vCHnt1PqsGAtMnaBB8xR48D8XhJ4jvwoEk"
-
-# Movies API URL
-MOVIES_API_URL = "http://sse-movies-project2.emdke0g3fbhkfrgy.uksouth.azurecontainer.io/movies"
+# Get configuration from environment
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+MOVIES_API_URL = os.getenv('MOVIES_API_URL')
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
