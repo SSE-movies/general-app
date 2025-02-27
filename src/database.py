@@ -1,23 +1,20 @@
 """Database and API configuration module."""
 
 import os
-from dotenv import load_dotenv
 import requests
 import logging
-
 from flask import request
 from supabase import create_client, Client
-
-# Load environment variables
-load_dotenv()
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
 # Get configuration from environment
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-MOVIES_API_URL = os.getenv("MOVIES_API_URL")
+MOVIES_API_URL = os.environ.get('MOVIES_API_URL')
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+
+logger.debug(f"MOVIES_API_URL: {MOVIES_API_URL}")
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
