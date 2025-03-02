@@ -108,11 +108,15 @@ def get_unique_categories():
         categories = set()
         for movie in movies:
             # Check both possible field names (listed_in and listedIn)
-            category_field = movie.get("listed_in") or movie.get("listedIn") or ""
+            category_field = (
+                movie.get("listed_in") or movie.get("listedIn") or ""
+            )
             if category_field:
                 movie_categories = category_field.split(",")
-                categories.update(cat.strip() for cat in movie_categories if cat.strip())
-        
+                categories.update(
+                    cat.strip() for cat in movie_categories if cat.strip()
+                )
+
         return sorted(list(categories))
     except requests.RequestException as e:
         logger.error(f"Error fetching categories: {e}")
