@@ -84,8 +84,8 @@ def get_filtered_movies(query_params=None, username=None):
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
         # Determine pagination flags
-        has_next = (len(movies) == results_per_page)  # assume a next page if full page was returned
-        has_prev = (page > 1)
+        has_next = len(movies) == results_per_page  # assume a next page if full page was returned
+        has_prev = page > 1
 
         # Don't return total for now
         return movies, page, has_next, has_prev, None
