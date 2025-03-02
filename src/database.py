@@ -37,7 +37,8 @@ def get_movies():
 def get_filtered_movies(query_params=None, username=None):
     """
     Fetches and filters movies based on search criteria.
-    Also marks watchlist status if username is provided.
+    Marks watchlist status if username is provided.
+    Passes pagination parameters to the API so that only 10 movies are fetched at a time.
     """
     try:
         # Build query params
@@ -51,6 +52,12 @@ def get_filtered_movies(query_params=None, username=None):
                 params["categories"] = query_params["categories"]
             if query_params.get("release_year"):
                 params["release_year"] = query_params["release_year"]
+
+        # Add pagination parameters to the API request
+        page = request.args.get("page", 1, type=int)
+        results_per_page = 10
+        params["page"] = page
+        params["per_page"] = results_per_page
 
         # Fetch filtered movies
         response = requests.get(
@@ -66,7 +73,7 @@ def get_filtered_movies(query_params=None, username=None):
             watchlist = get_watchlist(username)
             watchlist_movies = {entry["showId"] for entry in watchlist}
 
-        # Normalize field names and add watchlist status
+        # Normalise field names and add watchlist status
         for movie in movies:
             if "listed_in" in movie:
                 movie["listedIn"] = movie.pop("listed_in")
@@ -76,24 +83,16 @@ def get_filtered_movies(query_params=None, username=None):
                 movie["releaseYear"] = movie.pop("release_year")
             movie["in_watchlist"] = movie["showId"] in watchlist_movies
 
-        # Pagination parameters
-        total = len(movies)  # Total number of results
-        page = request.args.get("page", 1, type=int)
-        results_per_page = 10
-        offset = (page - 1) * results_per_page
+        # Determine pagination flags
+        has_next = (len(movies) == results_per_page)  # assume a next page if full page was returned
+        has_prev = (page > 1)
 
-        # Determine if there are next/previous pages
-        has_next = (offset + results_per_page) < total
-        has_prev = page > 1
-
-        # Slice movies list for the current page
-        paginated_movies = movies[offset : (offset + results_per_page)]
-
-        return paginated_movies, page, has_next, has_prev, total
+        # Don't return total for now
+        return movies, page, has_next, has_prev, None
 
     except requests.RequestException as e:
         logger.error(f"Error fetching filtered movies: {e}")
-        return [], 1, False, False, 0
+        return [], 1, False, False, None
 
 
 def get_unique_categories():
