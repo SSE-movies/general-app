@@ -113,7 +113,9 @@ def get_unique_categories():
             )
             if category_field:
                 movie_categories = category_field.split(",")
-                categories.update(cat.strip() for cat in movie_categories if cat.strip())
+                categories.update(
+                    cat.strip() for cat in movie_categories if cat.strip()
+                )
 
         return sorted(list(categories))
     except requests.RequestException as e:
