@@ -15,7 +15,6 @@ deprecation==2.1.0
 dnspython==2.7.0
 Flask==3.0.3
 Flask-Bcrypt==1.0.1
-Flask-PyMongo==3.0.1
 Flask-Session==0.8.0
 frozenlist==1.5.0
 gotrue==2.11.3
@@ -42,7 +41,6 @@ postgrest==0.19.3
 propcache==0.2.1
 pydantic==2.10.6
 pydantic_core==2.27.2
-pymongo==4.11.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 realtime==2.3.0
