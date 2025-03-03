@@ -16,10 +16,4 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('daisyui'),
-  ],
-  daisyui: {
-    // optional theme config
-  },
 }
