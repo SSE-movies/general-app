@@ -22,7 +22,7 @@
                     <img src="{{ movie.posterUrl }}" alt="{{ movie.title }} Poster" class="mx-auto my-4">
                 {% endif %}
                 <p class="text-cream">{{ movie.description }}</p>
-                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist') }}">
+                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
                     <input type="hidden" name="showId" value="{{ movie.showId }}">
                     <button type="submit" class="bg-golden text-dark-forest px-4 py-2 rounded hover:bg-opacity-80 transition">
                         Add to Watchlist
