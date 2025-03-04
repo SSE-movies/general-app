@@ -1,4 +1,5 @@
 """Watchlist blueprint for managing user movie watchlists."""
+from database import get_watchlist_movies
 
 from flask import (
     Blueprint,
@@ -26,28 +27,7 @@ def my_watchlist():
     try:
         username = session.get("username")
 
-        # Get watchlist entries
-        watchlist_entries = get_watchlist(username)
-
-        # Get all movies
-        all_movies = get_movies()
-
-        # Create watched status lookup
-        watched_dict = {
-            entry["showId"]: entry.get("watched", False)
-            for entry in watchlist_entries
-        }
-
-        # Filter and process movies that are in the watchlist
-        movies_data = []
-        for movie in all_movies:
-            # Normalize the show_id key
-            if "show_id" in movie:
-                movie["showId"] = movie.pop("show_id")
-
-            if movie["showId"] in watched_dict:
-                movie["watched"] = watched_dict[movie["showId"]]
-                movies_data.append(movie)
+        movies_data = get_watchlist_movies(username)
 
         return render_template(
             "my_watchlist.html", username=username, movies=movies_data

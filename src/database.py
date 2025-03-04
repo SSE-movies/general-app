@@ -174,6 +174,32 @@ def get_watchlist(username):
     except Exception as e:
         logger.error(f"Error fetching watchlist: {e}")
         return []
+    
+
+def get_watchlist_movies(username):
+    """
+    Retrieve movies that are in the user's watchlist.
+    Normalizes keys and attaches the watched status.
+    """
+    watchlist_entries = get_watchlist(username)
+    all_movies = get_movies()
+
+    # Build a lookup for the watched status.
+    watched_dict = {
+        entry["showId"]: entry.get("watched", False)
+        for entry in watchlist_entries
+    }
+
+    movies_data = []
+    for movie in all_movies:
+        # Normalize the key if needed.
+        if "show_id" in movie:
+            movie["showId"] = movie.pop("show_id")
+        # If the movie is in the watchlist, update its watched status.
+        if movie["showId"] in watched_dict:
+            movie["watched"] = watched_dict[movie["showId"]]
+            movies_data.append(movie)
+    return movies_data
 
 
 def update_watched_status(username, showId, watched):

@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, session
 from google import genai
 from google.genai import types
 
-from .database import get_movies, get_watchlist
+from .database import get_watchlist_movies
 from .decorators import login_required
 
 
@@ -43,23 +43,7 @@ def recommendations():
     username = session.get("username")
 
     try:
-        # Retrieve the user's watchlist entries and all movies
-        watchlist_entries = get_watchlist(username)
-        all_movies = get_movies()
-
-        # Build a lookup for movies that are in the watchlist (with watched status)
-        watched_dict = {
-            entry["showId"]: entry.get("watched", False)
-            for entry in watchlist_entries
-        }
-        movies_data = []
-        for movie in all_movies:
-            # Normalise key if needed.
-            if "show_id" in movie:
-                movie["showId"] = movie.pop("show_id")
-            if movie["showId"] in watched_dict:
-                movie["watched"] = watched_dict[movie["showId"]]
-                movies_data.append(movie)
+        movies_data = get_watchlist_movies()
 
         # Build a prompt that includes watchlist movie details if available.
         if movies_data:
