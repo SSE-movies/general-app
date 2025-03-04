@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendations{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto text-center">
+    <h1 class="text-4xl font-bold mb-6 text-golden">Movie Recommendations</h1>
+    
+    <!-- Optional: Refresh button to get new recommendations -->
+    <form action="/recommendations" method="GET" class="flex justify-center mb-6">
+        <button type="submit" class="bg-golden text-dark-forest px-6 py-2 rounded-lg hover:bg-opacity-80 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cream">
+            Refresh Recommendations
+        </button>
+    </form>
+
+    <!-- Recommendations results -->
+    <div class="movie-results mt-6">
+        {% for movie in recommendations %}
+            <div class="movie mb-4 p-4 bg-taupe rounded-lg">
+                <h3 class="text-2xl font-semibold">{{ movie.title }}</h3>
+                {% if movie.posterUrl %}
+                    <img src="{{ movie.posterUrl }}" alt="{{ movie.title }} Poster" class="mx-auto my-4">
+                {% endif %}
+                <p class="text-cream">{{ movie.description }}</p>
+                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist') }}">
+                    <input type="hidden" name="showId" value="{{ movie.showId }}">
+                    <button type="submit" class="bg-golden text-dark-forest px-4 py-2 rounded hover:bg-opacity-80 transition">
+                        Add to Watchlist
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <p class="text-cream">No recommendations available at this time.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

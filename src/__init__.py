@@ -30,12 +30,14 @@ def create_app(testing=False):  # Add 'testing' parameter
     from .search import search_bp
     from .watchlist import watchlist_bp
     from .admin import admin_bp
+    from .recommendations import recommendations_bp
 
     # Register blueprints with URL prefixes
     app.register_blueprint(auth_bp)
     app.register_blueprint(search_bp, url_prefix="/")
     app.register_blueprint(watchlist_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(recommendations_bp)
 
     @app.route("/")
     def index():
