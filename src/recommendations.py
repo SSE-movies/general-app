@@ -1,4 +1,5 @@
 """Blueprint for handling movie recommendations using the Gemini API."""
+
 import json
 import os
 
@@ -27,7 +28,7 @@ def recommendations():
     )
     try:
         # Instantiate the Gemini model (using "gemini-2.0-flash" as the model identifier)
-        model = genai.GenerativeModel("gemini-2.0-flash") # noqa: E1101
+        model = genai.GenerativeModel("gemini-2.0-flash")  # noqa: E1101
         response = model.generate_content(prompt)
         recommendations_list = json.loads(response.text)
     except Exception as e:
