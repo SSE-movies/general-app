@@ -36,10 +36,11 @@ def recommendations():
     prompt = (
         "Provide a JSON array of 3 movie recommendations. "
         "Each recommendation should include the following fields: "
-        "title, description, and releaseYear. "
+        "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), description, showId, and in_watchlist=False."
         "Return only the JSON array without any additional text or markdown formatting. "
         "Ensure the response is valid JSON."
-    )
+        )
+
 
     try:
         response = client.models.generate_content(

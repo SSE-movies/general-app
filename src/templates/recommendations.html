@@ -3,8 +3,8 @@
 {% block title %}Recommendations{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto text-center">
-    <h1 class="text-4xl font-bold mb-6 text-golden">Movie Recommendations</h1>
+<div class="max-w-7xl mx-auto py-8 px-4">
+    <h1 class="text-4xl font-bold text-center mb-8 text-golden">Movie Recommendations</h1>
     
     <!-- Optional: Refresh button to get new recommendations -->
     <form action="/recommendations" method="GET" class="flex justify-center mb-6">
@@ -13,21 +13,55 @@
         </button>
     </form>
 
-    <!-- Recommendations results -->
-    <div class="movie-results mt-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for movie in recommendations %}
-            <div class="movie mb-4 p-4 bg-taupe rounded-lg">
-                <h3 class="text-2xl font-semibold">{{ movie.title }}</h3>
-                {% if movie.posterUrl %}
-                    <img src="{{ movie.posterUrl }}" alt="{{ movie.title }} Poster" class="mx-auto my-4">
+            <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
+                <!-- Title -->
+                <h2 class="text-xl font-semibold text-cream mb-1">
+                    {{ movie.title }}
+                </h2>
+
+                <!-- Categories -->
+                <p class="text-sm text-cream mb-1">
+                    <strong>Categories:</strong> {{ movie.listedIn }}
+                </p>
+
+                {% if movie.releaseYear %}
+                    <p class="text-sm text-cream mb-1">
+                        <strong>Year:</strong> {{ movie.releaseYear }}
+                    </p>
                 {% endif %}
-                <p class="text-cream">{{ movie.description }}</p>
-                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
-                    <input type="hidden" name="showId" value="{{ movie.showId }}">
-                    <button type="submit" class="bg-golden text-dark-forest px-4 py-2 rounded hover:bg-opacity-80 transition">
-                        Add to Watchlist
-                    </button>
-                </form>
+
+                {% if movie.type %}
+                    <p class="text-sm text-cream mb-1">
+                        <strong>Type:</strong> {{ movie.type }}
+                    </p>
+                {% endif %}
+
+                {% if movie.description %}
+                    <p class="text-sm text-cream mb-3">
+                        <strong>Description:</strong> {{ movie.description }}
+                    </p>
+                {% endif %}
+
+                <!-- Spacer to push the button to the bottom -->
+                <div class="flex-grow"></div>
+
+                <!-- Watchlist Button -->
+                <div class="mt-auto">
+                    {% if movie.in_watchlist %}
+                        <button disabled class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block opacity-75 cursor-not-allowed">
+                            Added to Watchlist
+                        </button>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
+                            <input type="hidden" name="showId" value="{{ movie.showId }}">
+                            <button type="submit" class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block hover:bg-opacity-90 transition">
+                                Add to Watchlist
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
         {% else %}
             <p class="text-cream">No recommendations available at this time.</p>
