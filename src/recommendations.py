@@ -50,11 +50,8 @@ def recommendations():
                 temperature=0.7,
             ),
         )
-        # raw_text = response.text
         raw_text = response.text.strip()
-        print("Raw response text:", repr(raw_text))
         raw_text = strip_markdown(raw_text)
-        print("Stripped response text:", repr(raw_text))
 
         if not raw_text:
             raise ValueError("Empty response from the Generative AI model.")
