@@ -1,4 +1,5 @@
 """Watchlist blueprint for managing user movie watchlists."""
+
 from database import get_watchlist_movies
 
 from flask import (
