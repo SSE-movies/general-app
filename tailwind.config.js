@@ -10,7 +10,7 @@ module.exports = {
       colors: {
         'dark-forest': '#171F1E',
         'sage': '#334545',
-        'taupe': '#C6A98B',
+        'taupe': '#DFCAB2',
         'cream': '#FEFEFD',
         'golden': '#B6882C',
       },
