@@ -43,7 +43,7 @@ def recommendations():
     username = session.get("username")
 
     try:
-        movies_data = get_watchlist_movies()
+        movies_data = get_watchlist_movies(username)
 
         # Build a prompt that includes watchlist movie details if available.
         if movies_data:
