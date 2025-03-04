@@ -174,7 +174,7 @@ def get_watchlist(username):
     except Exception as e:
         logger.error(f"Error fetching watchlist: {e}")
         return []
-    
+
 
 def get_watchlist_movies(username):
     """
