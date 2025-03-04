@@ -4,9 +4,15 @@ on: [push]
 jobs:
   setup:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set_tag.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set Image Tag
+        id: set_tag
+        run: |
+          echo "tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
       - name: Setup Environment
         run: |
           export FLASK_APP=app.py
@@ -81,11 +87,32 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$(pwd)/..
           pytest test_auth.py test_search.py test_watchlist.py test_admin.py --cov=src --cov-report=xml
 
-  build-docker-image:
-    needs: [quality-checks, build-tailwind]
+  build-docker-image-testing:
+    needs: [setup, quality-checks]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.ORG_GHCR_TOKEN }}" | docker login ghcr.io --username "oosborgschmitz" --password-stdin
+      
+      - name: Build Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:${{ needs.setup.outputs.image_tag }}
+          docker build -t $IMAGE_NAME .
+
+      - name: Push Docker Image to GHCR
+        run: |
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:${{ needs.setup.outputs.image_tag }}
+          docker push $IMAGE_NAME
+  
+  build-docker-image-production:
+    needs: [setup, quality-checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
@@ -94,18 +121,17 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-production:${{ needs.setup.outputs.image_tag }}
           docker build -t $IMAGE_NAME .
 
-      - name: Push Docker Image to GHCR 
+      - name: Push Docker Image to GHCR
         run: |
-          IMAGE_NAME=ghcr.io/sse-movies/general-app-testing:latest
+          IMAGE_NAME=ghcr.io/sse-movies/general-app-production:${{ needs.setup.outputs.image_tag }}
           docker push $IMAGE_NAME
-  
-  deploy-azure-container-app:
-    needs: build-docker-image
-    runs-on: ubuntu-latest
 
+  deploy-azure-container-app-testing:
+    needs: [setup, build-docker-image-testing]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -120,7 +146,7 @@ jobs:
           az containerapp update \
             --name general-app-testing \
             --resource-group SSE-movies \
-            --image ghcr.io/sse-movies/general-app-testing:latest \
+            --image ghcr.io/sse-movies/general-app-testing:${{ needs.setup.outputs.image_tag }}
 
       - name: Azure Logout
         run: az logout
