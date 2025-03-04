@@ -8,10 +8,13 @@ import google.generativeai as genai
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-recommendations_bp = Blueprint("recommendations", __name__, url_prefix="/recommendations")
+recommendations_bp = Blueprint(
+    "recommendations", __name__, url_prefix="/recommendations"
+)
 
 # Initialize the Gemini API by configuring the API key.
 genai.configure(api_key=GEMINI_API_KEY)
+
 
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
@@ -32,4 +35,4 @@ def recommendations():
 
     return render_template(
         "recommendations.html", recommendations=recommendations_list
-        )
+    )
