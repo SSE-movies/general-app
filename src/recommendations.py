@@ -15,7 +15,8 @@ except ModuleNotFoundError:
         def generate_content(self, model, contents):
             class DummyResponse:
                 # Return an empty JSON array so the recommendations page renders without errors.
-                text = '[]'
+                text = "[]"
+
             return DummyResponse()
 
     class DummyClient:
@@ -27,10 +28,13 @@ except ModuleNotFoundError:
 
     genai = DummyGenai()
 
-recommendations_bp = Blueprint('recommendations', __name__, url_prefix='/recommendations')
+recommendations_bp = Blueprint(
+    "recommendations", __name__, url_prefix="/recommendations"
+)
 
 # Initialize the Gemini API client using Zev's key (or the dummy implementation during tests)
 client = genai.Client(api_key="AIzaSyB7HbAnWnVgVBfG_Ah727BOVudbhBH8Ras")
+
 
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
@@ -51,7 +55,7 @@ def recommendations():
     except Exception as e:
         recommendations_list = []
         print("Error generating recommendations:", e)
-    
+
     return render_template(
         "recommendations.html", recommendations=recommendations_list
-        )
+    )
