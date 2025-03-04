@@ -36,4 +36,6 @@ def recommendations():
         "recommendations.html", recommendations=recommendations_list
     )
 
-    return render_template("recommendations.html", recommendations=recommendations_list)
+    return render_template(
+        "recommendations.html", recommendations=recommendations_list
+    )
