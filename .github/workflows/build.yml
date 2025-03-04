@@ -76,6 +76,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/..
           pytest test_auth.py test_search.py test_watchlist.py test_admin.py --cov=src --cov-report=xml
