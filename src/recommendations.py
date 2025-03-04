@@ -16,6 +16,7 @@ recommendations_bp = Blueprint(
 # Initialize the Gemini API client
 genai.configure(api_key=GEMINI_API_KEY)
 
+
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
     # Construct a prompt for the Gemini API to return movie recommendations as JSON.
