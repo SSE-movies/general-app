@@ -1,4 +1,5 @@
 """Blueprint for handling movie recommendations using the Generative AI API."""
+
 import json
 import os
 
@@ -10,20 +11,24 @@ from google.genai import types
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-recommendations_bp = Blueprint("recommendations", __name__, url_prefix="/recommendations")
+recommendations_bp = Blueprint(
+    "recommendations", __name__, url_prefix="/recommendations"
+)
 
 # Create the client with your API key.
 client = genai.Client(api_key=GEMINI_API_KEY)
 
+
 def strip_markdown(text):
     """Strip markdown formatting if the response is wrapped in triple backticks."""
     if text.startswith("```json"):
-        text = text[len("```json"):].strip()
+        text = text[len("```json") :].strip()
     elif text.startswith("```"):
-        text = text[len("```"):].strip()
+        text = text[len("```") :].strip()
     if text.endswith("```"):
-        text = text[:-len("```")].strip()
+        text = text[: -len("```")].strip()
     return text
+
 
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
@@ -43,9 +48,9 @@ def recommendations():
             config=types.GenerateContentConfig(
                 max_output_tokens=500,  # Adjust as necessary for your response length.
                 temperature=0.7,
-            )
+            ),
         )
-        #raw_text = response.text
+        # raw_text = response.text
         raw_text = response.text.strip()
         print("Raw response text:", repr(raw_text))
         raw_text = strip_markdown(raw_text)
@@ -61,4 +66,4 @@ def recommendations():
 
     return render_template(
         "recommendations.html", recommendations=recommendations_list
-        )
+    )
