@@ -5,63 +5,65 @@
 {% block content %}
 <div class="max-w-4xl mx-auto text-center">
     <h1 class="text-4xl font-bold mb-6 text-golden">Movie Search</h1>
-    <form action="/results" method="GET" class="flex flex-col items-center space-y-4">
-        <!-- Search by movie title -->
-        <label for="movie-search" class="sr-only">Movie Search</label>
-        <input
-            id="movie-search"
-            name="title"
-            type="text"
-            placeholder="Search by title"
-            class="w-full px-4 py-2 rounded-lg bg-taupe text-cream
-                    placeholder:text-cream focus:outline-none focus:ring-2 focus:ring-golden"
-        />
-        <!-- Type filter -->
-        <div class="w-full max-w-md">
-            <label for="type" class="block text-left text-cream mb-1">Movie or TV Show?</label>
-            <select id="type" name="type" class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden">
-                <option value="">Select type</option>
-                <option value="movie">Movie</option>
-                <option value="tv">TV Show</option>
-            </select>
-        </div>
+    <div class="bg-dark-forest shadow-md rounded-lg p-6 mb-8"></div>
+        <form action="/results" method="GET" class="flex flex-col items-center space-y-4">
+            <!-- Search by movie title -->
+            <label for="movie-search" class="sr-only">Movie Search</label>
+            <input
+                id="movie-search"
+                name="title"
+                type="text"
+                placeholder="Search by title"
+                class="w-full px-4 py-2 rounded-lg bg-taupe text-cream
+                        placeholder:text-cream focus:outline-none focus:ring-2 focus:ring-golden"
+            />
+            <!-- Type filter -->
+            <div class="w-full max-w-md">
+                <label for="type" class="block text-left text-cream mb-1">Movie or TV Show?</label>
+                <select id="type" name="type" class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden">
+                    <option value="">Select type</option>
+                    <option value="movie">Movie</option>
+                    <option value="tv">TV Show</option>
+                </select>
+            </div>
 
-        <!-- Type categories (Multi-Select) -->
-        <div class="w-full max-w-md">
-            <label for="categories" class="block text-left text-cream mb-1">Categories</label>
-            <select
-                id="categories"
-                name="categories"
-                multiple
-                class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden"
+            <!-- Type categories (Multi-Select) -->
+            <div class="w-full max-w-md">
+                <label for="categories" class="block text-left text-cream mb-1">Categories</label>
+                <select
+                    id="categories"
+                    name="categories"
+                    multiple
+                    class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden"
+                >
+                    <!-- Optional placeholder (disabled) -->
+                    <option value="" disabled>Select one or more categories...</option>
+
+                    <!-- Dynamically populate categories from Flask -->
+                    {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Release Year filter as a dropdown -->
+            <div class="w-full max-w-md">
+                <label for="release-year" class="block text-left text-cream mb-1">Release Year</label>
+                <select id="release-year" name="release_year" class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden">
+                    <option value="">Select year</option>
+                    {% for year in range(2025, 1949, -1) %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button
+                    type="submit"
+                    class="bg-golden text-dark-forest px-6 py-2 rounded-lg hover:bg-opacity-80 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cream"
             >
-                <!-- Optional placeholder (disabled) -->
-                <option value="" disabled>Select one or more categories...</option>
-
-                <!-- Dynamically populate categories from Flask -->
-                {% for cat in categories %}
-                    <option value="{{ cat }}">{{ cat }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- Release Year filter as a dropdown -->
-        <div class="w-full max-w-md">
-            <label for="release-year" class="block text-left text-cream mb-1">Release Year</label>
-            <select id="release-year" name="release_year" class="w-full px-4 py-2 rounded-lg bg-taupe text-cream focus:outline-none focus:ring-2 focus:ring-golden">
-                <option value="">Select year</option>
-                {% for year in range(2025, 1949, -1) %}
-                    <option value="{{ year }}">{{ year }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button
-                type="submit"
-                class="bg-golden text-dark-forest px-6 py-2 rounded-lg hover:bg-opacity-80 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cream"
-        >
-            Search
-        </button>
-    </form>
+                Search
+            </button>
+        </form>
+    </div>
 
     <!-- Search results: display the list of movies -->
     <div class="movie-results mt-6">

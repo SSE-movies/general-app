@@ -5,7 +5,7 @@
     <title>{% block title %}My App{% endblock %}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/" href="{{ url_for('static', filename='favicon.ico') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
@@ -25,10 +25,17 @@
 </head>
 <body class="bg-dark-forest text-cream min-h-screen">
 
+    <!-- Main Content -->
+  <main class="flex-grow">
+    <div class="max-w-7xl mx-auto mt-6 px-4">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
 
-    <!-- Add top margin so everything is pushed down away from the navbar -->
-    <main class="mt-6">
-        {% block content %}{% endblock %}
-    </main>
+  <!-- Footer -->
+  <footer class="bg-dark-forest border-t border-golden py-4 text-center">
+    <p class="text-sm text-cream">© 2025 IC Netflix Configurator</p>
+  </footer>
+  
 </body>
 </html>
