@@ -2,7 +2,8 @@
 
 import json
 from flask import Blueprint, render_template
-from google import genai
+import google as genai
+
 
 recommendations_bp = Blueprint(
     "recommendations", __name__, url_prefix="/recommendations"
