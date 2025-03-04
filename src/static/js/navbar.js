@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Create navbar element
       const navbarHtml = `
-          <nav class="bg-sage px-6 py-4 flex w-full items-center justify-center justify-between">
+          <nav class="bg-sage px-6 py-4 flex w-full items-center justify-between">
             <!-- Left: Title -->
             <div class="flex-1 flex justify-start items-center">
               <h1 class="text-taupe text-2xl font-bold">

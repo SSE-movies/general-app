@@ -14,6 +14,9 @@ module.exports = {
         'cream': '#FEFEFD',
         'golden': '#B6882C',
       },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
     },
   },
 }
