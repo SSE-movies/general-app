@@ -27,7 +27,7 @@ def recommendations():
         "Return only the JSON array without any additional text."
     )
     try:
-        response = client.models.generate_content(
+        response = genai.models.generate_content(
             model="gemini-2.0-flash",
             contents=prompt,
         )
