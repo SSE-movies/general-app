@@ -1,9 +1,9 @@
 """Blueprint for handling movie recommendations using the Gemini API."""
 
 import json
+import os
 from flask import Blueprint, render_template
 from dotenv import load_dotenv
-import os
 import google.generativeai as genai
 
 load_dotenv()
