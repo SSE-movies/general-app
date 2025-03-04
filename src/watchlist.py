@@ -9,14 +9,12 @@ from flask import (
     session,
 )
 from .database import (
-    get_movies,
-    get_watchlist,
+    get_watchlist_movies,
     add_to_watchlist,
     remove_from_watchlist,
     update_watched_status,
 )
 from .decorators import login_required
-from .database import get_watchlist_movies
 
 watchlist_bp = Blueprint("watchlist", __name__)
 
