@@ -4,10 +4,13 @@ import json
 from flask import Blueprint, render_template
 from google import genai
 
-recommendations_bp = Blueprint('recommendations', __name__, url_prefix='/recommendations')
+recommendations_bp = Blueprint(
+    "recommendations", __name__, url_prefix="/recommendations"
+)
 
 # Initialize the Gemini API client using Zev's key
 client = genai.Client(api_key="AIzaSyB7HbAnWnVgVBfG_Ah727BOVudbhBH8Ras")
+
 
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
@@ -28,5 +31,9 @@ def recommendations():
     except Exception as e:
         recommendations_list = []
         print("Error generating recommendations:", e)
+
+    return render_template(
+        "recommendations.html", recommendations=recommendations_list
+    )
 
     return render_template("recommendations.html", recommendations=recommendations_list)
