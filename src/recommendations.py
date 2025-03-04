@@ -37,6 +37,7 @@ def strip_markdown(text):
 
 
 @recommendations_bp.route("", methods=["GET"])
+@login_required
 def recommendations():
     """Generate a JSON array of 3 movie recommendations using a Generative AI model."""
     username = session.get("username")
@@ -81,7 +82,8 @@ def recommendations():
             # Fallback if the watchlist is empty.
             prompt = (
                 "Provide a JSON array of 3 movie recommendations. "
-                "Each recommendation should include the following fields: title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
+                """Each recommendation should include the following fields: 
+                title, listedIn, releaseYear, type ('Movie' or 'TV Show'), """
                 "description, showId, and in_watchlist=False. "
                 "Return only the JSON array without any additional text or markdown formatting. "
                 "Ensure the response is valid JSON."
