@@ -12,6 +12,7 @@ recommendations_bp = Blueprint(
 client = genai.Client(api_key="AIzaSyB7HbAnWnVgVBfG_Ah727BOVudbhBH8Ras")
 
 
+
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
     # Construct a prompt for the Gemini API to return movie recommendations as JSON.
@@ -31,6 +32,7 @@ def recommendations():
     except Exception as e:
         recommendations_list = []
         print("Error generating recommendations:", e)
+
 
     return render_template(
         "recommendations.html", recommendations=recommendations_list
