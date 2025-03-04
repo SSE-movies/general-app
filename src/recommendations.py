@@ -1,4 +1,5 @@
 """Blueprint for handling movie recommendations using the Google Generative AI API."""
+
 import json
 import os
 
@@ -9,10 +10,13 @@ import google.generativeai as genai
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-recommendations_bp = Blueprint("recommendations", __name__, url_prefix="/recommendations")
+recommendations_bp = Blueprint(
+    "recommendations", __name__, url_prefix="/recommendations"
+)
 
 # Configure the Google Generative AI client with your API key.
 genai.configure(api_key=GEMINI_API_KEY)
+
 
 @recommendations_bp.route("", methods=["GET"])
 def recommendations():
@@ -44,4 +48,4 @@ def recommendations():
 
     return render_template(
         "recommendations.html", recommendations=recommendations_list
-        )
+    )
