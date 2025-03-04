@@ -2,8 +2,8 @@
 module.exports = {
   content: [
     './src/templates/**/*.html',    // Flask HTML templates
-    './src/static/js/**/*.js',      // Static JS files
-    './src/static/js/**/*.js',   // React files
+    './src/static/js/**/*.js',        // Static JS files
+    './src/static/js/**/*.js',        // React files
   ],
   theme: {
     extend: {
@@ -17,6 +17,11 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+    },
+  },
+  variants: {
+    extend: {
+      placeholderColor: ['focus', 'hover', 'active', 'responsive'],
     },
   },
 }

@@ -5,8 +5,5 @@
   "scripts": {
     "build:css": "tailwindcss build src/static/css/input.css -o src/static/css/styles.css",
     "build": "npm run build:css"
-  },
-  "dependencies": {
-    "daisyui": "^4.12.23"
   }
 }
