@@ -40,7 +40,6 @@ def strip_markdown(text):
 @login_required
 def recommendations():
     """Generate a JSON array of 3 movie recommendations using a Generative AI model."""
-    username = session.get("username")
 
     try:
         movies_data = get_watchlist_movies()
