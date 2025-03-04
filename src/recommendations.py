@@ -2,15 +2,18 @@
 
 import json
 from flask import Blueprint, render_template
+from dotenv import load_dotenv
+import os
 import google as genai
 
+load_dotenv()
 
 recommendations_bp = Blueprint(
     "recommendations", __name__, url_prefix="/recommendations"
 )
 
-# Initialize the Gemini API client using Zev's key
-client = genai.Client(api_key="AIzaSyB7HbAnWnVgVBfG_Ah727BOVudbhBH8Ras")
+# Initialize the Gemini API client
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 @recommendations_bp.route("", methods=["GET"])
