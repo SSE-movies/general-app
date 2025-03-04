@@ -39,8 +39,7 @@ def recommendations():
         "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), description, showId, and in_watchlist=False."
         "Return only the JSON array without any additional text or markdown formatting. "
         "Ensure the response is valid JSON."
-        )
-
+    )
 
     try:
         response = client.models.generate_content(
