@@ -31,7 +31,7 @@ def test_search_results(auth_client):
     import os
 
     # Access the MOVIES_API_URL environment variable
-    movies_api_url = os.environ.get('MOVIES_API_URL')
+    movies_api_url = os.environ.get("MOVIES_API_URL")
     print(f"MOVIES_API_URL in test: {movies_api_url}")
 
     # Test search with specific categories
