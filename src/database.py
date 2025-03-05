@@ -236,8 +236,8 @@ def get_all_movies():
     try:
         # Request all movies by setting a large per_page value
         params = {
-            "per_page": 1000
-        }  # Large enough to get all movies in one request
+            "per_page": 10000 # Large enough to get all movies in one request
+        }
         response = requests.get(
             MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
         )

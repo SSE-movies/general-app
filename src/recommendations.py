@@ -44,7 +44,6 @@ def recommendations():
 
     try:
         movies_data = get_watchlist_movies(username)
-        all_movies = get_all_movies()  # Get all movies from the database
 
         # Build a prompt that includes watchlist movie details if available.
         if movies_data:
@@ -88,35 +87,30 @@ def recommendations():
         if not raw_text:
             raise ValueError("Empty response from the Generative AI model.")
 
-        recommendations_list = json.loads(raw_text)
+        recommendations_json = json.loads(raw_text)
+
+        all_movies = get_all_movies()  # Fetch all movies from the database.
 
         # Check if recommended movies exist in the database
-        for recommendation in recommendations_list:
-            # Remove showId if it exists since it won't match our database
+        for recommendation in recommendations_json:
             if "showId" in recommendation:
                 del recommendation["showId"]
 
             print(f"\nChecking recommendation: {recommendation['title']}")
-            print("Database titles:")
-            for movie in all_movies:
-                print(f"- {movie['title']} (type: {movie.get('type')})")
 
-            # Check if the movie exists in the database by matching title
+            # Check if the recommended movie exists in the database
             exists = any(
                 movie["title"].lower() == recommendation["title"].lower()
                 for movie in all_movies
             )
-            print(f"Exists in database: {exists}")
+            print("Exists in database:", exists)
             recommendation["exists_in_database"] = exists
 
-            # If the movie exists, check if it's in the user's watchlist
             if exists:
-                # Find the matching movie to get its showId
+                # Find the matching movie to get its details
                 matching_movie = next(
-                    movie
-                    for movie in all_movies
-                    if movie["title"].lower()
-                    == recommendation["title"].lower()
+                    movie for movie in all_movies
+                    if movie["title"].lower() == recommendation["title"].lower()
                 )
                 print(f"Found matching movie: {matching_movie['title']}")
                 # Update recommendation with correct metadata from our database
@@ -130,10 +124,11 @@ def recommendations():
             else:
                 recommendation["in_watchlist"] = False
 
+
     except Exception as e:
-        recommendations_list = []
+        recommendations_json = []
         print("Error generating recommendations:", e)
 
     return render_template(
-        "recommendations.html", recommendations=recommendations_list
+        "recommendations.html", recommendations=recommendations_json
     )
