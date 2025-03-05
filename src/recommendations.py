@@ -89,7 +89,6 @@ def recommendations():
 
         recommendations_json = json.loads(raw_text)
 
-
         # Create a set of watchlist titles for O(1) lookup
         watchlist_titles = {movie["title"].lower() for movie in movies_data}
 
