@@ -9,7 +9,7 @@ from flask import Blueprint, render_template, session
 from google import genai
 from google.genai import types
 
-from .database import get_watchlist_movies, get_filtered_movies
+from .database import get_watchlist_movies, check_movie_exists_by_title
 from .decorators import login_required
 
 
@@ -39,9 +39,13 @@ def strip_markdown(text):
 
 def check_movie_exists(title, username):
     """Check if a movie exists in the database and get its details."""
-    movie_query = {"title": title}
-    matching_movies, _, _, _, _ = get_filtered_movies(movie_query, username)
-    return matching_movies[0] if matching_movies else None
+    print(f"\nChecking movie: {title}")
+    matching_movie = check_movie_exists_by_title(title, username)
+    if matching_movie:
+        print(f"Found match: {matching_movie['title']}")
+    else:
+        print(f"No match found for {title}")
+    return matching_movie
 
 
 @recommendations_bp.route("", methods=["GET"])
@@ -69,8 +73,8 @@ def recommendations():
                     "Each recommendation should include the following fields: "
                     "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
                     "description, showId, and in_watchlist=False. "
-                    "Return only the JSON array without any additional text or "
-                    "markdown formatting. Ensure the response is valid JSON."
+                    "Return only the JSON array without any additional text "
+                    "or markdown formatting. Ensure the response is valid JSON."
                 )
             else:
                 prompt = (
@@ -99,36 +103,36 @@ def recommendations():
             raise ValueError("Empty response from the Generative AI model.")
 
         recommendations_json = json.loads(raw_text)
+        print(f"\nGot recommendations: {[r['title'] for r in recommendations_json]}")
 
         # Create a set of watchlist titles for O(1) lookup
         watchlist_titles = {movie["title"].lower() for movie in movies_data}
+        print(f"Watchlist titles: {watchlist_titles}")
 
         # Check all recommendations in parallel
         with ThreadPoolExecutor(max_workers=3) as executor:
-            future_to_movie = {
-                executor.submit(
-                    check_movie_exists, rec["title"], username
-                ): rec
-                for rec in recommendations_json
-            }
+            # Submit all tasks first
+            futures = []
+            for rec in recommendations_json:
+                if "showId" in rec:
+                    del rec["showId"]
+                future = executor.submit(check_movie_exists, rec["title"], username)
+                futures.append((future, rec))
 
-            for future in future_to_movie:
-                recommendation = future_to_movie[future]
-                if "showId" in recommendation:
-                    del recommendation["showId"]
-
+            # Process results as they complete
+            for future, recommendation in futures:
                 try:
                     matching_movie = future.result()
+                    print(f"\nProcessing result for {recommendation['title']}")
                     if matching_movie:
+                        print(f"Found matching movie: {matching_movie['title']}")
                         recommendation["exists_in_database"] = True
                         recommendation["showId"] = matching_movie["showId"]
-                        recommendation["releaseYear"] = matching_movie[
-                            "releaseYear"
-                        ]
-                        recommendation["in_watchlist"] = (
-                            matching_movie["title"].lower() in watchlist_titles
-                        )
+                        recommendation["releaseYear"] = matching_movie["releaseYear"]
+                        recommendation["in_watchlist"] = matching_movie.get("in_watchlist", False)
+                        print(f"Set exists_in_database=True for {recommendation['title']}")
                     else:
+                        print(f"No match found for {recommendation['title']}")
                         recommendation["exists_in_database"] = False
                         recommendation["in_watchlist"] = False
                 except Exception as e:

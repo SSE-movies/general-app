@@ -229,3 +229,49 @@ def get_movie_by_id(movie_id):
     except requests.RequestException as e:
         logger.error(f"Error fetching movie {movie_id}: {e}")
         return None
+
+
+def check_movie_exists_by_title(title, username=None):
+    """
+    Check if a movie exists in the database by title.
+    Returns the movie if found, None otherwise.
+    """
+    try:
+        # Build query params
+        params = {
+            "title": title,
+            "per_page": 1  # We only need one match
+        }
+
+        # Fetch filtered movies
+        response = requests.get(
+            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
+        )
+        response.raise_for_status()
+        data = response.json()
+        movies = data.get("movies", [])
+
+        if not movies:
+            return None
+
+        movie = movies[0]
+        
+        # Normalise field names
+        if "listed_in" in movie:
+            movie["listedIn"] = movie.pop("listed_in")
+        if "show_id" in movie:
+            movie["showId"] = movie.pop("show_id")
+        if "release_year" in movie:
+            movie["releaseYear"] = movie.pop("release_year")
+
+        # Check watchlist status if username provided
+        if username:
+            watchlist = get_watchlist(username)
+            watchlist_movies = {entry["showId"] for entry in watchlist}
+            movie["in_watchlist"] = movie["showId"] in watchlist_movies
+
+        return movie
+
+    except requests.RequestException as e:
+        logger.error(f"Error checking movie existence: {e}")
+        return None
