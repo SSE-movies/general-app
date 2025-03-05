@@ -181,18 +181,16 @@ def get_movies_by_ids(show_ids):
     try:
         # Convert list of IDs to comma-separated string
         ids_string = ",".join(show_ids)
-
+        
         # Request movies with these IDs
         params = {
             "show_ids": ids_string,
-            "per_page": len(show_ids),  # Make sure we get all requested movies
+            "per_page": len(show_ids)  # Make sure we get all requested movies
         }
-        response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
-        )
+        response = requests.get(MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         movies = response.json().get("movies", [])
-
+        
         # Normalize the keys
         for movie in movies:
             if "listed_in" in movie:
@@ -201,7 +199,7 @@ def get_movies_by_ids(show_ids):
                 movie["showId"] = movie.pop("show_id")
             if "release_year" in movie:
                 movie["releaseYear"] = movie.pop("release_year")
-
+                
         return movies
     except requests.RequestException as e:
         logger.error(f"Error fetching movies by IDs: {e}")
@@ -214,26 +212,26 @@ def get_watchlist_movies(username):
     Normalizes keys and attaches the watched status.
     """
     watchlist_entries = get_watchlist(username)
-
+    
     if not watchlist_entries:
         return []
-
+        
     # Get the showIds from watchlist
     show_ids = [entry["showId"] for entry in watchlist_entries]
-
+    
     # Get all the movies that are in the watchlist
     movies = get_movies_by_ids(show_ids)
-
+    
     # Build a lookup for the watched status
     watched_dict = {
         entry["showId"]: entry.get("watched", False)
         for entry in watchlist_entries
     }
-
+    
     # Attach watched status to each movie
     for movie in movies:
         movie["watched"] = watched_dict.get(movie["showId"], False)
-
+    
     return movies
 
 
