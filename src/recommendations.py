@@ -106,7 +106,9 @@ def recommendations():
         # Check all recommendations in parallel
         with ThreadPoolExecutor(max_workers=3) as executor:
             future_to_movie = {
-                executor.submit(check_movie_exists, rec["title"], username): rec
+                executor.submit(
+                    check_movie_exists, rec["title"], username
+                ): rec
                 for rec in recommendations_json
             }
 
@@ -120,7 +122,9 @@ def recommendations():
                     if matching_movie:
                         recommendation["exists_in_database"] = True
                         recommendation["showId"] = matching_movie["showId"]
-                        recommendation["releaseYear"] = matching_movie["releaseYear"]
+                        recommendation["releaseYear"] = matching_movie[
+                            "releaseYear"
+                        ]
                         recommendation["in_watchlist"] = (
                             matching_movie["title"].lower() in watchlist_titles
                         )
@@ -128,7 +132,9 @@ def recommendations():
                         recommendation["exists_in_database"] = False
                         recommendation["in_watchlist"] = False
                 except Exception as e:
-                    print(f"Error checking movie {recommendation['title']}: {e}")
+                    print(
+                        f"Error checking movie {recommendation['title']}: {e}"
+                    )
                     recommendation["exists_in_database"] = False
                     recommendation["in_watchlist"] = False
 
