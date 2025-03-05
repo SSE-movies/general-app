@@ -57,7 +57,7 @@
                         {% else %}
                             <form method="POST" action="{{ url_for('watchlist.mark_watched_handler') }}" class="inline-block mr-2">
                                 <input type="hidden" name="showId" value="{{ movie.showId }}">
-                                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
+                                <button type="submit" class="bg-green-700 text-white px-3 py-1 rounded">Mark as Watched</button>
                             </form>
                         {% endif %}
                 
