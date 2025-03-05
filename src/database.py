@@ -221,7 +221,7 @@ def get_watchlist_movies(username):
     # Get the showIds from watchlist
     show_ids = [entry["showId"] for entry in watchlist_entries]
 
-    # Get all the movies that are in the watchlist
+    # Get all movies that are in the watchlist
     movies = get_movies_by_ids(show_ids)
 
     # Build a lookup for the watched status
