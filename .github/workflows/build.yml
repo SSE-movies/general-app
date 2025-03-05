@@ -108,7 +108,7 @@ jobs:
           IMAGE_NAME=ghcr.io/sse-movies/general-app:${{ needs.setup.outputs.image_tag }}
           docker push $IMAGE_NAME
   
-  deploy-azure-container-app-testing:
+  deploy-azure-container-app-testing :
     needs: [setup, build-docker-image]
     runs-on: ubuntu-latest
     steps:
