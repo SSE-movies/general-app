@@ -5,7 +5,9 @@
 {% block content %}
     <div class="max-w-7xl mx-auto py-8 px-4">
 
-        <h1 class="text-4xl font-bold mb-6 text-golden">My Watchlist</h1>
+        <h1 class="text-4xl font-bold text-center mb-8 text-golden">My Watchlist</h1>
+
+        <div class="mb-4"></div>
 
         {% if movies %}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -40,15 +42,15 @@
                             </p>
                         {% endif %}
 
-                        <div class="flex items-center justify-center gap-4">
+                        <div class="flex items-center justify-left gap-4">
                             <!-- Toggle watched status form -->
                             {% if movie.watched %}
-                                <form method="POST" action="{{ url_for('watchlist.mark_unwatched_handler') }}" class="inline-block">
+                                <form method="POST" action="{{ url_for('watchlist.mark_unwatched_handler') }}" class="inline-block mr-2">
                                     <input type="hidden" name="showId" value="{{ movie.showId }}">
                                     <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Mark as Unwatched</button>
                                 </form>
                             {% else %}
-                                <form method="POST" action="{{ url_for('watchlist.mark_watched_handler') }}" class="inline-block">
+                                <form method="POST" action="{{ url_for('watchlist.mark_watched_handler') }}" class="inline-block mr-2">
                                     <input type="hidden" name="showId" value="{{ movie.showId }}">
                                     <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Mark as Watched</button>
                                 </form>
