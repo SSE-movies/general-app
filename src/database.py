@@ -238,10 +238,12 @@ def get_all_movies():
         params = {
             "per_page": 1000  # Large enough to get all movies in one request
         }
-        response = requests.get(MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS)
+        response = requests.get(
+            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
+        )
         response.raise_for_status()
         movies = response.json().get("movies", [])
-        
+
         # Normalize keys to match our application's format
         for movie in movies:
             if "listed_in" in movie:
@@ -250,7 +252,7 @@ def get_all_movies():
                 movie["showId"] = movie.pop("show_id")
             if "release_year" in movie:
                 movie["releaseYear"] = movie.pop("release_year")
-        
+
         return movies
     except requests.RequestException as e:
         logger.error(f"Error fetching all movies: {e}")
