@@ -238,10 +238,7 @@ def check_movie_exists_by_title(title, username=None):
     """
     try:
         # Build query params
-        params = {
-            "title": title,
-            "per_page": 1  # We only need one match
-        }
+        params = {"title": title, "per_page": 1}  # We only need one match
 
         # Fetch filtered movies
         response = requests.get(
@@ -255,7 +252,7 @@ def check_movie_exists_by_title(title, username=None):
             return None
 
         movie = movies[0]
-        
+
         # Normalise field names
         if "listed_in" in movie:
             movie["listedIn"] = movie.pop("listed_in")

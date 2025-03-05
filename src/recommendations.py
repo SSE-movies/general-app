@@ -103,7 +103,9 @@ def recommendations():
             raise ValueError("Empty response from the Generative AI model.")
 
         recommendations_json = json.loads(raw_text)
-        print(f"\nGot recommendations: {[r['title'] for r in recommendations_json]}")
+        print(
+            f"\nGot recommendations: {[r['title'] for r in recommendations_json]}"
+        )
 
         # Create a set of watchlist titles for O(1) lookup
         watchlist_titles = {movie["title"].lower() for movie in movies_data}
@@ -116,7 +118,9 @@ def recommendations():
             for rec in recommendations_json:
                 if "showId" in rec:
                     del rec["showId"]
-                future = executor.submit(check_movie_exists, rec["title"], username)
+                future = executor.submit(
+                    check_movie_exists, rec["title"], username
+                )
                 futures.append((future, rec))
 
             # Process results as they complete
@@ -125,12 +129,20 @@ def recommendations():
                     matching_movie = future.result()
                     print(f"\nProcessing result for {recommendation['title']}")
                     if matching_movie:
-                        print(f"Found matching movie: {matching_movie['title']}")
+                        print(
+                            f"Found matching movie: {matching_movie['title']}"
+                        )
                         recommendation["exists_in_database"] = True
                         recommendation["showId"] = matching_movie["showId"]
-                        recommendation["releaseYear"] = matching_movie["releaseYear"]
-                        recommendation["in_watchlist"] = matching_movie.get("in_watchlist", False)
-                        print(f"Set exists_in_database=True for {recommendation['title']}")
+                        recommendation["releaseYear"] = matching_movie[
+                            "releaseYear"
+                        ]
+                        recommendation["in_watchlist"] = matching_movie.get(
+                            "in_watchlist", False
+                        )
+                        print(
+                            f"Set exists_in_database=True for {recommendation['title']}"
+                        )
                     else:
                         print(f"No match found for {recommendation['title']}")
                         recommendation["exists_in_database"] = False
