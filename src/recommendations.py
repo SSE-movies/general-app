@@ -88,30 +88,34 @@ def recommendations():
             raise ValueError("Empty response from the Generative AI model.")
 
         recommendations_json = json.loads(raw_text)
-        
+
         # Create a set of watchlist titles for O(1) lookup
-        watchlist_titles = {movie['title'].lower() for movie in movies_data}
+        watchlist_titles = {movie["title"].lower() for movie in movies_data}
 
         # Process each recommendation
         for recommendation in recommendations_json:
-            if 'showId' in recommendation:
-                del recommendation['showId']
-            
+            if "showId" in recommendation:
+                del recommendation["showId"]
+
             # Search for this specific movie in the database
-            movie_query = {'title': recommendation['title']}
-            matching_movies, _, _, _, _ = get_filtered_movies(movie_query, username)
-            
+            movie_query = {"title": recommendation["title"]}
+            matching_movies, _, _, _, _ = get_filtered_movies(
+                movie_query, username
+            )
+
             if matching_movies:
                 # Movie exists in database
                 matching_movie = matching_movies[0]  # Take the first match
-                recommendation['exists_in_database'] = True
-                recommendation['showId'] = matching_movie['showId']
-                recommendation['releaseYear'] = matching_movie['releaseYear']
+                recommendation["exists_in_database"] = True
+                recommendation["showId"] = matching_movie["showId"]
+                recommendation["releaseYear"] = matching_movie["releaseYear"]
                 # O(1) lookup in set instead of O(n) search in list
-                recommendation['in_watchlist'] = matching_movie['title'].lower() in watchlist_titles
+                recommendation["in_watchlist"] = (
+                    matching_movie["title"].lower() in watchlist_titles
+                )
             else:
-                recommendation['exists_in_database'] = False
-                recommendation['in_watchlist'] = False
+                recommendation["exists_in_database"] = False
+                recommendation["in_watchlist"] = False
 
     except Exception as e:
         recommendations_json = []
