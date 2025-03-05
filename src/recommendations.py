@@ -54,7 +54,7 @@ def recommendations():
         # Get watchlist movies in parallel with Gemini API call
         with ThreadPoolExecutor(max_workers=2) as executor:
             watchlist_future = executor.submit(get_watchlist_movies, username)
-            
+
             # Build prompt for Gemini
             movies_data = watchlist_future.result()
             if movies_data:
@@ -69,8 +69,8 @@ def recommendations():
                     "Each recommendation should include the following fields: "
                     "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
                     "description, showId, and in_watchlist=False. "
-                    "Return only the JSON array without any additional text or markdown formatting. "
-                    "Ensure the response is valid JSON."
+                    "Return only the JSON array without any additional text or "
+                    "markdown formatting. Ensure the response is valid JSON."
                 )
             else:
                 prompt = (
@@ -78,8 +78,8 @@ def recommendations():
                     "Each recommendation should include the following fields: "
                     "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
                     "description, showId, and in_watchlist=False. "
-                    "Return only the JSON array without any additional text or markdown formatting. "
-                    "Ensure the response is valid JSON."
+                    "Return only the JSON array without any additional text "
+                    "or markdown formatting. Ensure the response is valid JSON."
                 )
 
             # Generate recommendations in parallel with watchlist fetch
