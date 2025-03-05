@@ -30,12 +30,12 @@ def test_search_results(auth_client):
     """Test searching by category and title."""
     import os
 
-    # Debug log the environment variable
-    print(f"MOVIES_API_URL in test: {os.environ.get('MOVIES_API_URL')}")
+    # Access the MOVIES_API_URL environment variable
+    movies_api_url = os.environ.get('MOVIES_API_URL')
+    print(f"MOVIES_API_URL in test: {movies_api_url}")
 
     # Test search with specific categories
     response = auth_client.get("/results?categories=Action%20%26%20Adventure")
-
     assert response.status_code == 200
 
     # Accept either movie results or no results message

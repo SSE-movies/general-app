@@ -1,12 +1,15 @@
 import pytest
 import uuid
+import os
 from src import create_app
 from src.database import supabase
+from dotenv import load_dotenv
 
 
 @pytest.fixture(scope="module")
 def app():
     """Create and configure a new app instance for each test module."""
+    load_dotenv()  # Ensure environment variables are loaded
     app = create_app(testing=True)
     yield app
 

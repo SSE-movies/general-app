@@ -1,10 +1,13 @@
 import uuid
+import os
 from src.database import supabase
 import bcrypt
+from dotenv import load_dotenv
 
 
 def test_login_page(client):
     """Ensure the login page loads correctly."""
+    load_dotenv()  # Ensure environment variables are loaded
     response = client.get("/login")
     assert response.status_code == 200
     assert b"Login" in response.data

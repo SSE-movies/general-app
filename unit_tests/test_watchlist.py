@@ -1,11 +1,14 @@
 import pytest
 import uuid
+import os
 from src.database import supabase
+from dotenv import load_dotenv
 
 
 @pytest.fixture
 def test_movie():
     """Fixture to create a test movie data (simulating one from Azure API)."""
+    load_dotenv()  # Ensure environment variables are loaded
     return {
         "showId": "s1234",  # Using a known ID from Azure API
         "title": "Test Movie",
