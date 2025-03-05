@@ -134,4 +134,6 @@ def recommendations():
         recommendations_list = []
         print("Error generating recommendations:", e)
 
-    return render_template("recommendations.html", recommendations=recommendations_list)
+    return render_template(
+        "recommendations.html", recommendations=recommendations_list
+    )
