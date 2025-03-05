@@ -3,11 +3,12 @@
 {% block title %}My Watchlist{% endblock %}
 
 {% block content %}
-    <div class="max-w-4xl mx-auto text-center">
+    <div class="max-w-7xl mx-auto py-8 px-4">
+
         <h1 class="text-4xl font-bold mb-6 text-golden">My Watchlist</h1>
 
         {% if movies %}
-            <div class="movie-list space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for movie in movies %}
                     <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
                         <!-- Title -->
