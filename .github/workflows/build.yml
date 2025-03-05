@@ -123,7 +123,7 @@ jobs:
       - name: Deploy to Azure Container App
         run: |
           az containerapp update \
-            --name general-app-testing \
+            --name general-app \
             --resource-group SSE-movies \
             --image ghcr.io/sse-movies/general-app:${{ needs.setup.outputs.image_tag }}
 
