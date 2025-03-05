@@ -261,7 +261,7 @@ def check_movie_exists_by_title(title, username=None):
         if "release_year" in movie:
             movie["releaseYear"] = movie.pop("release_year")
 
-        # Check watchlist status if username provided
+        # Check watchlist status if username is provided
         if username:
             watchlist = get_watchlist(username)
             watchlist_movies = {entry["showId"] for entry in watchlist}
