@@ -182,13 +182,19 @@ def get_watchlist_movies(username):
     Normalizes keys and attaches the watched status.
     """
     watchlist_entries = get_watchlist(username)
+    # Debug
+    print(f"DEBUG: watchlist_entries for '{username}': {watchlist_entries}")
     all_movies = get_movies()
+    # Debug
+    print(f"DEBUG: total movies from external API: {len(all_movies)}")
 
     # Build a lookup for the watched status.
     watched_dict = {
         entry["showId"]: entry.get("watched", False)
         for entry in watchlist_entries
     }
+    # Debug
+    print(f"DEBUG: watched_dict: {watched_dict}")
 
     movies_data = []
     for movie in all_movies:
@@ -199,6 +205,11 @@ def get_watchlist_movies(username):
         if movie["showId"] in watched_dict:
             movie["watched"] = watched_dict[movie["showId"]]
             movies_data.append(movie)
+
+    # Debug
+    print(f"DEBUG: final watchlist movies_data count: {len(movies_data)}")
+    print(f"DEBUG: final watchlist movies_data: {movies_data}")
+
     return movies_data
 
 
