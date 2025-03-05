@@ -109,8 +109,10 @@ def recommendations():
             if exists:
                 # Find the matching movie to get its details
                 matching_movie = next(
-                    movie for movie in all_movies
-                    if movie["title"].lower() == recommendation["title"].lower()
+                    movie
+                    for movie in all_movies
+                    if movie["title"].lower()
+                    == recommendation["title"].lower()
                 )
                 print(f"Found matching movie: {matching_movie['title']}")
                 # Update recommendation with correct metadata from our database
@@ -123,7 +125,6 @@ def recommendations():
                 )
             else:
                 recommendation["in_watchlist"] = False
-
 
     except Exception as e:
         recommendations_json = []
