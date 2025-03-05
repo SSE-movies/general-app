@@ -60,9 +60,7 @@ def get_filtered_movies(query_params=None, username=None):
         params["per_page"] = results_per_page
 
         # Fetch filtered movies
-        response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
-        )
+        response = requests.get(MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         data = response.json()
         movies = data.get("movies", [])
@@ -108,9 +106,7 @@ def get_unique_categories():
         categories = set()
         for movie in movies:
             # Check both possible field names (listed_in and listedIn)
-            category_field = (
-                movie.get("listed_in") or movie.get("listedIn") or ""
-            )
+            category_field = movie.get("listed_in") or movie.get("listedIn") or ""
             if category_field:
                 movie_categories = category_field.split(",")
                 categories.update(
@@ -165,10 +161,7 @@ def get_watchlist(username):
     """Fetches all movies in a user's watchlist."""
     try:
         response = (
-            supabase.table("watchlist")
-            .select("*")
-            .eq("username", username)
-            .execute()
+            supabase.table("watchlist").select("*").eq("username", username).execute()
         )
         return response.data if response.data else []
     except Exception as e:
@@ -186,8 +179,7 @@ def get_watchlist_movies(username):
 
     # Build a lookup for the watched status.
     watched_dict = {
-        entry["showId"]: entry.get("watched", False)
-        for entry in watchlist_entries
+        entry["showId"]: entry.get("watched", False) for entry in watchlist_entries
     }
 
     movies_data = []
@@ -221,9 +213,7 @@ def update_watched_status(username, showId, watched):
 def get_movie_by_id(movie_id):
     """Get a specific movie by its ID."""
     try:
-        response = requests.get(
-            f"{MOVIES_API_URL}/{movie_id}", timeout=TIMEOUT_SECONDS
-        )
+        response = requests.get(f"{MOVIES_API_URL}/{movie_id}", timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
@@ -235,14 +225,11 @@ def get_all_movies():
     """Get the complete list of movies without pagination."""
     try:
         # Request all movies by setting a large per_page value
-        params = {
-            "per_page": 1000  # Large enough to get all movies in one request
-        }
-        response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
-        )
+        params = {"per_page": 1000}  # Large enough to get all movies in one request
+        response = requests.get(MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         movies = response.json().get("movies", [])
+
 
         # Normalize keys to match our application's format
         for movie in movies:
@@ -252,6 +239,7 @@ def get_all_movies():
                 movie["showId"] = movie.pop("show_id")
             if "release_year" in movie:
                 movie["releaseYear"] = movie.pop("release_year")
+
 
         return movies
     except requests.RequestException as e:

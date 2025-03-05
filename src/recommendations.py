@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, session
 from google import genai
 from google.genai import types
 
-from .database import get_watchlist_movies, get_all_movies, add_to_watchlist
+from .database import get_watchlist_movies, get_all_movies
 from .decorators import login_required
 
 
@@ -55,10 +55,10 @@ def recommendations():
             )
             prompt = (
                 f"Based on the movies in my watchlist: {movies_list}. "
-                """Provide a JSON array of 3 movie recommendations that are 
-                similar in genre or style to these movies. """
-                """Each recommendation should include the following fields: 
-                title, listedIn, releaseYear, type ('Movie' or 'TV Show'), """
+                "Provide a JSON array of 3 movie recommendations that are "
+                "similar in genre or style to these movies. "
+                "Each recommendation should include the following fields: "
+                "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
                 "description, showId, and in_watchlist=False. "
                 "Return only the JSON array without any additional text or markdown formatting. "
                 "Ensure the response is valid JSON."
@@ -67,8 +67,8 @@ def recommendations():
             # Fallback if the watchlist is empty.
             prompt = (
                 "Provide a JSON array of 3 movie recommendations. "
-                """Each recommendation should include the following fields: 
-                title, listedIn, releaseYear, type ('Movie' or 'TV Show'), """
+                "Each recommendation should include the following fields: "
+                "title, listedIn, releaseYear, type ('Movie' or 'TV Show'), "
                 "description, showId, and in_watchlist=False. "
                 "Return only the JSON array without any additional text or markdown formatting. "
                 "Ensure the response is valid JSON."
@@ -134,6 +134,4 @@ def recommendations():
         recommendations_list = []
         print("Error generating recommendations:", e)
 
-    return render_template(
-        "recommendations.html", recommendations=recommendations_list
-    )
+    return render_template("recommendations.html", recommendations=recommendations_list)
