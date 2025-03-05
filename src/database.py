@@ -229,31 +229,3 @@ def get_movie_by_id(movie_id):
     except requests.RequestException as e:
         logger.error(f"Error fetching movie {movie_id}: {e}")
         return None
-
-
-def get_all_movies():
-    """Get the complete list of movies without pagination."""
-    try:
-        # Request all movies by setting a large per_page value
-        params = {
-            "per_page": 10000  # Large enough to get all movies in one request
-        }
-        response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
-        )
-        response.raise_for_status()
-        movies = response.json().get("movies", [])
-
-        # Normalize keys to match our application's format
-        for movie in movies:
-            if "listed_in" in movie:
-                movie["listedIn"] = movie.pop("listed_in")
-            if "show_id" in movie:
-                movie["showId"] = movie.pop("show_id")
-            if "release_year" in movie:
-                movie["releaseYear"] = movie.pop("release_year")
-
-        return movies
-    except requests.RequestException as e:
-        logger.error(f"Error fetching all movies: {e}")
-        return []
