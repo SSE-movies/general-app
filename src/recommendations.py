@@ -97,7 +97,7 @@ def recommendations():
                 del recommendation["showId"]
 
             print(f"\nChecking recommendation: {recommendation['title']}")
-            print(f"Database titles:")
+            print("Database titles:")
             for movie in all_movies:
                 print(f"- {movie['title']} (type: {movie.get('type')})")
 
