@@ -377,7 +377,7 @@ def my_watchlist():
         return render_template(
             "my_watchlist.html", username=username, movies=movie_details
         )
-    
+
     except Exception as e:
         logger.error(f"Error retrieving watchlist: {e}")
         return render_template(
