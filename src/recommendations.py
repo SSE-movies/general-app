@@ -9,7 +9,8 @@ from flask import Blueprint, render_template, session
 from google import genai
 from google.genai import types
 
-from .database import get_watchlist_movies, check_movie_exists_by_title
+from .database import check_movie_exists_by_title
+from .watchlist import watchlist_service
 from .decorators import login_required
 
 
@@ -57,7 +58,7 @@ def recommendations():
     try:
         # Get watchlist movies in parallel with Gemini API call
         with ThreadPoolExecutor(max_workers=2) as executor:
-            watchlist_future = executor.submit(get_watchlist_movies, username)
+            watchlist_future = executor.submit(watchlist_service.get_watchlist, username)
 
             # Build prompt for Gemini
             movies_data = watchlist_future.result()
