@@ -118,7 +118,7 @@ class WatchlistService:
                 logger.error(f"Unexpected response structure: {data}")
                 return []
 
-            return data["movies"]
+            return data["entries"]
 
         except requests.exceptions.RequestException as e:
             # Catch network-related errors, timeouts, etc.
