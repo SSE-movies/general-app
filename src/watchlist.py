@@ -114,7 +114,7 @@ class WatchlistService:
             # Assuming the response is in JSON format and has a key "movies"
             data = response.json()
 
-            if "movies" not in data:
+            if "entries" not in data:
                 logger.error(f"Unexpected response structure: {data}")
                 return []
 
@@ -353,7 +353,9 @@ def my_watchlist():
     try:
         username = session.get("username")
         movies_data = watchlist_service.get_watchlist(username)
+
         logger.info(f"Watchlist data: {movies_data}")
+        
         return render_template(
             "my_watchlist.html", username=username, movies=movies_data
         )
