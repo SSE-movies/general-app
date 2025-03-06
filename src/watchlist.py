@@ -36,7 +36,7 @@ class WatchlistService:
                 .execute()
             )
             return response.data if response.data else []
-            
+
         except Exception as e:
             logger.error(f"Error fetching watchlist: {e}")
             return []
@@ -363,7 +363,7 @@ def my_watchlist():
         for entry in watchlist_entries:
             show_id = entry.get("showId")
             # Fetch movie details using movie API
-            movie_details = get_movie_by_id(show_id)
+            movie_details = get_movie_by_id(str(show_id))
 
             if movie_details:
                 # Merge the watched status into the movie details
