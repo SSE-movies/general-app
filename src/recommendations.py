@@ -9,7 +9,7 @@ from flask import Blueprint, render_template, session
 from google import genai
 from google.genai import types
 
-from .database import check_movie_exists_by_title
+from .database import check_movie_exists_by_title, get_movie_details_by_id
 from .watchlist import watchlist_service
 from .decorators import login_required
 
@@ -63,12 +63,27 @@ def recommendations():
             )
 
             # Build prompt for Gemini
-            movies_data = watchlist_future.result()
-            if movies_data:
-                movies_list = "; ".join(
-                    f"{movie['title']} ({movie.get('listedIn', 'Genre unknown')})"
-                    for movie in movies_data
-                )
+            watchlist_data = watchlist_future.result()
+
+            movies_list = []
+
+            for entry in watchlist_data:
+                show_id = entry.get("showId")
+
+                # Fetch movie details using movie API
+                movies_list.append(get_movie_details_by_id(str(show_id)))
+
+            if movies_list:
+
+                movies_data = [
+                    movie
+                    for movie in movies_list
+                    if movie is not None and "title" in movie
+                ]
+                movies_list = [movie["title"] for movie in movies_data]
+                
+                print(f"Movies list: {movies_list}")
+
                 prompt = (
                     f"Based on the movies in my watchlist: {movies_list}. "
                     "Provide a JSON array of 3 movie recommendations that are "
@@ -106,9 +121,8 @@ def recommendations():
             raise ValueError("Empty response from the Generative AI model.")
 
         recommendations_json = json.loads(raw_text)
-        print(
-            f"\nGot recommendations: {[r['title'] for r in recommendations_json]}"
-        )
+
+        print("\nGot raw recommendations:", recommendations_json)
 
         # Create a set of watchlist titles for O(1) lookup
         watchlist_titles = {movie["title"].lower() for movie in movies_data}

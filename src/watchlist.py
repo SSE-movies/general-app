@@ -12,7 +12,7 @@ from flask import (
     session,
 )
 from .decorators import login_required
-from .database import get_movie_by_id
+from .database import get_movie_details_by_id
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -363,7 +363,7 @@ def my_watchlist():
         for entry in watchlist_entries:
             show_id = entry.get("showId")
             # Fetch movie details using movie API
-            movie_details = get_movie_by_id(str(show_id))
+            movie_details = get_movie_details_by_id(str(show_id))
 
             if movie_details:
                 # Merge the watched status into the movie details

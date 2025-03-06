@@ -157,7 +157,7 @@ def get_unique_categories():
         return []
 
 
-def get_movie_by_id(movie_id):
+def get_movie_details_by_id(movie_id):
     """Get a specific movie by its ID."""
     try:
         response = requests.get(
