@@ -331,7 +331,7 @@ def my_watchlist():
     try:
         username = session.get("username")
         movies_data = watchlist_service.get_watchlist(username)
-        print(f"Movies data: {movies_data}")
+        logger.info(f"Watchlist data: {movies_data}")
         return render_template(
             "my_watchlist.html", username=username, movies=movies_data
         )
@@ -387,6 +387,12 @@ def remove_from_watchlist_handler():
 
         username = session.get("username")
         success = watchlist_service.remove_from_watchlist(username, show_id)
+
+        if success:
+            logger.info("Successfully removed from watchlist")
+        else:
+            logger.error("Failed remove from watchlist")
+
         return redirect(url_for("watchlist.my_watchlist"))
     except Exception as e:
         logger.error(f"Error removing from watchlist: {e}")
