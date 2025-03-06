@@ -129,28 +129,31 @@ def get_filtered_movies(query_params=None, username=None):
 
 
 def get_unique_categories():
-    """Get list of unique categories from all movies."""
+    """Get unique categories from movies table."""
     try:
-        response = requests.get(MOVIES_API_URL, timeout=TIMEOUT_SECONDS)
-        response.raise_for_status()
-        movies = response.json().get("movies", [])
+        response = supabase.table("movies").select("listedIn").execute()
+        
+        # Create a set to store unique categories
+        unique_categories = set()
+        
+        # Parse through each movie's categories
+        for movie in response.data:
+            if movie.get("listedIn"):
+                # Split categories if it's a string containing multiple categories
+                if isinstance(movie["listedIn"], str):
+                    categories = movie["listedIn"].split(",")
+                    # Strip whitespace and add each category
+                    for category in categories:
+                        unique_categories.add(category.strip())
+                # If it's already a list, add each category
+                elif isinstance(movie["listedIn"], list):
+                    for category in movie["listedIn"]:
+                        unique_categories.add(category.strip())
 
-        # Extract and flatten categories
-        categories = set()
-        for movie in movies:
-            # Check both possible field names (listed_in and listedIn)
-            category_field = (
-                movie.get("listed_in") or movie.get("listedIn") or ""
-            )
-            if category_field:
-                movie_categories = category_field.split(",")
-                categories.update(
-                    cat.strip() for cat in movie_categories if cat.strip()
-                )
-
-        return sorted(list(categories))
-    except requests.RequestException as e:
-        logger.error(f"Error fetching categories: {e}")
+        # Convert set to sorted list and return
+        return sorted(list(unique_categories))
+    except Exception as e:
+        print(f"Error fetching categories: {e}")
         return []
 
 
