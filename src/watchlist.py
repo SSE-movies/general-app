@@ -120,10 +120,10 @@ class WatchlistService:
             show_id_str = str(show_id)
             logger.info(
                 f"WATCHLIST_BACKEND_URL is set to: {WATCHLIST_BACKEND_URL}"
-            )
+                )
             logger.info(
                 f"Adding to watchlist: username={username}, showId={show_id_str}"
-            )
+                )
 
             payload = {"username": username, "showId": show_id_str}
             logger.info(f"Sending payload: {payload}")
@@ -223,7 +223,7 @@ class WatchlistService:
                 f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
                 json={"username": username, "showIds": show_ids_str},
                 timeout=TIMEOUT_SECONDS,
-            )
+                )
             response.raise_for_status()
             return response.json()
         except Exception as e:
@@ -231,7 +231,7 @@ class WatchlistService:
             return {
                 show_id: {"in_watchlist": False, "watched": False}
                 for show_id in show_ids
-            }
+                }
 
 
 # Initialize the service
