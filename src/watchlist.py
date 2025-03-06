@@ -118,24 +118,28 @@ class WatchlistService:
         try:
             # Ensure show_id is a string
             show_id_str = str(show_id)
-            logger.info(f"WATCHLIST_BACKEND_URL is set to: {WATCHLIST_BACKEND_URL}")
-            logger.info(f"Adding to watchlist: username={username}, showId={show_id_str}")
-            
+            logger.info(
+                f"WATCHLIST_BACKEND_URL is set to: {WATCHLIST_BACKEND_URL}"
+            )
+            logger.info(
+                f"Adding to watchlist: username={username}, showId={show_id_str}"
+            )
+
             payload = {"username": username, "showId": show_id_str}
             logger.info(f"Sending payload: {payload}")
-            
+
             full_url = f"{WATCHLIST_BACKEND_URL}/watchlist"
             logger.info(f"Making POST request to: {full_url}")
-            
+
             response = requests.post(
                 full_url,
                 json=payload,
                 timeout=TIMEOUT_SECONDS,
             )
-            
+
             logger.info(f"Response status: {response.status_code}")
             logger.info(f"Response content: {response.text}")
-            
+
             response.raise_for_status()
             return True
         except requests.exceptions.ConnectionError as e:
@@ -347,21 +351,23 @@ def add_to_watchlist_handler():
     try:
         show_id = request.form.get("showId")
         username = session.get("username")
-        
-        logger.info(f"Adding to watchlist: username={username}, showId={show_id}")
+
+        logger.info(
+            f"Adding to watchlist: username={username}, showId={show_id}"
+        )
         logger.info(f"WATCHLIST_BACKEND_URL={WATCHLIST_BACKEND_URL}")
-        
+
         if not show_id or not username:
             logger.error("Missing showId or username")
             return redirect(request.referrer or url_for("search.index"))
-        
+
         success = watchlist_service.add_to_watchlist(username, show_id)
-        
+
         if success:
             logger.info("Successfully added to watchlist")
         else:
             logger.error("Failed to add to watchlist")
-            
+
         return redirect(request.referrer or url_for("search.index"))
     except Exception as e:
         logger.error(f"Error in add_to_watchlist_handler: {e}", exc_info=True)
