@@ -376,7 +376,7 @@ def my_watchlist():
         logger.info(f"Full movies data: {full_movies}")
 
         return render_template(
-            "my_watchlist.html", username=username, movies=movie_details
+            "my_watchlist.html", username=username, movies=full_movies
         )
 
     except Exception as e:
