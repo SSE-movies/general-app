@@ -36,6 +36,7 @@ class WatchlistService:
                 .execute()
             )
             return response.data if response.data else []
+            
         except Exception as e:
             logger.error(f"Error fetching watchlist: {e}")
             return []
