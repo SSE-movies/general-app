@@ -102,8 +102,10 @@ class WatchlistService:
         The backend handles fetching and combining watchlist data with movie details.
         """
         try:
+            full_url = f"{WATCHLIST_BACKEND_URL}/watchlist"
+
             response = requests.get(
-                f"{WATCHLIST_BACKEND_URL}/watchlist/{username}",
+                full_url,
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
