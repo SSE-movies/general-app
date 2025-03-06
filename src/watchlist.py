@@ -355,7 +355,7 @@ def my_watchlist():
         movies_data = watchlist_service.get_watchlist(username)
 
         logger.info(f"Watchlist data: {movies_data}")
-        
+
         return render_template(
             "my_watchlist.html", username=username, movies=movies_data
         )
