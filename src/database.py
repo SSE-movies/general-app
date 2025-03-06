@@ -82,7 +82,7 @@ def get_filtered_movies(query_params=None, username=None):
 
         # Fetch filtered movies
         response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
+            MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS
         )
         response.raise_for_status()
         data = response.json()
