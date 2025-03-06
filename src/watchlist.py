@@ -331,6 +331,7 @@ def my_watchlist():
     try:
         username = session.get("username")
         movies_data = watchlist_service.get_watchlist(username)
+        print(f"Movies data: {movies_data}")
         return render_template(
             "my_watchlist.html", username=username, movies=movies_data
         )
