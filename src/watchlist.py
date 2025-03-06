@@ -12,6 +12,7 @@ from flask import (
     session,
 )
 from .decorators import login_required
+from .database import get_movie_by_id
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -292,7 +293,7 @@ def add_to_watchlist_handler():
 
         username = session.get("username")
         success = add_to_watchlist(username, show_id)
-        
+
         return redirect(request.referrer or url_for("search.index"))
     except Exception as e:
         print(f"Error adding to watchlist: {e}")
@@ -353,13 +354,30 @@ def my_watchlist():
     The backend provides complete movie data with watchlist status."""
     try:
         username = session.get("username")
-        movies_data = watchlist_service.get_watchlist(username)
 
-        logger.info(f"Watchlist data: {movies_data}")
+        # Retrieve the watchlist entries (each with showId and watched status)
+        watchlist_entries = watchlist_service.get_watchlist(username)
+        full_movies = []
+
+        for entry in watchlist_entries:
+            show_id = entry.get("showId")
+            # Fetch movie details using movie API
+            movie_details = get_movie_by_id(show_id)
+
+            if movie_details:
+                # Merge the watched status into the movie details
+                movie_details["watched"] = entry.get("watched", False)
+                full_movies.append(movie_details)
+
+            else:
+                logger.error(f"Movie details not found for showId: {show_id}")
+
+        logger.info(f"Full movies data: {full_movies}")
 
         return render_template(
-            "my_watchlist.html", username=username, movies=movies_data
+            "my_watchlist.html", username=username, movies=movie_details
         )
+    
     except Exception as e:
         logger.error(f"Error retrieving watchlist: {e}")
         return render_template(
