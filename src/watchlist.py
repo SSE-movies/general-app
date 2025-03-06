@@ -107,7 +107,9 @@ class WatchlistService:
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
-            logger.info(f"Received response: {response.status_code} - {response.text}")
+            logger.info(
+                f"Received response: {response.status_code} - {response.text}"
+            )
 
             # Assuming the response is in JSON format and has a key "movies"
             data = response.json()
@@ -116,12 +118,15 @@ class WatchlistService:
                 logger.error(f"Unexpected response structure: {data}")
                 return []
 
+
             return data["movies"]
+
 
         except requests.exceptions.RequestException as e:
             # Catch network-related errors, timeouts, etc.
             logger.error(f"Request error fetching watchlist: {e}")
             return []
+
 
         except ValueError as e:
             # Handle JSON decoding errors
