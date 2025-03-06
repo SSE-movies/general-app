@@ -52,6 +52,8 @@ def results():
             query_params, username
         )
 
+        print(movies)
+
         return render_template(
             "results.html",
             username=username,

@@ -121,7 +121,7 @@ class WatchlistService:
             show_id_str = str(show_id)
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist",
-                json={"user": username, "showId": show_id_str},
+                json={"username": username, "showId": show_id_str},
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
@@ -139,7 +139,7 @@ class WatchlistService:
             show_id_str = str(show_id)
             response = requests.delete(
                 f"{WATCHLIST_BACKEND_URL}/watchlist",
-                json={"user": username, "showId": show_id_str},
+                json={"username": username, "showId": show_id_str},
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
@@ -158,7 +158,7 @@ class WatchlistService:
             response = requests.put(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/status",
                 json={
-                    "user": username,
+                    "username": username,
                     "showId": show_id_str,
                     "watched": watched,
                 },
@@ -202,7 +202,7 @@ class WatchlistService:
             show_ids_str = [str(show_id) for show_id in show_ids]
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
-                json={"username": username, "showIds": show_ids_str},
+                json={"username": username, "showId": show_ids_str},
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
