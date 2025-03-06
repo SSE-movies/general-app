@@ -81,7 +81,7 @@ def recommendations():
                     if movie is not None and "title" in movie
                 ]
                 movies_list = [movie["title"] for movie in movies_data]
-                
+
                 print(f"Movies list: {movies_list}")
 
                 prompt = (
