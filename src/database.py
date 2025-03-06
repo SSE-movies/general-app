@@ -24,6 +24,7 @@ logger.debug(f"WATCHLIST_BACKEND_URL: {WATCHLIST_BACKEND_URL}")
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 def get_movies():
     """Get all movies for initial loading."""
     try:
@@ -37,35 +38,36 @@ def get_movies():
 
 def _build_movie_params(query_params, page):
     """Build query parameters for the movies API request."""
-    params = {
-        "page": page,
-        "per_page": 10  # Fixed value for results per page
-    }
+    params = {"page": page, "per_page": 10}  # Fixed value for results per page
     if query_params:
         param_mapping = {
             "title": "title",
             "type": "type",
             "categories": "categories",
-            "release_year": "release_year"
+            "release_year": "release_year",
         }
-        params.update({
-            api_param: query_params[param_name]
-            for param_name, api_param in param_mapping.items()
-            if query_params.get(param_name)
-        })
+        params.update(
+            {
+                api_param: query_params[param_name]
+                for param_name, api_param in param_mapping.items()
+                if query_params.get(param_name)
+            }
+        )
     return params
+
 
 def _normalize_movie_fields(movie):
     """Normalize field names in movie data."""
     field_mapping = {
         "listed_in": "listedIn",
         "show_id": "showId",
-        "release_year": "releaseYear"
+        "release_year": "releaseYear",
     }
     for old_field, new_field in field_mapping.items():
         if old_field in movie:
             movie[new_field] = movie.pop(old_field)
     return movie
+
 
 def get_filtered_movies(query_params=None, username=None):
     """
@@ -91,31 +93,28 @@ def get_filtered_movies(query_params=None, username=None):
         if username and movies:
             # Extract show IDs, handling both field names
             show_ids = [
-                movie.get("show_id") or movie.get("showId")
-                for movie in movies
+                movie.get("show_id") or movie.get("showId") for movie in movies
             ]
             try:
                 watchlist_response = requests.post(
                     f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
-                    json={
-                        "username": username,
-                        "showIds": show_ids
-                    },
-                    timeout=TIMEOUT_SECONDS
+                    json={"username": username, "showIds": show_ids},
+                    timeout=TIMEOUT_SECONDS,
                 )
                 watchlist_response.raise_for_status()
                 watchlist_status = watchlist_response.json()
             except Exception as e:
-                logger.error(
-                    f"Error checking watchlist status: {e}"
-                )
+                logger.error(f"Error checking watchlist status: {e}")
 
         # Process each movie
         for movie in movies:
             movie = _normalize_movie_fields(movie)
             show_id = movie.get("showId")
-            movie["in_watchlist"] = watchlist_status.get(
-                show_id, {}).get("in_watchlist", False) if username else False
+            movie["in_watchlist"] = (
+                watchlist_status.get(show_id, {}).get("in_watchlist", False)
+                if username
+                else False
+            )
 
         # Determine pagination flags
         results_per_page = 10
@@ -203,11 +202,13 @@ def check_movie_exists_by_title(title, username=None):
             try:
                 watchlist_response = requests.get(
                     f"{WATCHLIST_BACKEND_URL}/watchlist/status/{username}/{movie['showId']}",
-                    timeout=TIMEOUT_SECONDS
+                    timeout=TIMEOUT_SECONDS,
                 )
                 watchlist_response.raise_for_status()
                 watchlist_status = watchlist_response.json()
-                movie["in_watchlist"] = watchlist_status.get("in_watchlist", False)
+                movie["in_watchlist"] = watchlist_status.get(
+                    "in_watchlist", False
+                )
             except Exception as e:
                 logger.error(f"Error checking watchlist status: {e}")
                 movie["in_watchlist"] = False

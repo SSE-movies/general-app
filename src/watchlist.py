@@ -90,18 +90,21 @@ class WatchlistService:
             return False
 """
 
+
 # NEW VERSION - Using watchlist-backend microservice
 class WatchlistService:
     """Service class for interacting with the watchlist backend API.
     This is a thin client that delegates most logic to the backend service."""
+
     @staticmethod
     def get_watchlist(username):
         """Get all movies in a user's watchlist with full movie details.
-        The backend handles fetching and combining watchlist data with movie details."""
+        The backend handles fetching and combining watchlist data with movie details.
+        """
         try:
             response = requests.get(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/{username}",
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return response.json().get("movies", [])
@@ -119,7 +122,7 @@ class WatchlistService:
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist",
                 json={"user": username, "showId": show_id_str},
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return True
@@ -137,7 +140,7 @@ class WatchlistService:
             response = requests.delete(
                 f"{WATCHLIST_BACKEND_URL}/watchlist",
                 json={"user": username, "showId": show_id_str},
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return True
@@ -154,8 +157,12 @@ class WatchlistService:
             show_id_str = str(show_id)
             response = requests.put(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/status",
-                json={"user": username, "showId": show_id_str, "watched": watched},
-                timeout=TIMEOUT_SECONDS
+                json={
+                    "user": username,
+                    "showId": show_id_str,
+                    "watched": watched,
+                },
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return True
@@ -171,7 +178,7 @@ class WatchlistService:
             show_id_str = str(show_id)
             response = requests.get(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/status/{username}/{show_id_str}",
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return response.json()
@@ -182,11 +189,11 @@ class WatchlistService:
     @staticmethod
     def batch_check_watchlist_status(username, show_ids):
         """Check watchlist status for multiple movies at once.
-        
+
         Args:
             username (str): The username to check for
             show_ids (list): List of show IDs to check
-            
+
         Returns:
             dict: Dictionary mapping show IDs to their watchlist status
         """
@@ -196,13 +203,17 @@ class WatchlistService:
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
                 json={"username": username, "showIds": show_ids_str},
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
             return response.json()
         except Exception as e:
             logger.error(f"Error checking batch watchlist status: {e}")
-            return {show_id: {"in_watchlist": False, "watched": False} for show_id in show_ids}
+            return {
+                show_id: {"in_watchlist": False, "watched": False}
+                for show_id in show_ids
+            }
+
 
 # Initialize the service
 watchlist_service = WatchlistService()
@@ -291,6 +302,7 @@ def mark_unwatched_handler():
         return redirect(url_for("watchlist.my_watchlist"))
 """
 
+
 # NEW VERSION - Route handlers using the watchlist microservice
 @watchlist_bp.route("/my_watchlist")
 @login_required
@@ -312,6 +324,7 @@ def my_watchlist():
             error="Error retrieving watchlist",
         )
 
+
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist_handler():
@@ -328,6 +341,7 @@ def add_to_watchlist_handler():
     except Exception as e:
         logger.error(f"Error adding to watchlist: {e}")
         return redirect(request.referrer or url_for("search.index"))
+
 
 @watchlist_bp.route("/remove_from_watchlist", methods=["POST"])
 @login_required
@@ -346,6 +360,7 @@ def remove_from_watchlist_handler():
         logger.error(f"Error removing from watchlist: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
 
+
 @watchlist_bp.route("/mark_watched", methods=["POST"])
 @login_required
 def mark_watched_handler():
@@ -357,11 +372,14 @@ def mark_watched_handler():
             return redirect(url_for("watchlist.my_watchlist"))
 
         username = session.get("username")
-        success = watchlist_service.update_watched_status(username, show_id, True)
+        success = watchlist_service.update_watched_status(
+            username, show_id, True
+        )
         return redirect(url_for("watchlist.my_watchlist"))
     except Exception as e:
         logger.error(f"Error marking as watched: {e}")
         return redirect(url_for("watchlist.my_watchlist"))
+
 
 @watchlist_bp.route("/mark_unwatched", methods=["POST"])
 @login_required
@@ -374,7 +392,9 @@ def mark_unwatched_handler():
             return redirect(url_for("watchlist.my_watchlist"))
 
         username = session.get("username")
-        success = watchlist_service.update_watched_status(username, show_id, False)
+        success = watchlist_service.update_watched_status(
+            username, show_id, False
+        )
         return redirect(url_for("watchlist.my_watchlist"))
     except Exception as e:
         logger.error(f"Error marking as unwatched: {e}")

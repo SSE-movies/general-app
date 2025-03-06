@@ -58,7 +58,9 @@ def recommendations():
     try:
         # Get watchlist movies in parallel with Gemini API call
         with ThreadPoolExecutor(max_workers=2) as executor:
-            watchlist_future = executor.submit(watchlist_service.get_watchlist, username)
+            watchlist_future = executor.submit(
+                watchlist_service.get_watchlist, username
+            )
 
             # Build prompt for Gemini
             movies_data = watchlist_future.result()
