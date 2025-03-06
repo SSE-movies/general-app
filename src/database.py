@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 TIMEOUT_SECONDS = 10  # Add a reasonable timeout constant
 
 # Get configuration from environment
-MOVIES_API_URL = os.environ.get("MOVIES_API_URL")
+MOVIE_BACKEND_URL = os.environ.get("MOVIE_BACKEND_URL")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 WATCHLIST_BACKEND_URL = os.environ.get("WATCHLIST_BACKEND_URL")
 
-logger.debug(f"MOVIES_API_URL: {MOVIES_API_URL}")
+logger.debug(f"MOVIE_BACKEND_URL: {MOVIE_BACKEND_URL}")
 logger.debug(f"WATCHLIST_BACKEND_URL: {WATCHLIST_BACKEND_URL}")
 
 # Initialize Supabase client
@@ -28,7 +28,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 def get_movies():
     """Get all movies for initial loading."""
     try:
-        response = requests.get(MOVIES_API_URL, timeout=TIMEOUT_SECONDS)
+        response = requests.get(MOVIE_BACKEND_URL, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         return response.json().get("movies", [])
     except requests.RequestException as e:
@@ -161,7 +161,7 @@ def get_movie_by_id(movie_id):
     """Get a specific movie by its ID."""
     try:
         response = requests.get(
-            f"{MOVIES_API_URL}/{movie_id}", timeout=TIMEOUT_SECONDS
+            f"{MOVIE_BACKEND_URL}/{movie_id}", timeout=TIMEOUT_SECONDS
         )
         response.raise_for_status()
         return response.json()
@@ -181,7 +181,7 @@ def check_movie_exists_by_title(title, username=None):
 
         # Fetch filtered movies
         response = requests.get(
-            MOVIES_API_URL, params=params, timeout=TIMEOUT_SECONDS
+            MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS
         )
         response.raise_for_status()
         data = response.json()
