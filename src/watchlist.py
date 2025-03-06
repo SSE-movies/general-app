@@ -114,18 +114,33 @@ class WatchlistService:
 
     @staticmethod
     def add_to_watchlist(username, show_id):
-        """Add a movie to the user's watchlist.
-        The backend handles validation and duplicate checking."""
+        """Add a movie to the user's watchlist."""
         try:
             # Ensure show_id is a string
             show_id_str = str(show_id)
+            logger.info(f"WATCHLIST_BACKEND_URL is set to: {WATCHLIST_BACKEND_URL}")
+            logger.info(f"Adding to watchlist: username={username}, showId={show_id_str}")
+            
+            payload = {"username": username, "showId": show_id_str}
+            logger.info(f"Sending payload: {payload}")
+            
+            full_url = f"{WATCHLIST_BACKEND_URL}/watchlist"
+            logger.info(f"Making POST request to: {full_url}")
+            
             response = requests.post(
-                f"{WATCHLIST_BACKEND_URL}/watchlist",
-                json={"username": username, "showId": show_id_str},
+                full_url,
+                json=payload,
                 timeout=TIMEOUT_SECONDS,
             )
+            
+            logger.info(f"Response status: {response.status_code}")
+            logger.info(f"Response content: {response.text}")
+            
             response.raise_for_status()
             return True
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Connection error to watchlist backend: {e}")
+            return False
         except Exception as e:
             logger.error(f"Error adding to watchlist: {e}")
             return False
@@ -202,7 +217,7 @@ class WatchlistService:
             show_ids_str = [str(show_id) for show_id in show_ids]
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
-                json={"username": username, "showId": show_ids_str},
+                json={"username": username, "showIds": show_ids_str},
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
@@ -328,18 +343,28 @@ def my_watchlist():
 @watchlist_bp.route("/add_to_watchlist", methods=["POST"])
 @login_required
 def add_to_watchlist_handler():
-    """Handle adding a movie to the watchlist.
-    The backend handles all validation and business logic."""
+    """Handle adding a movie to the watchlist."""
     try:
         show_id = request.form.get("showId")
-        if not show_id:
-            return redirect(request.referrer or url_for("search.index"))
-
         username = session.get("username")
+        
+        logger.info(f"Adding to watchlist: username={username}, showId={show_id}")
+        logger.info(f"WATCHLIST_BACKEND_URL={WATCHLIST_BACKEND_URL}")
+        
+        if not show_id or not username:
+            logger.error("Missing showId or username")
+            return redirect(request.referrer or url_for("search.index"))
+        
         success = watchlist_service.add_to_watchlist(username, show_id)
+        
+        if success:
+            logger.info("Successfully added to watchlist")
+        else:
+            logger.error("Failed to add to watchlist")
+            
         return redirect(request.referrer or url_for("search.index"))
     except Exception as e:
-        logger.error(f"Error adding to watchlist: {e}")
+        logger.error(f"Error in add_to_watchlist_handler: {e}", exc_info=True)
         return redirect(request.referrer or url_for("search.index"))
 
 

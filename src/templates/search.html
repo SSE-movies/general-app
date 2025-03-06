@@ -71,7 +71,7 @@
             <div class="movie mb-4 p-4 bg-taupe rounded-lg shadow-md hover:shadow-lg transition-shadow">
                 <h3 class="text-2xl font-semibold">{{ movie.title }}</h3>
                 <!-- Additional details -->
-                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist') }}">
+                <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
                     <input type="hidden" name="showId" value="{{ movie.showId }}">
                     <button type="submit" class="bg-golden text-dark-forest px-4 py-2 rounded hover:bg-opacity-80 transition">
                         Add to Watchlist
