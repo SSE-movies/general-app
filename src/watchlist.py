@@ -292,6 +292,7 @@ def add_to_watchlist_handler():
 
         username = session.get("username")
         success = add_to_watchlist(username, show_id)
+        
         return redirect(request.referrer or url_for("search.index"))
     except Exception as e:
         print(f"Error adding to watchlist: {e}")
