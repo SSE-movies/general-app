@@ -122,11 +122,8 @@ def recommendations():
 
         recommendations_json = json.loads(raw_text)
 
-        print("\nGot raw recommendations:", recommendations_json)
-
         # Create a set of watchlist titles for O(1) lookup
         watchlist_titles = {movie["title"].lower() for movie in movies_data}
-        print(f"Watchlist titles: {watchlist_titles}")
 
         # Check all recommendations in parallel
         with ThreadPoolExecutor(max_workers=3) as executor:
