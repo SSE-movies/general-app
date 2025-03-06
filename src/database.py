@@ -132,10 +132,10 @@ def get_unique_categories():
     """Get unique categories from movies table."""
     try:
         response = supabase.table("movies").select("listedIn").execute()
-
+        
         # Create a set to store unique categories
         unique_categories = set()
-
+        
         # Parse through each movie's categories
         for movie in response.data:
             if movie.get("listedIn"):
