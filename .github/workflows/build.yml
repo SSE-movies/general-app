@@ -34,7 +34,7 @@ jobs:
       - name: Install Black
         run: pip install black
       - name: Run Black
-        run: black . --line-length 79 --exclude "Blueprint/__init__.py"
+        run: black . --line-length 79
       - name: Commit changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
