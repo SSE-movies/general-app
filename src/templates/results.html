@@ -8,7 +8,7 @@
         <p class="text-center text-cream mb-6">
             Browse through the titles that match your search
         </p>
-
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for movie in movies %}
                 <div class="bg-taupe p-4 mb-6 rounded-lg shadow-md flex flex-col hover:scale-105 transition-transform">
@@ -28,11 +28,10 @@
                         </p>
                     {% endif %}
 
-                    {% if movie.type %}
-                        <p class="text-sm text-cream mb-1">
-                            <strong>Type:</strong> {{ movie.type }}
-                        </p>
-                    {% endif %}
+                    <!-- Always show type, even if it's empty -->
+                    <p class="text-sm text-cream mb-1">
+                        <strong>Type:</strong> {{ movie.type or 'Not specified' }}
+                    </p>
 
                     {% if movie.description %}
                         <p class="text-sm text-cream mb-3">
@@ -93,11 +92,17 @@
             {% endif %}
         </div>
 
-        <!-- No results message -->
+        <!-- No results message with more details -->
         {% if movies|length == 0 %}
-            <p class="text-cream text-center mt-8">
-                No movies found matching your search.
-            </p>
+            <div class="text-cream text-center mt-8">
+                <p class="mb-2">No results found matching your search criteria.</p>
+                {% if request.args.get('type') == 'TV Show' %}
+                    <p class="text-sm">
+                        Note: You searched for TV Shows. If you're not seeing results, 
+                        try searching without specifying a type or try searching for "Movies" instead.
+                    </p>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 {% endblock %}
