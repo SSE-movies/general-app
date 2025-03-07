@@ -23,6 +23,7 @@ TIMEOUT_SECONDS = 10
 # Get configuration from environment
 WATCHLIST_BACKEND_URL = os.environ.get("WATCHLIST_BACKEND_URL")
 
+
 class WatchlistService:
     """Service class for interacting with the watchlist backend API.
     This is a thin client that delegates most logic to the backend service."""
@@ -192,6 +193,7 @@ watchlist_service = WatchlistService()
 
 # Initialize the blueprint
 watchlist_bp = Blueprint("watchlist", __name__)
+
 
 @watchlist_bp.route("/my_watchlist")
 @login_required
