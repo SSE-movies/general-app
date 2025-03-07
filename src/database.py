@@ -54,7 +54,9 @@ def _build_movie_params(query_params, page):
                 # Special handling for type parameter
                 if param_name == "type":
                     # Log the type value for debugging
-                    logger.info(f"Type parameter value: '{query_params[param_name]}'")
+                    logger.info(
+                        f"Type parameter value: '{query_params[param_name]}'"
+                    )
                     # Handle different variations of TV Show type
                     type_value = query_params[param_name].lower()
                     if type_value in ("tv", "tv show", "tvshow"):
@@ -113,9 +115,13 @@ def get_filtered_movies(query_params=None, username=None):
             modified_params = query_params.copy()
             # Check if we're filtering for TV Shows (handle different variations)
             tv_type_values = ["tv", "tv show", "tvshow"]
-            if (modified_params.get("type") and
-                    modified_params.get("type").lower() in tv_type_values):
-                logger.info(f"TV Show filter detected (value: {modified_params.get('type')})")
+            if (
+                modified_params.get("type")
+                and modified_params.get("type").lower() in tv_type_values
+            ):
+                logger.info(
+                    f"TV Show filter detected (value: {modified_params.get('type')})"
+                )
                 # Set the type to "TV Show" for consistency
                 modified_params["type"] = "TV Show"
                 # First attempt with the standard format
@@ -133,11 +139,15 @@ def get_filtered_movies(query_params=None, username=None):
                 # Process the movies we found (if any)
                 if movies:
                     # Get watchlist status and process movies
-                    return _process_movies_with_watchlist(movies, username, page)
+                    return _process_movies_with_watchlist(
+                        movies, username, page
+                    )
         # If we're not filtering for TV Shows or if we didn't return early above
         params = _build_movie_params(query_params, page)
         # Fetch filtered movies
-        logger.info(f"Sending request to {MOVIE_BACKEND_URL} with params: {params}")
+        logger.info(
+            f"Sending request to {MOVIE_BACKEND_URL} with params: {params}"
+        )
         try:
             response = requests.get(
                 MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS

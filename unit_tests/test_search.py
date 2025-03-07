@@ -37,7 +37,7 @@ def test_search_results(auth_client):
     # Test search with specific categories
     response = auth_client.get("/results?categories=Action%20%26%20Adventure")
     assert response.status_code == 200
-    
+
     # Print response data for debugging
     print(response.data)
 
