@@ -40,15 +40,17 @@ class WatchlistService:
             data = response.json()
 
             if "entries" not in data:
-                logger.error("Unexpected response structure", extra={"data": data})
+                logger.error(
+                    "Unexpected response structure", extra={"data": data}
+                )
                 return []
 
             return data["entries"]
         except Exception as e:
-            logger.error("Error fetching watchlist", extra={
-                "error": str(e),
-                "username": username
-            })
+            logger.error(
+                "Error fetching watchlist",
+                extra={"error": str(e), "username": username},
+            )
             return []
 
     @staticmethod
@@ -56,11 +58,14 @@ class WatchlistService:
         """Add a movie to the user's watchlist."""
         try:
             show_id_str = str(show_id)
-            logger.info("Adding movie to watchlist", extra={
-                "username": username,
-                "show_id": show_id_str,
-                "watchlist_url": WATCHLIST_BACKEND_URL
-            })
+            logger.info(
+                "Adding movie to watchlist",
+                extra={
+                    "username": username,
+                    "show_id": show_id_str,
+                    "watchlist_url": WATCHLIST_BACKEND_URL,
+                },
+            )
 
             response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist",
