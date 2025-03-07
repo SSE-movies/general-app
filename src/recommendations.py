@@ -173,5 +173,5 @@ def recommendations():
         print("Error generating recommendations:", e)
 
     return render_template(
-        "recommendations.html", recommendations=recommendations_json
+        "recommendations.html", username=username, recommendations=recommendations_json
     )
