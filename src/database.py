@@ -54,9 +54,7 @@ def _build_movie_params(query_params, page):
                 # Special handling for type parameter
                 if param_name == "type":
                     # Log the type value for debugging
-                    logger.info(
-                        f"Type parameter value: '{query_params[param_name]}'"
-                    )
+                    logger.info(f"Type parameter value: '{query_params[param_name]}'")
                     # Handle different variations of TV Show type
                     type_value = query_params[param_name].lower()
                     if type_value in ("tv", "tv show", "tvshow"):
@@ -66,6 +64,18 @@ def _build_movie_params(query_params, page):
                     else:
                         # Pass through any other values
                         params[api_param] = query_params[param_name]
+                # Special handling for categories with special characters
+                elif param_name == "categories":
+                    # Handle both single category and list of categories
+                    categories = query_params[param_name]
+                    if isinstance(categories, list):
+                        # If it's already a list, use it as is
+                        params[api_param] = categories
+                    else:
+                        # If it's a single string, use it directly
+                        # The API will handle URL decoding
+                        params[api_param] = categories
+                    logger.info(f"Categories parameter: {params[api_param]}")
                 else:
                     # Handle other parameters normally
                     params[api_param] = query_params[param_name]
@@ -103,13 +113,9 @@ def get_filtered_movies(query_params=None, username=None):
             modified_params = query_params.copy()
             # Check if we're filtering for TV Shows (handle different variations)
             tv_type_values = ["tv", "tv show", "tvshow"]
-            if (
-                modified_params.get("type")
-                and modified_params.get("type").lower() in tv_type_values
-            ):
-                logger.info(
-                    f"TV Show filter detected (value: {modified_params.get('type')})"
-                )
+            if (modified_params.get("type") and
+                    modified_params.get("type").lower() in tv_type_values):
+                logger.info(f"TV Show filter detected (value: {modified_params.get('type')})")
                 # Set the type to "TV Show" for consistency
                 modified_params["type"] = "TV Show"
                 # First attempt with the standard format
@@ -127,28 +133,32 @@ def get_filtered_movies(query_params=None, username=None):
                 # Process the movies we found (if any)
                 if movies:
                     # Get watchlist status and process movies
-                    return _process_movies_with_watchlist(
-                        movies, username, page
-                    )
+                    return _process_movies_with_watchlist(movies, username, page)
         # If we're not filtering for TV Shows or if we didn't return early above
         params = _build_movie_params(query_params, page)
         # Fetch filtered movies
-        logger.info(
-            f"Sending request to {MOVIE_BACKEND_URL} with params: {params}"
-        )
-        response = requests.get(
-            MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS
-        )
-        response.raise_for_status()
-        data = response.json()
-        movies = data.get("movies", [])
-        # Log the number of movies returned
-        logger.info(f"Received {len(movies)} movies from API")
-        # Process movies with watchlist status
-        return _process_movies_with_watchlist(movies, username, page)
+        logger.info(f"Sending request to {MOVIE_BACKEND_URL} with params: {params}")
+        try:
+            response = requests.get(
+                MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS
+            )
+            response.raise_for_status()
+            data = response.json()
+            movies = data.get("movies", [])
+            # Log the number of movies returned
+            logger.info(f"Received {len(movies)} movies from API")
+            # Process movies with watchlist status
+            return _process_movies_with_watchlist(movies, username, page)
+        except requests.HTTPError as e:
+            logger.error(f"HTTP error fetching movies: {e}")
+            # Return empty results with error message
+            error_message = f"Error fetching movies: {e}"
+            return [], 1, False, False, error_message
     except requests.RequestException as e:
         logger.error(f"Error fetching filtered movies: {e}")
-        return [], 1, False, False, None
+        # Return empty results with error message
+        error_message = f"Error fetching movies: {e}"
+        return [], 1, False, False, error_message
 
 
 def _try_alternative_tv_formats(params):

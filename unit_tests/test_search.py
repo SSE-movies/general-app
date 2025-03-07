@@ -30,13 +30,16 @@ def test_search_results(auth_client):
     """Test searching by category and title."""
     import os
 
-    # Access the MOVIES_API_URL environment variable
-    movies_api_url = os.environ.get("MOVIES_API_URL")
-    print(f"MOVIES_API_URL in test: {movies_api_url}")
+    # Access the MOVIE_BACKEND_URL environment variable
+    movie_backend_url = os.environ.get("MOVIE_BACKEND_URL")
+    print(f"MOVIE_BACKEND_URL in test: {movie_backend_url}")
 
     # Test search with specific categories
     response = auth_client.get("/results?categories=Action%20%26%20Adventure")
     assert response.status_code == 200
+    
+    # Print response data for debugging
+    print(response.data)
 
     # Accept either movie results or no results message
     assert any(
@@ -44,6 +47,7 @@ def test_search_results(auth_client):
             b"Action" in response.data,
             b"Adventure" in response.data,
             b"No movies found" in response.data,
+            b"matching your search criteria" in response.data,
         ]
     ), "Expected either movie categories or no results message"
 

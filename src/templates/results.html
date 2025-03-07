@@ -95,12 +95,20 @@
         <!-- No results message with more details -->
         {% if movies|length == 0 %}
             <div class="text-cream text-center mt-8">
-                <p class="mb-2">No results found matching your search criteria.</p>
-                {% if request.args.get('type') == 'TV Show' %}
+                <p class="mb-2">No movies found matching your search criteria.</p>
+                {% if request.args.get('categories') %}
+                    <p class="text-sm">
+                        You searched for category: {{ request.args.get('categories') }}
+                    </p>
+                {% endif %}
+                {% if request.args.get('type') == 'TV Show' or request.args.get('type') == 'tv' %}
                     <p class="text-sm">
                         Note: You searched for TV Shows. If you're not seeing results, 
                         try searching without specifying a type or try searching for "Movies" instead.
                     </p>
+                {% endif %}
+                {% if error %}
+                    <p class="text-sm text-red-400">{{ error }}</p>
                 {% endif %}
             </div>
         {% endif %}
