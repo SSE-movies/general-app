@@ -96,15 +96,3 @@ def test_mark_unwatched(auth_client, test_movie):
         follow_redirects=True,
     )
     assert response.status_code == 200
-
-
-# Add cleanup fixture to remove test entries from watchlist
-@pytest.fixture(autouse=True)
-def cleanup_watchlist(test_movie):
-    yield
-    try:
-        supabase.table("watchlist").delete().eq(
-            "showId", test_movie["showId"]
-        ).execute()
-    except Exception as e:
-        print(f"Cleanup error: {e}")

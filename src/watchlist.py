@@ -30,75 +30,45 @@ class WatchlistService:
 
     @staticmethod
     def get_watchlist(username):
-        """Get all movies in a user's watchlist with full movie details.
-        The backend handles fetching and combining watchlist data with movie details.
-        """
+        """Get all movies in a user's watchlist with full movie details."""
         try:
             response = requests.get(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/{username}",
                 timeout=TIMEOUT_SECONDS,
             )
             response.raise_for_status()
-            logger.info(
-                f"Received response: {response.status_code} - {response.text}"
-            )
-
-            # Assuming the response is in JSON format and has a key "movies"
             data = response.json()
 
             if "entries" not in data:
-                logger.error(f"Unexpected response structure: {data}")
+                logger.error("Unexpected response structure", extra={"data": data})
                 return []
 
             return data["entries"]
-
-        except requests.exceptions.RequestException as e:
-            # Catch network-related errors, timeouts, etc.
-            logger.error(f"Request error fetching watchlist: {e}")
-            return []
-
-        except ValueError as e:
-            # Handle JSON decoding errors
-            logger.error(f"Error decoding JSON response: {e}")
-            return []
-
         except Exception as e:
-            logger.error(f"Error fetching watchlist: {e}")
+            logger.error("Error fetching watchlist", extra={
+                "error": str(e),
+                "username": username
+            })
             return []
 
     @staticmethod
     def add_to_watchlist(username, show_id):
         """Add a movie to the user's watchlist."""
         try:
-            # Ensure show_id is a string
             show_id_str = str(show_id)
-            logger.info(
-                f"WATCHLIST_BACKEND_URL is set to: {WATCHLIST_BACKEND_URL}"
-            )
-            logger.info(
-                f"Adding to watchlist: username={username}, showId={show_id_str}"
-            )
-
-            payload = {"username": username, "showId": show_id_str}
-            logger.info(f"Sending payload: {payload}")
-
-            full_url = f"{WATCHLIST_BACKEND_URL}/watchlist"
-            logger.info(f"Making POST request to: {full_url}")
+            logger.info("Adding movie to watchlist", extra={
+                "username": username,
+                "show_id": show_id_str,
+                "watchlist_url": WATCHLIST_BACKEND_URL
+            })
 
             response = requests.post(
-                full_url,
-                json=payload,
+                f"{WATCHLIST_BACKEND_URL}/watchlist",
+                json={"username": username, "showId": show_id_str},
                 timeout=TIMEOUT_SECONDS,
             )
-
-            logger.info(f"Response status: {response.status_code}")
-            logger.info(f"Response content: {response.text}")
-
             response.raise_for_status()
             return True
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"Connection error to watchlist backend: {e}")
-            return False
         except Exception as e:
             logger.error(f"Error adding to watchlist: {e}")
             return False
