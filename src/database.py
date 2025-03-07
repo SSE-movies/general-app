@@ -54,7 +54,9 @@ def _build_movie_params(query_params, page):
                 # Special handling for type parameter
                 if param_name == "type":
                     # Log the type value for debugging
-                    logger.info(f"Type parameter value: '{query_params[param_name]}'")
+                    logger.info(
+                        f"Type parameter value: '{query_params[param_name]}'"
+                    )
                     # Handle different variations of TV Show type
                     type_value = query_params[param_name].lower()
                     if type_value in ("tv", "tv show", "tvshow"):
@@ -101,9 +103,13 @@ def get_filtered_movies(query_params=None, username=None):
             modified_params = query_params.copy()
             # Check if we're filtering for TV Shows (handle different variations)
             tv_type_values = ["tv", "tv show", "tvshow"]
-            if (modified_params.get("type") and
-                    modified_params.get("type").lower() in tv_type_values):
-                logger.info(f"TV Show filter detected (value: {modified_params.get('type')})")
+            if (
+                modified_params.get("type")
+                and modified_params.get("type").lower() in tv_type_values
+            ):
+                logger.info(
+                    f"TV Show filter detected (value: {modified_params.get('type')})"
+                )
                 # Set the type to "TV Show" for consistency
                 modified_params["type"] = "TV Show"
                 # First attempt with the standard format
@@ -121,11 +127,15 @@ def get_filtered_movies(query_params=None, username=None):
                 # Process the movies we found (if any)
                 if movies:
                     # Get watchlist status and process movies
-                    return _process_movies_with_watchlist(movies, username, page)
+                    return _process_movies_with_watchlist(
+                        movies, username, page
+                    )
         # If we're not filtering for TV Shows or if we didn't return early above
         params = _build_movie_params(query_params, page)
         # Fetch filtered movies
-        logger.info(f"Sending request to {MOVIE_BACKEND_URL} with params: {params}")
+        logger.info(
+            f"Sending request to {MOVIE_BACKEND_URL} with params: {params}"
+        )
         response = requests.get(
             MOVIE_BACKEND_URL, params=params, timeout=TIMEOUT_SECONDS
         )
@@ -156,7 +166,9 @@ def _try_alternative_tv_formats(params):
             alt_response.raise_for_status()
             alt_data = alt_response.json()
             alt_movies = alt_data.get("movies", [])
-            logger.info(f"Alternative format '{alt}' returned {len(alt_movies)} results")
+            logger.info(
+                f"Alternative format '{alt}' returned {len(alt_movies)} results"
+            )
             if len(alt_movies) > 0:
                 return alt_movies
         except requests.RequestException as e:
@@ -178,7 +190,7 @@ def _process_movies_with_watchlist(movies, username, page):
             watchlist_response = requests.post(
                 f"{WATCHLIST_BACKEND_URL}/watchlist/batch",
                 json={"username": username, "showIds": show_ids},
-                timeout=TIMEOUT_SECONDS
+                timeout=TIMEOUT_SECONDS,
             )
             watchlist_response.raise_for_status()
             watchlist_status = watchlist_response.json()
@@ -291,8 +303,7 @@ def get_unique_types():
         # First try to get types directly from the API
         try:
             response = requests.get(
-                f"{MOVIE_BACKEND_URL}/types",
-                timeout=TIMEOUT_SECONDS
+                f"{MOVIE_BACKEND_URL}/types", timeout=TIMEOUT_SECONDS
             )
             if response.status_code == 200:
                 return response.json().get("types", [])
@@ -301,8 +312,10 @@ def get_unique_types():
         # If API doesn't support types endpoint, try to infer from data
         response = requests.get(
             MOVIE_BACKEND_URL,
-            params={"per_page": 1000},  # Get a large sample to find different types
-            timeout=TIMEOUT_SECONDS
+            params={
+                "per_page": 1000
+            },  # Get a large sample to find different types
+            timeout=TIMEOUT_SECONDS,
         )
         response.raise_for_status()
         data = response.json()
