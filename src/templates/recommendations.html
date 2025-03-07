@@ -53,14 +53,11 @@
                             Added to Watchlist
                         </button>
                     {% elif movie.exists_in_database %}
-                        <form method="POST" action="{{ url_for('watchlist.add_to_watchlist_handler') }}">
-                            <input type="hidden" name="title" value="{{ movie.title }}">
-                            <button type="submit" class="bg-golden text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block hover:bg-opacity-90 transition">
-                                Add to Watchlist
-                            </button>
-                        </form>
+                        <button disabled class="bg-green-700 text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block opacity-75 cursor-not-allowed">
+                            Available
+                        </button>
                     {% else %}
-                        <button disabled class="bg-gray-500 text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block opacity-75 cursor-not-allowed">
+                        <button disabled class="bg-red-500 text-dark-forest px-4 py-2 text-sm rounded w-auto inline-block opacity-75 cursor-not-allowed">
                             Not Available
                         </button>
                     {% endif %}
